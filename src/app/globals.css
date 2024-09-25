@@ -1,4 +1,6 @@
 /* Reset or Normalize */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
 *,
 *::before,
 *::after {
@@ -16,7 +18,7 @@ body {
   line-height: 1.6;
   background-color: #f8f9fa;
   color: #333;
-  padding: 20px;
+  padding: 0 20px;
 }
 
 
@@ -44,8 +46,4 @@ p {
   margin: 0 0 1.5rem;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
+
