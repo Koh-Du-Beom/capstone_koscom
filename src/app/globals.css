@@ -18,9 +18,12 @@ body {
   line-height: 1.6;
   background-color: #f8f9fa;
   color: #333;
-  padding: 0 20px;
+  padding: 0;
 }
 
+.contents{
+	padding: 20px;
+}
 
 a {
   color: inherit;

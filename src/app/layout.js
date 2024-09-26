@@ -32,7 +32,9 @@ export default function RootLayout({ children }) {
     <html lang="ko">
       <body className={notoSansKR.variable}>
         <TopNavBar />
-				{children}
+				<main className="contents">
+					{children}
+				</main>	
       </body>
     </html>
   );
