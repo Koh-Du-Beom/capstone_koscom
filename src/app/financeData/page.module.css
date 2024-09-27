@@ -1,0 +1,56 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.selectionSection {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #ddd;
+}
+
+.activeButton {
+  background-color: #007bff;
+  color: white;
+}
+
+.mainSection {
+  display: flex;
+  justify-content: space-between;
+}
+
+.inputSection {
+  flex: 1;
+  margin-right: 20px;
+  border: 1px solid #ccc;
+  padding: 20px;
+}
+
+.graphSection {
+  flex: 2;
+  border: 1px solid black;
+  padding: 20px;
+  height: 300px;
+}
+
+.prompt textarea {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  resize: none;
+}
