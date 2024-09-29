@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import FinancialDropdownGroup from '@/components/financial-data/dropdown/financial-dropdown-groups';
 import classes from './page.module.css';
+import FinancialGraph from '@/components/graphs/financial-graph';
 
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown'); // 초기값은 'dropdown'
@@ -33,13 +34,13 @@ export default function FinancialDataShowPage() {
             <FinancialDropdownGroup />
           ) : (
             <div className={classes.prompt}>
-              <textarea placeholder="Enter your prompt here" />
+              <textarea placeholder="프롬프트 입력창" />
             </div>
           )}
         </div>
 
         <div className={classes.graphSection}>
-          {/* 그래프 컴포넌트는 여기에 추가 */}
+          <FinancialGraph />
         </div>
       </div>
     </div>

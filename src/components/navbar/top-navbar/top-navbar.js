@@ -11,7 +11,7 @@ export default function TopNavBar() {
   return (
     <Navbar expand="lg" className='bg-primary' sticky="top">
       <Container>
-        <Navbar.Brand href="/" style={{textDecoration: "none"}} className="text-white">React-Bootstrap</Navbar.Brand>
+        <Navbar.Brand as={Link} href="/" style={{textDecoration: "none"}} className="text-white">React-Bootstrap</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="ms-auto" />
         <Navbar.Collapse id="basic-navbar-nav"> 
           <Nav className="mx-auto">
