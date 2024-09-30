@@ -1,4 +1,5 @@
 'use client'
+import InterestedItems from '@/components/interested-items/interested-items';
 import { useState } from 'react';
 
 export default function Home() {
@@ -33,9 +34,6 @@ export default function Home() {
 
   return (
     <main>
-      <h1>홈페이지입니다.</h1>
-      <h2>어떤 내용할지 같이 고민해보죠</h2>
-
       <textarea
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
@@ -49,6 +47,7 @@ export default function Home() {
           <li key={index}>{item.title}</li>
         ))}
       </ul>
+			<InterestedItems />
     </main>
   );
 }

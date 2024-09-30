@@ -1,0 +1,67 @@
+
+.container{
+	display: flex;
+	flex-direction: row;
+	padding: 20px;
+	border: 2px solid #e1e1e1;
+
+}
+
+.wrapper{
+	display: flex;
+	flex-direction: column;
+	margin-left: 10px;
+}
+
+.title_box{
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 8px;
+}
+
+.big_title{
+	font-size: 18px;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 5px;
+}
+
+.small_title{
+	font-size: 12px;
+	color: #6C757D;
+}
+
+.price_info{
+	display: flex;
+	align-items: center;
+}
+
+.current_price{
+	font-size: 24px;
+	color: #0077d7;
+	font-weight: bold;
+	margin-right: 10px;
+}
+
+.price_change_box{
+	display: flex;
+	align-items: center;
+	color: #0077d7;
+}
+
+.price_change{
+	font-size: 14px;
+	color: #0077d7;
+}
+
+
+.arrow {
+	display: inline-block;
+	width: 0;
+	height: 0;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 7px solid #0077d7;
+	margin-left: 5px;
+	vertical-align: middle;
+}
