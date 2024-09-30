@@ -15,6 +15,14 @@ export const salesData = {
       borderColor: "rgba(153, 102, 255, 1)", // 영업이익 테두리 색상
       borderWidth: 1,
     },
+		{
+			label: "순매출",
+      data: [5343249, 432234, 165670, 880499], // 영업이익 데이터
+      backgroundColor: "rgba(153, 69, 255, 0.2)", // 영업이익 그래프 색상
+      borderColor: "rgba(153, 69, 255, 1)", // 영업이익 테두리 색상
+      borderWidth: 1,
+		}
   ],
 };
+
 

@@ -24,7 +24,7 @@ export async function GET(request) {
     const lowerCaseSearch = search.toLowerCase().trim();
     const newsHeadlines = [];
 
-    // 적절한 클래스 선택자를 사용하여 뉴스 타이틀 추출
+    // 적절한 클래스 선택자를 사용하여 뉴스 추출(여기선 제목으로만 일단 타이틀을 추출함)
     $('strong.NewsList_title__XdSpT').each((index, element) => {
       const title = $(element).text().replace(/\s+/g, ' ').trim().toLowerCase(); // 공백 제거 및 소문자 변환
       console.log("Parsed title:", title); // 파싱된 타이틀을 로그로 출력

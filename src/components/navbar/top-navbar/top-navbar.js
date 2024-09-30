@@ -15,9 +15,10 @@ export default function TopNavBar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="ms-auto" />
         <Navbar.Collapse id="basic-navbar-nav"> 
           <Nav className="mx-auto">
-						<Nav.Link as={Link} href="/financeData" className={`text-white ${classes.navbarLink}`}>관심종목</Nav.Link> 
-						<Nav.Link as={Link} href="/portfolio" className={`text-white ${classes.navbarLink}`}>포트폴리오</Nav.Link> 
-          </Nav>
+						<Nav.Link as={Link} href="/financeData" className={`text-white ${classes.navbarLink}`}>주식분석</Nav.Link> 
+						<Nav.Link as={Link} href="/backTesting" className={`text-white ${classes.navbarLink}`}>백테스트</Nav.Link> 
+						<Nav.Link as={Link} href="/portfolio" className={`text-white ${classes.navbarLink}`}>포트폴리오 추천</Nav.Link>
+					</Nav>
           <Nav className="ms-auto">
             <Button variant="outline-light">Login</Button> 
           </Nav>
