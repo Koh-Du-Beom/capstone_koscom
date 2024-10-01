@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.leftSection {
+  width: 45%;
+}
+
+.rightSection {
+  width: 45%;
+}
+
+.divider {
+  width: 1px;
+  background-color: #e1e1e1;
+  height: 100%;
+  margin: 0 20px;
+}

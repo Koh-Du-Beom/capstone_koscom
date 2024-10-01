@@ -1,16 +1,24 @@
-import classes from './interested-items.module.css';
-import 'bootstrap/dist/css/bootstrap.min.css'; // 부트스트랩 스타일 적용
-import mock_interested_items from './mock-interested-items';
-import Image from 'next/image';
-import LogoTmp from '../../../public/images/tmpLogo.png';
+import classes from './interested-news.module.css';
 
-export default function InterestedItems({ items }) {
-  items = mock_interested_items;
-	
+export default function InterestedNews() {
 	return (
-    <div>
-      {items.map((item, index) => (
-        <div className={classes.container} key={index}>
+		<div className={classes.container}>
+			<div className={classes.logo}>
+
+			</div>
+		
+			<div className={classes.wrapper}>
+				<h1 className={classes.title}></h1>
+				<h3 className={classes.infos}>
+					
+				</h3>
+			</div>
+
+		</div>
+	)
+};
+
+<div className={classes.container} key={index}>
           <div className={classes.logo}>
             <Image 
 							src={LogoTmp}
@@ -36,7 +44,3 @@ export default function InterestedItems({ items }) {
             </div>
           </div>
         </div>
-      ))}
-    </div>
-  );
-}
