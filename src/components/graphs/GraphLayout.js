@@ -1,17 +1,16 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 
-
-export default function GridLayout( { graphs }) {
-	return (
+export default function GraphLayout({ graphs }) {
+  return (
     <Container>
       <Row>
-        {items.map((item, index) => (
+        {graphs.map((graph, index) => (
           <Col xs={12} md={6} key={index}>
-            {item}
+            {graph}
           </Col>
         ))}
       </Row>
     </Container>
-	)
-};
+  );
+}
