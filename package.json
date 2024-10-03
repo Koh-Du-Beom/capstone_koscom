@@ -17,7 +17,8 @@
     "react": "^18",
     "react-bootstrap": "^2.10.4",
     "react-chartjs-2": "^5.2.0",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "eslint": "^8",
