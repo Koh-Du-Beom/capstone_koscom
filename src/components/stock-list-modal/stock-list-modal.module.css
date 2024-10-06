@@ -27,14 +27,12 @@
   flex-direction: column;
 }
 
-/* 모달 내부 콘텐츠 */
 .modalContent {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
 
-/* 모달 헤더 */
 .modalHeader {
   display: flex;
   justify-content: space-between;
@@ -74,7 +72,7 @@
   transition: background-color 0.3s, color 0.3s;
 }
 
-/* 테이블 스타일 */
+
 .modalTable {
   width: 100%;
   border-collapse: collapse;
@@ -122,4 +120,11 @@
 
 .addButton:hover {
   background-color: #0056b3;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; 
 }

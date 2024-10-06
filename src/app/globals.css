@@ -34,12 +34,13 @@ a:hover {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-weight: bold;
-  margin: 1.5rem 0 1rem;
+  font-weight: 700;
+  margin: 0;
 }
 
 p {
   margin: 0 0 1.5rem;
+	font-weight: 300;
 }
 
 /* 스크롤바 커스터마이징 */

@@ -6,16 +6,18 @@
 }
 
 .leftSection {
-  width: 45%;
+  width: 40%;
+  margin-left: 20%; 
 }
 
 .rightSection {
-  width: 45%;
+  width: 40%;
+  margin-right: 15%;
 }
 
 .divider {
   width: 1px;
   background-color: #e1e1e1;
   height: 100%;
-  margin: 0 20px;
 }
+

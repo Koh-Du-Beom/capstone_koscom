@@ -22,11 +22,12 @@ export default function InterestedItems({ items }) {
             </div>
 
             <div className={classes.price_info}>
-              <div className={classes.current_price}>{item.mkp}</div>
+              {/* 숫자 변환 후 쉼표 추가 */}
+              <h4 className={classes.current_price}>{Number(item.mkp).toLocaleString()}</h4> 
               <div className={classes.price_change_box}>
                 <h5 
                   className={`${classes.price_change} ${item.priceChange > 0 ? classes.priceChangeUp : classes.priceChangeDown}`}>
-                  {item.priceChange > 0 ? `+${item.priceChange}` : item.priceChange} 
+                  {item.priceChange > 0 ? `+${Number(item.priceChange).toLocaleString()}` : Number(item.priceChange).toLocaleString()} 
                   ({(item.priceChangeRate > 0 ? '+' : '') + parseFloat(item.priceChangeRate).toFixed(2)}%)
                 </h5>
 								<span className={`${classes.arrow} ${item.priceChange > 0 ? classes.arrowUp : classes.arrowDown}`}></span>

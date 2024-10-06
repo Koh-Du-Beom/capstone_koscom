@@ -15,11 +15,11 @@ const InterestedItemsBox = () => {
 
   // 관심 종목에 종목 추가하는 함수
   const addStockItem = (stock) => {
-    // 이미 추가된 종목은 중복되지 않도록 필터링
     setItems((prevItems) => {
       if (prevItems.find((item) => item.code === stock.code)) {
-        return prevItems; // 중복 종목은 추가하지 않음
+        return prevItems;
       }
+			setIsModalOpen(false);
       return [...prevItems, stock];
     });
   };

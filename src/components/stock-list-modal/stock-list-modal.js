@@ -2,20 +2,25 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import classes from './stock-list-modal.module.css'; // 스타일 모듈로 분리
+import Loading from '@/app/loading';
 
 export default function StockListModal({ onClose, onAddItem }) {
   const [stocks, setStocks] = useState([]);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState(''); // 검색어 상태 추가
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
   useEffect(() => {
     const fetchData = async () => {
       if (searchTerm) {
+        setIsLoading(true); // 로딩 시작
         try {
           const response = await axios.get(`/api/stockList?itmsNm=${searchTerm}`);
           setStocks(response.data);
         } catch (error) {
           setError('Failed to fetch stock data');
+        } finally {
+          setIsLoading(false); // 로딩 완료
         }
       }
     };
@@ -25,7 +30,7 @@ export default function StockListModal({ onClose, onAddItem }) {
       fetchData();
     }, 500); // 500ms의 지연 시간을 설정
 
-    return () => clearTimeout(delayDebounceFn); 
+    return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
 
   if (error) {
@@ -34,11 +39,9 @@ export default function StockListModal({ onClose, onAddItem }) {
 
   return (
     <div>
-      {/* 모달창과 오버레이 */}
       <div className={classes.overlay} onClick={onClose}></div>
       <div className={classes.modal}>
         <div className={classes.modalContent}>
-          {/* 모달 헤더 */}
           <div className={classes.modalHeader}>
             <input
               type="text"
@@ -48,11 +51,10 @@ export default function StockListModal({ onClose, onAddItem }) {
               className={classes.searchInput}
             />
             <button onClick={onClose} className={classes.closeButton}>
-              &times; {/* 닫기 버튼 */}
+              &times;
             </button>
           </div>
 
-          {/* 검색 결과 테이블 */}
           <div className={classes.tableContainer}>
             <table className={classes.modalTable}>
               <thead>
@@ -64,14 +66,21 @@ export default function StockListModal({ onClose, onAddItem }) {
                 </tr>
               </thead>
               <tbody>
-                {stocks.length > 0 ? (
+                {isLoading ? (
+                  <tr>
+                    <td colSpan="4">
+                      <div className={classes.loadingContainer}>
+                        <Loading /> {/* 로딩 컴포넌트를 tbody 중앙에 위치 */}
+                      </div>
+                    </td>
+                  </tr>
+                ) : stocks.length > 0 ? (
                   stocks.map((stock, index) => (
                     <tr key={index}>
                       <td>{stock.marketCategory}</td>
                       <td>{stock.code}</td>
                       <td>{stock.name}</td>
                       <td>
-                        {/* 추가 버튼 클릭 시 해당 종목을 관심 종목에 추가 */}
                         <button
                           className={classes.addButton}
                           onClick={() => onAddItem(stock)}
@@ -83,7 +92,9 @@ export default function StockListModal({ onClose, onAddItem }) {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="4">검색 결과가 없습니다.</td>
+                    <td style={{ textAlign: 'center' }} colSpan="4">
+                      검색 결과가 없습니다.
+                    </td>
                   </tr>
                 )}
               </tbody>

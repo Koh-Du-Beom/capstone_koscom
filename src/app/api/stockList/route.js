@@ -17,12 +17,12 @@ export async function GET(request) {
   try {
     // API 요청 보내기 (XML 형식 응답)
     const response = await axios.get(url, { responseType: 'text' });
-    console.log("Raw API response:", response.data); // 원본 XML 데이터 확인
+    // console.log("Raw API response:", response.data); // 원본 XML 데이터 확인
 
     // XML을 JSON으로 변환
     const parser = new xml2js.Parser({ explicitArray: false }); // 배열로 처리하지 않도록 옵션 설정
     const jsonData = await parser.parseStringPromise(response.data);
-    console.log("Parsed JSON data:", JSON.stringify(jsonData, null, 2)); // JSON 데이터 구조 확인
+    // console.log("Parsed JSON data:", JSON.stringify(jsonData, null, 2)); // JSON 데이터 구조 확인
 
     // 데이터가 없을 경우 처리
     if (!jsonData || !jsonData.response || !jsonData.response.body || !jsonData.response.body.items || !jsonData.response.body.items.item) {
@@ -40,7 +40,7 @@ export async function GET(request) {
 			mkp : item.mkp, 								// 시가
     }));
 
-    console.log("Extracted stock items:", stockItems); // 추출한 데이터 확인
+    // console.log("Extracted stock items:", stockItems); // 추출한 데이터 확인
 
     return NextResponse.json(stockItems); // JSON 데이터 반환
   } catch (error) {
