@@ -33,12 +33,6 @@ a:hover {
   text-decoration: underline;
 }
 
-img, video {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
 h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
   margin: 1.5rem 0 1rem;

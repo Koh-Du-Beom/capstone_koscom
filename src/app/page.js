@@ -1,9 +1,7 @@
-'use client'
+
 import InterestedItemsBox from '@/components/interested-items/interested-items-box';
-import { useState } from 'react';
 import classes from './page.module.css';
 import InterestedNewsBox from '@/components/interested-news/interested-news-box';
-import StockList from '@/components/stock-list-modal/stock-list-modal';
 
 export default function Home() {
 

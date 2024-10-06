@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react';
 import InterestedItems from './interested-items';
 import StockListModal from '../stock-list-modal/stock-list-modal';
