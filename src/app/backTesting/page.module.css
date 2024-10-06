@@ -1,0 +1,94 @@
+.container {
+    padding: 20px;
+  }
+  
+  .title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  /* 메인 콘텐츠를 좌우로 배치 */
+  .content {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  /* 포트폴리오 구성 섹션은 왼쪽 */
+  .portfolioSection {
+    flex: 1;
+  }
+  
+  /* 그래프와 보고서 섹션은 오른쪽 */
+  .resultSection {
+    flex: 2;
+  }
+  
+  /* 공통 스타일 */
+  .testPeriod, .testAmount, .assetSection {
+    margin-bottom: 20px;
+  }
+  
+  .inputMonth, .inputAmount, .inputRatio {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .assetRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .removeButton {
+    background-color: #ff6b6b;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .addButton, .confirmButton, .saveButton {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  
+  .addButton:hover, .confirmButton:hover, .saveButton:hover {
+    background-color: #0056b3;
+  }
+  
+  .graphSection, .reportSection {
+    margin-top: 30px;
+  }
+  
+  .reportTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .reportTable th, .reportTable td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .detailLink {
+    color: green;
+    text-decoration: none;
+    margin-top: 10px;
+  }
+  
+  .detailLink:hover {
+    text-decoration: underline;
+  }
+  
