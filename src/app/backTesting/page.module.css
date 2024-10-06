@@ -1,0 +1,211 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #f8f8f8;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.portfolioSection {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  flex: 1 1 300px; /* 최소 너비를 유지 */
+}
+
+.resultSection {
+  flex: 3; /* 오른쪽 섹션이 더 많이 확장되도록 설정 */
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.loadButton {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.formGroup {
+  margin-bottom: 30px; /* 컴포넌트 사이에 여백 추가 */
+}
+
+.label {
+  display: block;
+  font-size: 16px;
+  font-weight: bold; /* 가독성 향상 */
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.subLabel {
+  font-size: 14px;
+  font-weight: bold; /* 가독성 향상 */
+  color: #666;
+  margin-right: 10px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+}
+
+.amountInputWrapper {
+  position: relative;
+}
+
+.currencySymbol {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 10px;
+  color: #333;
+}
+
+.inputWithSymbol {
+  width: 100%;
+  padding-left: 25px;
+}
+
+.assetRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.assetHeader {
+  font-weight: bold;
+  text-align: center;
+  width: 50%;
+}
+
+.assetInfo {
+  display: flex;
+  align-items: center;
+}
+
+.assetRatio {
+  display: flex;
+  align-items: center;
+}
+
+.inputRatio {
+  width: 60px;
+  text-align: right;
+  padding: 5px;
+  margin-right: 10px; /* 비율과 % 기호 사이 여백 추가 */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.removeButton {
+  background-color: transparent;
+  color: black;
+  border: none;
+  cursor: pointer;
+}
+
+.addButton {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  font-weight: bold; /* 두께 조정 */
+  cursor: pointer;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.confirmButton, .saveButton {
+  width: 48%;
+  padding: 10px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.confirmButton:hover, .saveButton:hover {
+  background-color: #0056b3;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalContent {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 400px;
+}
+
+.stockList {
+  margin-bottom: 20px;
+}
+
+.stockItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.closeModalButton {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.ratioSummary {
+  text-align: right; /* 비율 합계 오른쪽 정렬 */
+  margin-top: 10px;
+}
