@@ -3,7 +3,7 @@ import InterestedItemsBox from '@/components/interested-items/interested-items-b
 import { useState } from 'react';
 import classes from './page.module.css';
 import InterestedNewsBox from '@/components/interested-news/interested-news-box';
-import StockList from '@/components/stock-list/stock-list';
+import StockList from '@/components/stock-list-modal/stock-list-modal';
 
 export default function Home() {
 
@@ -20,7 +20,6 @@ export default function Home() {
 				<InterestedNewsBox />
       </div>
 
-			<StockList/>
     </main>
   );
 }

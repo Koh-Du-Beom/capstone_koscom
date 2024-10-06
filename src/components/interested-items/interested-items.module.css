@@ -1,76 +1,95 @@
-.container{
-	display: flex;
-	flex-direction: row;
-	padding: 10px;
-	border: 1px solid #e1e1e1;
-	width: 100%;
-	max-width: 400px;
-	margin: 10px 0;
-	box-sizing: border-box;
-	border-radius: 8px; /* 경계선에 둥근 모서리 추가 */
+.container {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  border: 1px solid #e1e1e1;
+  width: 100%;
+  max-width: 400px;
+  margin: 10px 0;
+  box-sizing: border-box;
+  border-radius: 8px;
 }
 
 .logo img {
-	width: 40px;
-	height: 40px;
+  width: 40px;
+  height: 40px;
 }
 
-.wrapper{
-	display: flex;
-	flex-direction: column;
-	margin-left: 10px;
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
 }
 
-.title_box{
-	display: flex;
-	margin-bottom: 8px;
+.title_box {
+  display: flex;
+  margin-bottom: 8px;
 }
 
-.big_title{
-	font-size: 16px;
-	font-weight: bold;
-	color: #333;
-	margin-right: 10px;
+.big_title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-right: 10px;
 }
 
-.small_title{
-	font-size: 12px;
-	color: #6C757D;
+.small_title {
+  font-size: 12px;
+  color: #6C757D;
 }
 
-.price_info{
-	display: flex;
-	align-items: center;
+.price_info {
+  display: flex;
+  align-items: center;
 }
 
-.current_price{
-	font-size: 20px;
-	color: #212529;
-	font-weight: bold;
-	margin-right: 10px;
+.current_price {
+  font-size: 24px; /* 크기를 더 크게 조정 */
+  color: #212529;
+  font-weight: bold;
+  margin-right: 10px;
 }
 
-.price_change_box{
-	display: flex;
-	align-items: center;
+.price_change_box {
+  display: flex;
+  align-items: center;
+  font-size: 14px; /* current_price보다 작은 글꼴 크기 */
+  margin: 0; /* 불필요한 여백 제거 */
+  padding: 0; /* 패딩 제거 */
+}
+
+.price_change {
+  margin: 0;
+}
+
+/* 양수일 때 색상 */
+.priceChangeUp {
+  color: #DC3545; /* 양수일 때 빨간색 */
+}
+
+/* 음수일 때 색상 */
+.priceChangeDown {
+  color: #0D6EFD; /* 음수일 때 파란색 */
 }
 
 .arrow {
-	display: inline-block;
-	width: 0;
-	height: 0;
-	border-left: 5px solid transparent;
-	border-right: 5px solid transparent;
-	border-top: 7px solid #0077d7;
-	margin-left: 5px;
-	vertical-align: middle;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid #0077d7;
+  margin-left: 5px;
+  vertical-align: middle;
 }
 
 .arrowDown {
-	border-top: none;
-	border-bottom: 7px solid #DC3545;
+  border-top: 7px solid #0D6EFD; /* 파란색 화살표가 아래로 가도록 설정 */
+  border-bottom: none;
 }
 
 .arrowUp {
-	border-top: 7px solid #0D6EFD;
+  border-bottom: 7px solid #DC3545; /* 빨간색 화살표가 위로 가도록 설정 */
+  border-top: none;
 }
+

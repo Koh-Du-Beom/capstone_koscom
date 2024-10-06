@@ -1,23 +1,19 @@
 import classes from './interested-items.module.css';
-import 'bootstrap/dist/css/bootstrap.min.css'; // 부트스트랩 스타일 적용
-import mock_interested_items from './mock-interested-items';
 import Image from 'next/image';
 import LogoTmp from '../../../public/images/tmpLogo.png';
 
 export default function InterestedItems({ items }) {
-  items = mock_interested_items;
-	
-	return (
+  return (
     <div>
       {items.map((item, index) => (
         <div className={classes.container} key={index}>
           <div className={classes.logo}>
             <Image 
-							src={LogoTmp}
-							alt="tmpLogo"
-							width={100}
-							height={100}
-						/>
+              src={LogoTmp}
+              alt="tmpLogo"
+              width={100}
+              height={100}
+            />
           </div>
           <div className={classes.wrapper}>
             <div className={classes.title_box}>
@@ -26,12 +22,14 @@ export default function InterestedItems({ items }) {
             </div>
 
             <div className={classes.price_info}>
-              <div className={classes.current_price}>{item.currentPrice}</div>
+              <div className={classes.current_price}>{item.mkp}</div>
               <div className={classes.price_change_box}>
-                <h4 className={item.priceChange > 0 ? 'text-danger' : 'text-primary'}>
-                  {item.priceChange} ({item.percentagechange}%)
-                </h4>
-                <span className={`${classes.arrow} ${item.priceChange < 0 ? classes.arrowUp : classes.arrowDown}`}></span>
+                <h5 
+                  className={`${classes.price_change} ${item.priceChange > 0 ? classes.priceChangeUp : classes.priceChangeDown}`}>
+                  {item.priceChange > 0 ? `+${item.priceChange}` : item.priceChange} 
+                  ({(item.priceChangeRate > 0 ? '+' : '') + parseFloat(item.priceChangeRate).toFixed(2)}%)
+                </h5>
+								<span className={`${classes.arrow} ${item.priceChange > 0 ? classes.arrowUp : classes.arrowDown}`}></span>
               </div>
             </div>
           </div>
