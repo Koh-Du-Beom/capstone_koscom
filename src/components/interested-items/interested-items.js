@@ -2,7 +2,7 @@ import classes from './interested-items.module.css';
 import Image from 'next/image';
 import LogoTmp from '../../../public/images/tmpLogo.png';
 
-export default function InterestedItems({ items }) {
+export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
   return (
     <div>
       {items.map((item, index) => (
@@ -22,7 +22,6 @@ export default function InterestedItems({ items }) {
             </div>
 
             <div className={classes.price_info}>
-              {/* 숫자 변환 후 쉼표 추가 */}
               <h4 className={classes.current_price}>{Number(item.mkp).toLocaleString()}</h4> 
               <div className={classes.price_change_box}>
                 <h5 
@@ -34,6 +33,16 @@ export default function InterestedItems({ items }) {
               </div>
             </div>
           </div>
+
+          {/* 편집 모드에서만 삭제 버튼 표시 */}
+          {isEditMode && (
+            <button 
+              className={classes.deleteButton} 
+              onClick={() => onRemoveItem(item.code)}
+            >
+              삭제
+            </button>
+          )}
         </div>
       ))}
     </div>
