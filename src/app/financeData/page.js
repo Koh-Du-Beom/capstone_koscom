@@ -5,6 +5,7 @@ import classes from './page.module.css';
 import FinancialGraph from '@/components/graphs/financial-graph';
 import InterestedItemsBox from '@/components/interested-items/interested-items-box';
 import dropdownData from '@/components/financial-data/dropdown/financial-dropdown-data';
+import SelectedStock from '@/components/graphs/selected-stock';
 
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown');
@@ -21,7 +22,7 @@ export default function FinancialDataShowPage() {
 
   const handleOptionClick = (option) => {
     setSelectedOption(option); 
-  }; //프롬프트인지, 드롭다운인지 선택
+  };
 
   return (
     <div className={classes.container}>
@@ -68,6 +69,8 @@ export default function FinancialDataShowPage() {
 
       <div className={classes.rightSection}>
         {/* 그래프 섹션 */}
+				<SelectedStock />
+
         <div className={classes.graphSection}>
           <FinancialGraph />
         </div>

@@ -4,9 +4,26 @@
   padding: 10px;
   border: 1px solid #e1e1e1;
   width: 100%;
-  margin: 10px 0;
   box-sizing: border-box;
   border-radius: 8px;
+  position: relative; /* 삭제 버튼을 절대 위치로 배치하기 위해 position을 relative로 설정 */
+}
+
+.deleteButton {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #ff4d4d;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.deleteButton:hover {
+  background-color: #ff0000;
 }
 
 .logo img {

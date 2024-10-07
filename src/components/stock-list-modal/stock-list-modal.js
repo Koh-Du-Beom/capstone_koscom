@@ -25,7 +25,6 @@ export default function StockListModal({ onClose, onAddItem }) {
       }
     };
 
-    // 입력이 끝난 후 500ms 대기 후 API 요청
     const delayDebounceFn = setTimeout(() => {
       fetchData();
     }, 500); // 500ms의 지연 시간을 설정
@@ -47,7 +46,7 @@ export default function StockListModal({ onClose, onAddItem }) {
               type="text"
               placeholder="종목 검색"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)} // 입력 값 상태 업데이트
+              onChange={(e) => setSearchTerm(e.target.value)}
               className={classes.searchInput}
             />
             <button onClick={onClose} className={classes.closeButton}>
