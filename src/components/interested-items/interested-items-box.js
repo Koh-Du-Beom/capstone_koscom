@@ -65,15 +65,23 @@ const InterestedItemsBox = () => {
           <span className={classes.action} onClick={toggleModal}>추가</span>
         </div>
       </div>
-      <div className={classes.scrollContainer}>
-        <div className={classes.itemsList}>
-          <InterestedItems 
-            items={items} 
-            isEditMode={isEditMode} 
-            onRemoveItem={removeStockItem} 
-          />
+      
+      {/* 아이템이 없을 경우 메세지 표시 */}
+      {items.length === 0 ? (
+        <h1 className={classes.noItemsMessage}>
+          관심종목을 등록하세요!
+        </h1>
+      ) : (
+        <div className={classes.scrollContainer}>
+          <div className={classes.itemsList}>
+            <InterestedItems 
+              items={items} 
+              isEditMode={isEditMode} 
+              onRemoveItem={removeStockItem} 
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {isModalOpen && (
         <StockListModal onClose={toggleModal} onAddItem={addStockItem} />
