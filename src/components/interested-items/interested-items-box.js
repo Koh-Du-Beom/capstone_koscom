@@ -65,12 +65,14 @@ const InterestedItemsBox = () => {
           <span className={classes.action} onClick={toggleModal}>추가</span>
         </div>
       </div>
-      <div className={classes.itemsList}>
-        <InterestedItems 
-          items={items} 
-          isEditMode={isEditMode} 
-          onRemoveItem={removeStockItem} 
-        />
+      <div className={classes.scrollContainer}>
+        <div className={classes.itemsList}>
+          <InterestedItems 
+            items={items} 
+            isEditMode={isEditMode} 
+            onRemoveItem={removeStockItem} 
+          />
+        </div>
       </div>
 
       {isModalOpen && (

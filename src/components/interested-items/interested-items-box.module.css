@@ -56,10 +56,21 @@
   color: #333; 
 }
 
-.itemsList {
+.scrollContainer {
+  max-height: 300px; 
+  overflow-y: auto; 
   margin-top: 10px;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	width: 100%;
+  padding-right: 10px;
 }
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+
+.itemsList > div {
+  margin-bottom: 10px;
+}
+
