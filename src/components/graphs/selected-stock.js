@@ -30,10 +30,19 @@ const SelectedStock = () => {
 
   // 선택 종목에서 종목 삭제하는 함수
   const removeStockItem = (stockCode) => {
+    setItems((prevItems) => prevItems.filter((item) => item.code !== stockCode));
+  };
+
+  // 모달에서 종목을 추가하는 함수
+  const addStockItem = (newItem) => {
     setItems((prevItems) => {
-      const newItems = prevItems.filter((item) => item.code !== stockCode);
-      return newItems;
+      // 이미 있는 종목이 아니면 추가
+      if (!prevItems.some((item) => item.code === newItem.code)) {
+        return [...prevItems, newItem];
+      }
+      return prevItems; // 이미 있는 종목이면 그대로 반환
     });
+    toggleModal(); // 모달 닫기
   };
 
   return (
@@ -62,7 +71,7 @@ const SelectedStock = () => {
       </div>
 
       {isModalOpen && (
-        <StockListModal onClose={toggleModal} />
+        <StockListModal onClose={toggleModal} onAddItem={addStockItem} /> 
       )}
     </section>
   );
