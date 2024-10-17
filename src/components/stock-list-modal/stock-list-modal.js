@@ -13,21 +13,21 @@ export default function StockListModal({ onClose, onAddItem }) {
   useEffect(() => {
     const fetchData = async () => {
       if (searchTerm) {
-        setIsLoading(true); // 로딩 시작
+        setIsLoading(true);
         try {
           const response = await axios.get(`/api/stockList?itmsNm=${searchTerm}`);
           setStocks(response.data);
         } catch (error) {
           setError('Failed to fetch stock data');
         } finally {
-          setIsLoading(false); // 로딩 완료
+          setIsLoading(false);
         }
       }
     };
 
     const delayDebounceFn = setTimeout(() => {
       fetchData();
-    }, 500); // 500ms의 지연 시간을 설정
+    }, 500);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
