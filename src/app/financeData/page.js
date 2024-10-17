@@ -10,7 +10,7 @@ import SelectedStock from '@/components/graphs/selected-stock';
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown');
   const [checkedItems, setCheckedItems] = useState({});
-  const [selectedStocks, setSelectedStocks] = useState([]); // 선택된 종목 배열로 수정
+  const [selectedStocks, setSelectedStocks] = useState([]); 
 
   // 체크박스 선택 시 상태 업데이트 핸들러
   const handleCheckboxChange = (event) => {
@@ -27,7 +27,7 @@ export default function FinancialDataShowPage() {
 
   // 선택된 종목을 배열로 FinancialGraph에 전달
   const handleSelectStock = (stocks) => {
-    setSelectedStocks(stocks); // 선택된 종목 배열로 저장
+    setSelectedStocks(stocks); 
   };
 
   return (
@@ -71,12 +71,9 @@ export default function FinancialDataShowPage() {
       </div>
 
       <div className={classes.rightSection}>
-        {/* 종목 선택 핸들러 전달 */}
         <SelectedStock onSelectStock={handleSelectStock} />
-
         <div className={classes.graphSection}>
-          {/* 선택된 종목 배열을 FinancialGraph로 전달 */}
-          <FinancialGraph selectedStockNames={selectedStocks} />
+          <FinancialGraph selectedStockNames={selectedStocks} selectedIndicators={checkedItems} />
         </div>
       </div>
     </div>

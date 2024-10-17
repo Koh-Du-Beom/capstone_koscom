@@ -3,7 +3,7 @@ const dropdownData = [
 	{
 		category : '손익계산서',
 		details : [
-			'매출액', '영업이익', '세전계속사업이익'
+			'매출액', '영업이익', '순매출'
 		]
 	},
 	{
