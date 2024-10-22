@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { Bar, Line } from "react-chartjs-2";
+import { Range } from "react-range";
 import graph_Mock_data from "./graphData";
 import graphColors from "./graph-colors";
+import classes from './financial-graph.module.css';
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,35 +31,40 @@ ChartJS.register(
 );
 
 export default function FinancialGraph({ selectedStockNames, selectedIndicators }) {
-  const [chartType, setChartType] = useState("Bar");
+  const [chartType, setChartType] = useState("Line");
   const [financialData, setFinancialData] = useState([]);
+  const [filterRange, setFilterRange] = useState([0, 10]); // 기본값
+  const [maxRange, setMaxRange] = useState(10); // 슬라이더의 최대 범위 설정
 
-  // 차트 유형 변경 핸들러
   const toggleChartType = () => {
     setChartType(chartType === "Bar" ? "Line" : "Bar");
   };
 
-  // 선택된 종목의 데이터를 graph_Mock_data에서 필터링하는 로직
   useEffect(() => {
     if (selectedStockNames.length > 0) {
       const filteredData = graph_Mock_data.filter(company =>
         selectedStockNames.includes(company.company)
       );
       setFinancialData(filteredData);
+
+      if (filteredData.length > 0) {
+        const maxLength = filteredData[0].years.length - 1;
+        setFilterRange([0, maxLength]); // 기본값을 최대 범위로 설정
+        setMaxRange(maxLength); // 슬라이더의 최대값을 업데이트
+      }
     }
   }, [selectedStockNames]);
 
   if (financialData.length === 0) {
-    return <p>선택한 종목의 데이터를 불러오는 중입니다...</p>;
+    return <p>입력이 완료되지 않았습니다</p>;
   }
 
-  // 차트 데이터 생성 함수
   const createDatasetForMetric = (metricKey, label) => {
     return financialData.map((company, index) => {
-      const colorIndex = index % graphColors.length; // 최대 10개의 고정 색상
+      const colorIndex = index % graphColors.length;
       return {
         label: `${company.company}`,
-        data: company.financials[metricKey],
+        data: company.financials[metricKey].slice(filterRange[0], filterRange[1] + 1),
         backgroundColor: graphColors[colorIndex].backgroundColor,
         borderColor: graphColors[colorIndex].borderColor,
         borderWidth: 1,
@@ -64,40 +72,67 @@ export default function FinancialGraph({ selectedStockNames, selectedIndicators 
     });
   };
 
-  // 선택된 항목을 기반으로 동적으로 데이터셋을 생성
   const selectedMetrics = Object.keys(selectedIndicators).filter(indicator => selectedIndicators[indicator]);
-  
+
   const graphs = selectedMetrics.map((metric) => {
     const metricKeyMapping = {
       "매출액": "sales",
       "영업이익": "operatingIncome",
       "순매출": "netIncome",
-      // 필요한 다른 지표도 추가 가능
     };
-    const metricKey = metricKeyMapping[metric] || "netIncome"; // 기본값: 순매출
+    const metricKey = metricKeyMapping[metric] || "netIncome";
     const data = {
-      labels: financialData[0].years,
+      labels: financialData[0].years.slice(filterRange[0], filterRange[1] + 1),
       datasets: createDatasetForMetric(metricKey, metric),
     };
     const ChartComponent = chartType === "Bar" ? Bar : Line;
 
     return (
-      <ChartComponent
-        key={metric}
-        data={data}
-        options={{
-          responsive: true,
-          plugins: {
-            legend: { position: "top" },
-            title: { display: true, text: `${metric}` },
-          },
-        }}
-      />
+      <div key={metric} className={classes.chartContainer}>
+        <ChartComponent
+          data={data}
+          options={{
+            responsive: true,
+            plugins: {
+              legend: { position: "top" },
+              title: { display: true, text: `${metric}` },
+            },
+          }}
+        />
+        <Range
+          step={1}
+          min={0}
+          max={maxRange}
+          values={filterRange}
+          onChange={(values) => setFilterRange(values)}
+          renderTrack={({ props, children }) => (
+            <div
+              {...props}
+              className={classes.rangeSliderTrack} // 스타일링된 트랙 사용
+            >
+              {children}
+            </div>
+          )}
+          renderThumb={({ props, index }) => {
+            const { key, ...restProps } = props;  
+            return (
+              <div
+                key={`thumb-${index}`} 
+                {...restProps} 
+                className={classes.rangeSliderThumb}
+              />
+            );
+          }}
+        />
+        <div className={classes.rangeValue}>
+          <span>기간: {financialData[0].years[filterRange[0]]} - {financialData[0].years[filterRange[1]]}</span>
+        </div>
+      </div>
     );
   });
 
   return (
-    <div>
+    <div className={classes.graphSection}>
       <button onClick={toggleChartType}>
         {chartType === "Bar" ? "Line 차트로 보기" : "Bar 차트로 보기"}
       </button>

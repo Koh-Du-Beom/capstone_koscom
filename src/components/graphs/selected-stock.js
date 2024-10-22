@@ -12,12 +12,10 @@ const SelectedStock = ({ onSelectStock }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림/닫힘 상태
   const [isEditMode, setIsEditMode] = useState(false); // 편집 모드 상태
 
-  // 모달 열기/닫기 함수
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  // 편집 모드 토글 함수
   const toggleEditMode = () => {
     setIsEditMode(!isEditMode);
   };
@@ -30,9 +28,9 @@ const SelectedStock = ({ onSelectStock }) => {
 
   // 종목 선택 핸들러
   const handleSelectStock = useCallback(() => {
-    const selectedNames = items.map((item) => item.name); // 선택된 종목의 name만 추출
-    onSelectStock(selectedNames); // 부모 컴포넌트에 종목 이름 배열을 전달
-  }, [items]); // onSelectStock이 아닌 items만 의존성으로 설정
+    const selectedNames = items.map((item) => item.name); 
+    onSelectStock(selectedNames);
+  }, [items]); 
 
   // 의존성 배열에서 handleSelectStock만 실행되도록 관리
   useEffect(() => {
