@@ -14,7 +14,7 @@
 .chatBox {
   flex-grow: 1;
   overflow-y: auto;
-  padding-bottom: 10px;
+  padding: 15px; /* 채팅 전체 padding */
   margin-bottom: 10px;
   min-height: 300px;
   background-color: #fff;
@@ -32,11 +32,12 @@
   position: relative;
 }
 
-/* 왼쪽 말풍선 스타일 */
+/* 왼쪽 말풍선 스타일 (시스템 메시지) */
 .systemMessage {
   background-color: #f1f1f1;
   color: #333;
   align-self: flex-start;
+  margin-right: auto; /* 왼쪽으로 정렬 */
 }
 
 .systemMessage::before {
@@ -49,11 +50,13 @@
   border-color: transparent #f1f1f1 transparent transparent;
 }
 
-/* 오른쪽 말풍선 스타일 */
+/* 오른쪽 말풍선 스타일 (유저 메시지) */
 .userMessage {
   background-color: #d1e7ff;
   color: #000;
   align-self: flex-end;
+  margin-left: auto; /* 오른쪽으로 거의 밀착 */
+  margin-right: 0; /* 오른쪽 margin 제거 */
 }
 
 .userMessage::before {
