@@ -1,9 +1,0 @@
-/* FinancialReportTableGraph.module.css */
-
-.chartContainer {
-    width: 100%;
-    max-width: 800px; /* 차트 최대 너비 설정 */
-    height: 400px; /* 차트 고정 높이 설정 */
-    margin: 0 auto; /* 차트를 가운데 정렬 */
-  }
-  
