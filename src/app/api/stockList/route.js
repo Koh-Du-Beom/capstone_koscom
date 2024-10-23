@@ -22,6 +22,7 @@ export async function GET(request) {
       console.log("No data available");
       return NextResponse.json([]); // 데이터가 없을 때 빈 배열 반환
     }
+		
 
     // 필요한 데이터 추출 (필요한 필드만 추출)
     const stockItems = response.data.response.body.items.item.map(item => ({

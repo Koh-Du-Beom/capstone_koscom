@@ -2,23 +2,22 @@
 import InterestedNews from "./interested-news";
 import classes from './interested-news-box.module.css';
 import { useState, useEffect } from "react";
-import { getLocalStorageItems } from '@/utils/localStorage'; // 로컬스토리지 관련 함수 가져오기
 import axios from 'axios';
 import Loading from '@/app/loading';
-
-const LOCAL_STORAGE_KEY = 'interestedItems'; // 로컬스토리지에 저장할 키
+import { useInterestedItems } from '@/contexts/InterestedItemsContext'; // Context API 사용
 
 export default function InterestedNewsBox() {
-  const itemsPerPage = 5;
+  const itemsPerPage = 5; // 한 페이지에 보여줄 뉴스 아이템 수
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageGroup, setPageGroup] = useState(1); // 페이지 그룹 상태 추가
   const [newsItems, setNewsItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
+  const { interestedItems } = useInterestedItems(); // Context API로 관심 종목 상태 가져오기
 
   // 종목에 해당하는 뉴스 가져오기
-  const fetchNews = async () => {
-    const savedItems = getLocalStorageItems(LOCAL_STORAGE_KEY); // 로컬스토리지에서 관심 종목 가져오기
-    const stockCodes = savedItems.map(item => item.code);
-    const stockNames = savedItems.map(item => item.name); // 종목명 추가
+  const fetchNews = async (items) => {
+    const stockCodes = items.map(item => item.code);
+    const stockNames = items.map(item => item.name); // 종목명 추가
 
     try {
       setIsLoading(true); // 로딩 시작
@@ -42,19 +41,12 @@ export default function InterestedNewsBox() {
     }
   };
 
-  // 로컬스토리지의 아이템이 변경될 때마다 뉴스를 다시 가져오도록 설정
+  // 관심 종목이 변경될 때마다 fetchNews 호출
   useEffect(() => {
-    const handleStorageChange = () => {
-      fetchNews();
-    };
-
-    window.addEventListener('storage', handleStorageChange); // 로컬스토리지 변경 감지
-    fetchNews(); // 초기 실행
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+    if (interestedItems.length > 0) {
+      fetchNews(interestedItems);
+    }
+  }, [interestedItems]); // 관심 종목에 의존
 
   // 페이지네이션에 맞는 기사들을 계산하는 함수
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -63,50 +55,71 @@ export default function InterestedNewsBox() {
 
   // 총 페이지 수 계산
   const totalPages = Math.ceil(newsItems.length / itemsPerPage);
+  
+  // 한 번에 보여줄 페이지 버튼 수 (5개 단위)
+  const pagesPerGroup = 5;
+  const totalPageGroups = Math.ceil(totalPages / pagesPerGroup);
+  const startPage = (pageGroup - 1) * pagesPerGroup + 1;
+  const endPage = Math.min(pageGroup * pagesPerGroup, totalPages); // 현재 그룹에서 보여줄 마지막 페이지
 
   // 페이지 변경하기
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
+  // 페이지 그룹 변경하기 (화살표 버튼으로 이동)
+  const handleGroupChange = (direction) => {
+    if (direction === "prev" && pageGroup > 1) {
+      setPageGroup(pageGroup - 1);
+    } else if (direction === "next" && pageGroup < totalPageGroups) {
+      setPageGroup(pageGroup + 1);
+    }
+  };
+
   return (
     <div className={classes.container}>
       <h2 className={classes.title}>나만의 뉴스</h2>
 
-			<div className={classes.news_wrapper}>
-				{isLoading ? 
-					<div className={classes.loading_container}>
-						<Loading />
-					</div> : currentItems.map((news, index) => (
-						<InterestedNews key={index} news={news} />
-					))}	
-			</div>
-			
-			<div className={classes.pagination}>
-				<button
-					onClick={() => handlePageChange(currentPage - 1)}
-					disabled={currentPage === 1}
-				>
-					{"<"}
-				</button>
+      <div className={classes.news_wrapper}>
+        {isLoading ? 
+          <div className={classes.loading_container}>
+            <Loading />
+          </div> : currentItems.map((news, index) => (
+            <InterestedNews key={index} news={news} />
+          ))} 
+      </div>
+      
+      <div className={classes.pagination}>
+        {/* 이전 페이지 그룹으로 이동 */}
+        <button
+          onClick={() => handleGroupChange("prev")}
+          disabled={pageGroup === 1}
+        >
+          {"<"}
+        </button>
 
-				{[...Array(totalPages)].map((_, index) => (
-					<button
-						key={index + 1}
-						className={currentPage === index + 1 ? classes.activePage : ''}
-						onClick={() => handlePageChange(index + 1)}
-					>
-						{index + 1}
-					</button>
-				))}
+        {/* 현재 페이지 그룹의 페이지 번호 표시 */}
+        {[...Array(endPage - startPage + 1)].map((_, index) => {
+          const pageNumber = startPage + index;
+          return (
+            <button
+              key={pageNumber}
+              className={currentPage === pageNumber ? classes.activePage : ''}
+              onClick={() => handlePageChange(pageNumber)}
+            >
+              {pageNumber}
+            </button>
+          );
+        })}
 
-				<button
-					onClick={() => handlePageChange(currentPage + 1)}
-					disabled={currentPage === totalPages}
-				>
-					{">"}
-				</button>
-			</div>
+        {/* 다음 페이지 그룹으로 이동 */}
+        <button
+          onClick={() => handleGroupChange("next")}
+          disabled={pageGroup === totalPageGroups}
+        >
+          {">"}
+        </button>
+      </div>
     </div>
   );
 }

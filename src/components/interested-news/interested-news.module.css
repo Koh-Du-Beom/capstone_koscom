@@ -1,27 +1,36 @@
 .container {
-  display: flex;
-  padding: 10px;
-  border-bottom: 1px solid #e1e1e1;
-}
-
-.logo img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  margin-right: 10px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background-color: white;
+  transition: background-color 0.3s ease;
+  position: relative; /* 툴팁을 절대 위치로 설정하기 위한 상대 위치 */
 }
 
 .wrapper {
-  display: flex;
-  flex-direction: column;
+  position: relative; 
+}
+
+.stock_name {
+  font-size: 18px;
+  margin-bottom: 5px;
+  color: #333;
 }
 
 .title {
   font-size: 16px;
-  color: #333;
+  font-weight: bold;
+  margin-bottom: 5px;
 }
 
 .infos {
-  font-size: 12px;
-  color: #6c757d;
+  font-size: 14px;
+  color: #666;
 }
+
+.container:hover {
+  background-color: #f0f8ff;
+  cursor: pointer;
+}
+
