@@ -6,6 +6,7 @@ import FinancialGraph from '@/components/graphs/financial-graph';
 import InterestedItemsBox from '@/components/interested-items/interested-items-box';
 import dropdownData from '@/components/graphs/financial-data/dropdown/financial-dropdown-data';
 import SelectedStock from '@/components/graphs/selected-stock';
+import FinancialPrompt from '@/components/graphs/financial-data/prompt/financial-prompt';
 
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown');
@@ -63,9 +64,9 @@ export default function FinancialDataShowPage() {
               />
             ))
           ) : (
-            <div className={classes.prompt}>
-              <textarea placeholder="프롬프트 입력창" />
-            </div>
+           
+						<FinancialPrompt />
+            
           )}
         </div>
       </div>
