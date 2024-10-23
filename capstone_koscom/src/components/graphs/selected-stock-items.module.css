@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid #e1e1e1;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.name {
+  font-size: 16px;
+  color: #333;
+}
+
+.deleteButton {
+  background-color: #ff4d4d;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  background-color: #ff0000;
+}
