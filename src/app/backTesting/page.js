@@ -151,7 +151,7 @@ export default function BackTestingPage() {
           <div className={classes.formGroup}>
             <div className={classes.assetHeader}>
               <h2 className={classes.label}>테스트 자산</h2>
-              <button className={classes.addButton} onClick={toggleModal}>종목 추가</button>
+              <button className={classes.loadButton} onClick={toggleModal}>종목 추가</button>
             </div>
             {assets.map((asset, index) => (
               <div key={index} className={classes.assetRow}>
