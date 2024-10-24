@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import InterestedItems from './interested-items';
-import StockListModal from '../stock-list-modal/stock-list-modal';
+import StockListModal from '../modal/stock-list-modal/stock-list-modal';
 import classes from './interested-items-box.module.css';
 import { useInterestedItems } from '@/contexts/InterestedItemsContext';
 

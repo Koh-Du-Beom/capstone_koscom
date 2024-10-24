@@ -11,18 +11,19 @@ import graph_Mock_data from '@/components/graphs/graphData'; // 임시 JSON 데�
 
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown');
-  const [checkedItems, setCheckedItems] = useState({});
+  const [checkedItems, setCheckedItems] = useState([]);
   const [selectedStocks, setSelectedStocks] = useState([]); 
   const [graphData, setGraphData] = useState([]); // JSON 데이터를 관리하는 새로운 상태
 
   // 체크박스 선택 시 상태 업데이트 핸들러
-  const handleCheckboxChange = (event) => {
-    const { name, checked } = event.target;
-    setCheckedItems((prev) => ({
-      ...prev,
-      [name]: checked,
-    }));
-  };
+  const handleCheckboxChange = (name, checked) => {
+		if (checked) {
+			setCheckedItems((prevItems) => [...prevItems, name]); // 체크된 항목을 배열에 추가
+		} else {
+			setCheckedItems((prevItems) => prevItems.filter(item => item !== name)); // 체크 해제된 항목은 배열에서 제거
+		}
+	};
+	
 
   const handleOptionClick = (option) => {
     setSelectedOption(option); 
@@ -32,11 +33,7 @@ export default function FinancialDataShowPage() {
   const handleSelectStock = (stocks) => {
     setSelectedStocks(stocks); 
   };
-
-  // 임시로 graphData 상태를 graph_Mock_data로 설정
-  useEffect(() => {
-    setGraphData(graph_Mock_data);
-  }, []); // 추후에, 이벤트가 발생하면 데이터를 json으로 변경하는 로직 만들기
+	
 
   return (
     <div className={classes.container}>
@@ -79,7 +76,7 @@ export default function FinancialDataShowPage() {
       <div className={classes.rightSection}>
         <SelectedStock onSelectStock={handleSelectStock} />
         <div className={classes.graphSection}>
-          <FinancialGraph graphData={graphData} />
+          <FinancialGraph graphData={graph_Mock_data} />
         </div>
       </div>
     </div>
