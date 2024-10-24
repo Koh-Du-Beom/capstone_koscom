@@ -25,13 +25,18 @@ export default function FinancialDataShowPage() {
 	};
 	
 
+  // 옵션 클릭 핸들러
   const handleOptionClick = (option) => {
     setSelectedOption(option); 
   };
 
   // 선택된 종목을 배열로 FinancialGraph에 전달
   const handleSelectStock = (stocks) => {
-    setSelectedStocks(stocks); 
+    if (Array.isArray(stocks)) {
+      setSelectedStocks(stocks);
+    } else {
+      setSelectedStocks([stocks]); // stocks가 배열이 아닌 경우 배열로 변환
+    }
   };
 	
 
