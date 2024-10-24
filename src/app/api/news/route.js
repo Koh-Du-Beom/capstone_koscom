@@ -1,61 +1,40 @@
+import { NextResponse } from 'next/server';
 import axios from 'axios';
-import * as cheerio from 'cheerio';
-
-const NAVER_STOCK_NEWS_URL = "https://m.stock.naver.com/investment/news/flashnews";
+import iconv from 'iconv-lite'; // 인코딩 변환을 위한 라이브러리
+const cheerio = require('cheerio');
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const search = searchParams.get("search");
+  const code = searchParams.get('code'); // 주식 코드 파라미터 받기
 
-  if (!search) {
-    return new Response(JSON.stringify({ error: "검색어가 제공되지 않았습니다." }), {
-      status: 400,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
+  // 네이버 금융 URL 설정
+  const url = `https://finance.naver.com/item/main.naver?code=${code}`;
 
   try {
-    // 네이버 주식 뉴스 페이지에서 HTML 가져오기
-    const { data } = await axios.get(NAVER_STOCK_NEWS_URL);
-    const $ = cheerio.load(data);
-
-    const lowerCaseSearch = search.toLowerCase().trim();
-    const newsHeadlines = [];
-
-    // 적절한 클래스 선택자를 사용하여 뉴스 추출(여기선 제목으로만 일단 타이틀을 추출함)
-    $('strong.NewsList_title__XdSpT').each((index, element) => {
-      const title = $(element).text().replace(/\s+/g, ' ').trim().toLowerCase(); // 공백 제거 및 소문자 변환
-      console.log("Parsed title:", title); // 파싱된 타이틀을 로그로 출력
-
-      if (title.includes(lowerCaseSearch)) {  // 검색어 포함 여부 확인
-        newsHeadlines.push({ id: index, title });
-      }
+    // HTML 페이지 가져오기 (EUC-KR 인코딩 처리)
+    const response = await axios.get(url, {
+      responseType: 'arraybuffer', // 바이너리 데이터로 받기
     });
 
-    if (newsHeadlines.length === 0) {
-      return new Response(JSON.stringify({ error: '검색어와 일치하는 기사가 없습니다.' }), {
-        status: 404,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    }
+    // 응답 데이터를 EUC-KR에서 UTF-8로 변환
+    const html = iconv.decode(response.data, 'EUC-KR');
 
-    return new Response(JSON.stringify({ headlines: newsHeadlines }), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
+    // Cheerio를 사용하여 HTML 파싱
+    const $ = cheerio.load(html);
+
+    // 뉴스 항목 가져오기
+    const newsItems = [];
+    $('div.sub_section.news_section ul li').each((index, element) => {
+      const title = $(element).find('a').text().trim();
+      const link = 'https://finance.naver.com' + $(element).find('a').attr('href');
+      const date = $(element).children('em').text().trim();
+			
+      newsItems.push({ title, link, date });
     });
+
+    return NextResponse.json(newsItems); // 뉴스 데이터를 JSON으로 반환
   } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: '크롤링에 실패했습니다.' }), {
-      status: 500,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    console.error("뉴스 데이터를 가져오는 중 오류 발생:", error.message);
+    return NextResponse.json({ error: 'Failed to fetch data from external source' }, { status: 500 });
   }
 }

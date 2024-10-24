@@ -1,13 +1,13 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import SelectedStockItems from './selected-stock-items';
-import StockListModal from '../stock-list-modal/stock-list-modal'; // 종목 선택 모달
+import SimpleStockListModal from '../modal/simple-stock-list-modal/simple-stock-list-modal';
 import classes from './selected-stock.module.css'; // 스타일 모듈
 import { getLocalStorageItems } from '@/utils/localStorage'; // 로컬스토리지에서 아이템을 가져오는 함수
 
 const LOCAL_STORAGE_KEY = 'interestedItems'; // InterestedItems의 로컬스토리지 키
 
-const SelectedStock = ({ onSelectStock = () => {} }) => {  // 기본값으로 빈 함수 설정
+const SelectedStock = ({ onSelectStock }) => {
   const [items, setItems] = useState([]); // 선택된 종목 상태
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림/닫힘 상태
   const [isEditMode, setIsEditMode] = useState(false); // 편집 모드 상태
@@ -26,7 +26,20 @@ const SelectedStock = ({ onSelectStock = () => {} }) => {  // 기본값으로 �
     setItems(savedItems || []); // 로컬스토리지에서 아이템을 불러와 상태로 설정
   };
 
-  // 선택된 종목에서 종목 삭제하는 함수
+  // 종목 선택 핸들러
+  const handleSelectStock = useCallback(() => {
+    const selectedNames = items.map((item) => item.name); 
+    onSelectStock(selectedNames);
+  }, [items, onSelectStock]); 
+
+  // useEffect를 통해 items 변경 시 handleSelectStock 호출
+  useEffect(() => {
+    if (items.length > 0) {
+      handleSelectStock(); // 종목이 변경될 때만 실행
+    }
+  }, [items]);
+
+  // 선택 종목에서 종목 삭제하는 함수
   const removeStockItem = (stockCode) => {
     setItems((prevItems) => prevItems.filter((item) => item.code !== stockCode));
   };
@@ -43,19 +56,6 @@ const SelectedStock = ({ onSelectStock = () => {} }) => {  // 기본값으로 �
     toggleModal(); // 모달 닫기
   };
 
-  // 종목 선택 핸들러
-  const handleSelectStock = () => {
-    const selectedNames = items.map((item) => item.name);
-    onSelectStock(selectedNames); // 부모 컴포넌트로 선택된 종목 전달
-  };
-
-  // 선택된 종목이 변경될 때마다 handleSelectStock 실행
-  useEffect(() => {
-    if (items.length > 0) {
-      handleSelectStock();
-    }
-  }, [items]);
-
   return (
     <section className={classes.container}>
       <div className={classes.header}>
@@ -67,7 +67,7 @@ const SelectedStock = ({ onSelectStock = () => {} }) => {  // 기본값으로 �
             {isEditMode ? '완료' : '편집'}
           </span>
           <span className={classes.action} onClick={toggleModal}>추가</span>
-          <span className={classes.action} onClick={fetchInterestedItems}>불러오기</span>
+          <span className={classes.action} onClick={fetchInterestedItems}>관심종목 불러오기</span>
         </div>
       </div>
 
@@ -76,14 +76,13 @@ const SelectedStock = ({ onSelectStock = () => {} }) => {  // 기본값으로 �
           <SelectedStockItems 
             items={items} 
             isEditMode={isEditMode} 
-            onRemoveItem={removeStockItem} // 삭제 기능 연결
-            onSelectStock={handleSelectStock} // 종목 선택 기능 연결
+            onRemoveItem={removeStockItem}
           />
         </div>
       </div>
 
       {isModalOpen && (
-        <StockListModal onClose={toggleModal} onAddItem={addStockItem} /> 
+        <SimpleStockListModal onClose={toggleModal} onAddItem={addStockItem} /> 
       )}
     </section>
   );
