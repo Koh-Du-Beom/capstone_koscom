@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import SelectedStockItems from './selected-stock-items';
-import StockListModal from '../stock-list-modal/stock-list-modal'; // 종목 선택 모달
+import SimpleStockListModal from '../modal/simple-stock-list-modal/simple-stock-list-modal';
 import classes from './selected-stock.module.css'; // 스타일 모듈
 import { getLocalStorageItems } from '@/utils/localStorage'; // 로컬스토리지에서 아이템을 가져오는 함수
 
@@ -30,14 +30,14 @@ const SelectedStock = ({ onSelectStock }) => {
   const handleSelectStock = useCallback(() => {
     const selectedNames = items.map((item) => item.name); 
     onSelectStock(selectedNames);
-  }, [items]); 
+  }, [items, onSelectStock]); 
 
-  // 의존성 배열에서 handleSelectStock만 실행되도록 관리
+  // useEffect를 통해 items 변경 시 handleSelectStock 호출
   useEffect(() => {
     if (items.length > 0) {
       handleSelectStock(); // 종목이 변경될 때만 실행
     }
-  }, [items, handleSelectStock]); // items가 변경될 때만 실행
+  }, [items]);
 
   // 선택 종목에서 종목 삭제하는 함수
   const removeStockItem = (stockCode) => {
@@ -67,7 +67,7 @@ const SelectedStock = ({ onSelectStock }) => {
             {isEditMode ? '완료' : '편집'}
           </span>
           <span className={classes.action} onClick={toggleModal}>추가</span>
-          <span className={classes.action} onClick={fetchInterestedItems}>불러오기</span>
+          <span className={classes.action} onClick={fetchInterestedItems}>관심종목 불러오기</span>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ const SelectedStock = ({ onSelectStock }) => {
       </div>
 
       {isModalOpen && (
-        <StockListModal onClose={toggleModal} onAddItem={addStockItem} /> 
+        <SimpleStockListModal onClose={toggleModal} onAddItem={addStockItem} /> 
       )}
     </section>
   );

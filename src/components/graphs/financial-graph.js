@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import { Range } from "react-range";
-import graph_Mock_data from "./graphData";
 import graphColors from "./graph-colors";
 import classes from './financial-graph.module.css';
-
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -30,7 +28,7 @@ ChartJS.register(
   Legend
 );
 
-export default function FinancialGraph({ selectedStockNames, selectedIndicators }) {
+export default function FinancialGraph({ graphData }) {
   const [chartType, setChartType] = useState("Line");
   const [financialData, setFinancialData] = useState([]);
   const [filterRange, setFilterRange] = useState([0, 10]); // 기본값
@@ -40,25 +38,23 @@ export default function FinancialGraph({ selectedStockNames, selectedIndicators 
     setChartType(chartType === "Bar" ? "Line" : "Bar");
   };
 
+  // 데이터가 변경될 때마다 financialData 상태를 업데이트
   useEffect(() => {
-    if (selectedStockNames.length > 0) {
-      const filteredData = graph_Mock_data.filter(company =>
-        selectedStockNames.includes(company.company)
-      );
-      setFinancialData(filteredData);
+    if (graphData.length > 0) {
+      setFinancialData(graphData);
 
-      if (filteredData.length > 0) {
-        const maxLength = filteredData[0].years.length - 1;
-        setFilterRange([0, maxLength]); // 기본값을 최대 범위로 설정
-        setMaxRange(maxLength); // 슬라이더의 최대값을 업데이트
-      }
+      // JSON 데이터 기반으로 슬라이더의 범위 설정
+      const maxLength = graphData[0].years.length - 1;
+      setFilterRange([0, maxLength]); // 기본값을 최대 범위로 설정
+      setMaxRange(maxLength); // 슬라이더의 최대값을 업데이트
     }
-  }, [selectedStockNames]);
+  }, [graphData]);
 
   if (financialData.length === 0) {
-    return <p>입력이 완료되지 않았습니다</p>;
+    return <p>데이터가 없습니다.</p>;
   }
 
+  // 각 지표(매출액, 영업이익, 순매출)에 대해 데이터셋을 생성
   const createDatasetForMetric = (metricKey, label) => {
     return financialData.map((company, index) => {
       const colorIndex = index % graphColors.length;
@@ -72,15 +68,16 @@ export default function FinancialGraph({ selectedStockNames, selectedIndicators 
     });
   };
 
-  const selectedMetrics = Object.keys(selectedIndicators).filter(indicator => selectedIndicators[indicator]);
+  // 렌더링할 지표의 키 매핑
+  const metricKeyMapping = {
+    "매출액": "sales",
+    "영업이익": "operatingIncome",
+    "순매출": "netIncome",
+  };
 
-  const graphs = selectedMetrics.map((metric) => {
-    const metricKeyMapping = {
-      "매출액": "sales",
-      "영업이익": "operatingIncome",
-      "순매출": "netIncome",
-    };
-    const metricKey = metricKeyMapping[metric] || "netIncome";
+  // 그래프 생성
+  const graphs = Object.keys(metricKeyMapping).map((metric) => {
+    const metricKey = metricKeyMapping[metric];
     const data = {
       labels: financialData[0].years.slice(filterRange[0], filterRange[1] + 1),
       datasets: createDatasetForMetric(metricKey, metric),

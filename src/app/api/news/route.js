@@ -27,8 +27,8 @@ export async function GET(request) {
     $('div.sub_section.news_section ul li').each((index, element) => {
       const title = $(element).find('a').text().trim();
       const link = 'https://finance.naver.com' + $(element).find('a').attr('href');
-      const date = $(element).find('span').text().trim();
-
+      const date = $(element).children('em').text().trim();
+			
       newsItems.push({ title, link, date });
     });
 
