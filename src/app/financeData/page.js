@@ -7,38 +7,59 @@ import InterestedItemsBox from '@/components/interested-items/interested-items-b
 import dropdownData from '@/components/graphs/financial-data/dropdown/financial-dropdown-data';
 import SelectedStock from '@/components/graphs/selected-stock';
 import FinancialPrompt from '@/components/graphs/financial-data/prompt/financial-prompt';
-import graph_Mock_data from '@/components/graphs/graphData'; // 임시 JSON 데이터 import
 
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown');
   const [checkedItems, setCheckedItems] = useState([]);
   const [selectedStocks, setSelectedStocks] = useState([]); 
-  const [graphData, setGraphData] = useState([]); // JSON 데이터를 관리하는 새로운 상태
+  const [graphData, setGraphData] = useState([]);
 
-  // 체크박스 선택 시 상태 업데이트 핸들러
   const handleCheckboxChange = (name, checked) => {
-		if (checked) {
-			setCheckedItems((prevItems) => [...prevItems, name]); // 체크된 항목을 배열에 추가
-		} else {
-			setCheckedItems((prevItems) => prevItems.filter(item => item !== name)); // 체크 해제된 항목은 배열에서 제거
-		}
-	};
-	
+    if (checked) {
+      setCheckedItems((prevItems) => [...prevItems, name]);
+    } else {
+      setCheckedItems((prevItems) => prevItems.filter(item => item !== name));
+    }
+  };
 
-  // 옵션 클릭 핸들러
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/getGraphData-checkBox', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ selectedStocks, checkedItems }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+
+        const data = await response.json();
+        setGraphData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    if (checkedItems.length > 0 && selectedStocks.length > 0) {
+      fetchData();
+    }
+  }, [checkedItems, selectedStocks]);
+
   const handleOptionClick = (option) => {
     setSelectedOption(option); 
   };
 
-  // 선택된 종목을 배열로 FinancialGraph에 전달
   const handleSelectStock = (stocks) => {
-    if (Array.isArray(stocks)) {
-      setSelectedStocks(stocks);
-    } else {
-      setSelectedStocks([stocks]); // stocks가 배열이 아닌 경우 배열로 변환
-    }
+    setSelectedStocks(Array.isArray(stocks) ? stocks : [stocks]);
   };
-	
+
+	const updateGraphDataWithPrompt = (newData) => {
+    setGraphData(newData);
+  };
 
   return (
     <div className={classes.container}>
@@ -59,9 +80,8 @@ export default function FinancialDataShowPage() {
           </button>
         </div>
 
-        <InterestedItemsBox />
-
         <div className={classes.inputSection}>
+					<SelectedStock onSelectStock={handleSelectStock} />
           {selectedOption === 'dropdown' ? (
             dropdownData.map((data, index) => (
               <FinancialDropdown
@@ -78,10 +98,9 @@ export default function FinancialDataShowPage() {
         </div>
       </div>
 
-      <div className={classes.rightSection}>
-        <SelectedStock onSelectStock={handleSelectStock} />
+      <div className={classes.rightSection}>      
         <div className={classes.graphSection}>
-          <FinancialGraph graphData={graph_Mock_data} />
+          <FinancialGraph graphData={graphData} />
         </div>
       </div>
     </div>
