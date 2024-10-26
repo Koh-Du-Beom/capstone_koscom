@@ -1,12 +1,14 @@
-// src/app/backTesting/page.js
-
+// 백테스트 페이지 컴포넌트
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import classes from './page.module.css';
 import FinancialReportTable from '@/components/tables/FinancialReportTable';
-import FinancialReportTableGraph from '@/components/graphs/FinancialReportTableGraph';
-import SimpleStockListModal from '@/components/modal/simple-stock-list-modal/simple-stock-list-modal'; // 종목 검색 모달
+import PortfolioValueChart from '@/components/graphs/PortfolioValueChart';
+import HoldingsProportionChart from '@/components/graphs/HoldingsProportionChart';
+import SimpleStockListModal from '@/components/modal/simple-stock-list-modal/simple-stock-list-modal';
+import Papa from 'papaparse'; // CSV 파일 파싱 라이브러리
+import { parseCSV } from '@/utils/parseCSV'; // 종목 모달창 CSV 파일
+import { parseCSV2 } from '@/utils/parseCSV2'; // 테스트 파일 CSV 파일 읽어오기
 
 export default function BackTestingPage() {
   // 백테스트 설정 및 입력값을 위한 상태 변수들
@@ -20,22 +22,14 @@ export default function BackTestingPage() {
   const [totalRatio, setTotalRatio] = useState(0); // 자산 비율의 총합
   const [showModal, setShowModal] = useState(false); // 모달창 열림/닫힘
   const [isFormValid, setIsFormValid] = useState(false); // 포트폴리오 비율이 100%일 때만 활성화
-  const [chartData, setChartData] = useState(null); // 차트 데이터
-  const [tableData, setTableData] = useState(null); // 테이블 데이터
+  const [portfolioChartData, setPortfolioChartData] = useState(null); // 포트폴리오 가치 차트 데이터
+  const [holdingsChartData, setHoldingsChartData] = useState(null); // 보유 비중 차트 데이터
 
   const PORTFOLIO_STORAGE_KEY = 'savedPortfolioData'; // 로컬스토리지 키 설정
 
   // 포트폴리오 저장 함수 - 로컬 스토리지에 포트폴리오 데이터 저장
   const handleSavePortfolio = () => {
-    const portfolioData = {
-      startDate,
-      endDate,
-      rebalancePeriod,
-      method,
-      rsiPeriod,
-      startMoney,
-      assets,
-    };
+    const portfolioData = { startDate, endDate, rebalancePeriod, method, rsiPeriod, startMoney, assets };
     localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(portfolioData));
     alert('포트폴리오가 저장되었습니다.');
   };
@@ -122,56 +116,69 @@ export default function BackTestingPage() {
     setStartMoney(formatMoney(value)); // 포맷팅된 값을 상태에 저장
   };
 
-  // 백엔드로 포트폴리오 구성 데이터를 전송하는 함수
-  const sendPortfolioDataToBackend = async () => {
-    try {
-      await fetch('/api/backtest/portfolioData', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startDate, endDate, rebalancePeriod, method, startMoney, assets })
-      });
-      console.log('포트폴리오 데이터가 백엔드로 전송되었습니다.');
-    } catch (error) {
-      console.error('백엔드로 데이터 전송 중 오류:', error);
-    }
-  };
+  // CSV 데이터 로드 및 파싱 함수
+const loadCSVData = async () => {
+  try {
+    // 포트폴리오 데이터 로드
+    const portfolioChartData = await parseCSV2('/csv/portfolio_values.csv');
+    setPortfolioChartData(portfolioChartData);
 
-  // 차트 데이터를 백엔드에서 가져오는 함수
-  const fetchChartData = async () => {
-    try {
-      const response = await fetch('/api/backtest/chartData', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startDate, endDate, rebalancePeriod, method, startMoney, assets })
-      });
-      const data = await response.json();
-      setChartData(data);
-    } catch (error) {
-      console.error('차트 데이터 로드 중 오류:', error);
-    }
-  };
+    // 보유 비중 데이터 로드
+    const holdingsProportionData = await parseCSV2('/csv/holdings_proportions.csv');
+    setHoldingsChartData(holdingsProportionData);
 
-  // 테이블 데이터를 백엔드에서 가져오는 함수
-  const fetchTableData = async () => {
-    try {
-      const response = await fetch('/api/backtest/tableData', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startDate, endDate, rebalancePeriod, method, startMoney, assets })
-      });
-      const data = await response.json();
-      setTableData(data);
-    } catch (error) {
-      console.error('표 데이터 로드 중 오류:', error);
-    }
-  };
+    console.log('Portfolio Data:', portfolioChartData); // 로드 확인용 콘솔 출력
+    console.log('Holdings Data:', holdingsProportionData); // 로드 확인용 콘솔 출력
+  } catch (error) {
+    console.error('CSV 데이터 로드 오류:', error);
+  }
+};
 
-  // 백테스트 실행 함수 - 포트폴리오 데이터 전송 후 차트와 테이블 데이터를 각각 가져옴
-  const handleRunBacktest = () => {
-    sendPortfolioDataToBackend();
-    fetchChartData();
-    fetchTableData();
-  };
+
+  // 페이지가 로드될 때 CSV 데이터를 불러옴
+  useEffect(() => {
+    loadCSVData();
+  }, []);
+  
+
+  // // CSV 데이터 불러와 차트에 사용할 수 있도록 설정
+  // const loadChartData = () => {
+  //   // 포트폴리오 가치 차트 데이터 로드
+  //   fetch('/csv/portfolio_values.csv')
+  //     .then(response => response.text())
+  //     .then(text => {
+  //       Papa.parse(text, {
+  //         header: true,
+  //         skipEmptyLines: true,
+  //         complete: (result) => {
+  //           // CSV 파일에서 날짜와 포트폴리오 가치를 추출하여 설정
+  //           const dates = result.data.map(row => row.dates);
+  //           const values = result.data.map(row => parseFloat(row.values));
+  //           setPortfolioChartData({ dates, values });
+  //         },
+  //       });
+  //     });
+
+  //   // 보유 비중 차트 데이터 로드
+  //   fetch('/csv/holdings_proportions.csv')
+  //     .then(response => response.text())
+  //     .then(text => {
+  //       Papa.parse(text, {
+  //         header: true,
+  //         skipEmptyLines: true,
+  //         complete: (result) => {
+  //           // 각 날짜별 종목별 비율 데이터 포맷
+  //           const holdings = result.data.map(row => ({
+  //             date: row.date,
+  //             "005380": parseFloat(row["005380"]),
+  //             "000660": parseFloat(row["000660"]),
+  //             "041510": parseFloat(row["041510"]),
+  //           }));
+  //           setHoldingsChartData(holdings);
+  //         },
+  //       });
+  //     });
+  // };
 
   return (
     <div className={classes.container}>
@@ -219,9 +226,10 @@ export default function BackTestingPage() {
                 onChange={(e) => setRebalancePeriod(e.target.value)}
                 className={classes.select}
               >
-                <option value="1일">1일</option>
-                <option value="1주일">1주일</option>
-                <option value="1달">1달</option>
+                <option value="1개월">1개월</option>
+                <option value="3개월">3개월</option>
+                <option value="6개월">6개월</option>
+                <option value="1년">1년</option>
               </select>
             </div>
           </div>
@@ -262,7 +270,7 @@ export default function BackTestingPage() {
             <div className={classes.moneyInputContainer}>
               <span className={classes.moneySymbol}>₩</span>
               <input
-                type="text" // 숫자형 대신 text로 사용
+                type="text"
                 value={startMoney}
                 onChange={(e) => handleMoneyChange(e.target.value)}
                 className={classes.moneyInput}
@@ -301,7 +309,7 @@ export default function BackTestingPage() {
 
           {/* 실행 및 저장 버튼 */}
           <div className={classes.buttonGroup}>
-            <button className={classes.confirmButton} onClick={handleRunBacktest} disabled={!isFormValid}>
+            <button className={classes.confirmButton} onClick={loadCSVData} disabled={!isFormValid}>
               결과 확인
             </button>
             <button className={classes.saveButton} onClick={handleSavePortfolio} disabled={!isFormValid}>포트폴리오 저장</button>
@@ -311,18 +319,16 @@ export default function BackTestingPage() {
         {/* 우측: 그래프 및 요약 보고서 */}
         <div className={classes.resultSection}>
           <div className={classes.graphSection}>
-            {chartData && <FinancialReportTableGraph chartData={chartData} />}
-          </div>
-          <div className={classes.tableSection}>
-            {tableData && <FinancialReportTable tableData={tableData} />}
-          </div>
+            {/* 포트폴리오 가치 차트 */}
+            {portfolioChartData && <PortfolioValueChart data={portfolioChartData} />}
+
+            {/* 보유 비중 차트 */}
+            {holdingsChartData && <HoldingsProportionChart data={holdingsChartData} />}</div>
         </div>
       </div>
 
       {/* 종목 검색 모달 창 */}
-      {showModal && (
-        <SimpleStockListModal onClose={toggleModal} onAddItem={handleSelectStock} />
-      )}
+      {showModal && <SimpleStockListModal onClose={toggleModal} onAddItem={handleSelectStock} />}
     </div>
   );
 }
