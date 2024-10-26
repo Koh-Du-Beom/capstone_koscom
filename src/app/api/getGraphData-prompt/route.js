@@ -1,30 +1,41 @@
 import { NextResponse } from 'next/server';
+import { spawn } from 'child_process';
 
 export async function POST(request) {
   try {
-    const { message } = await request.json(); // Input message data
+    const { message } = await request.json(); // Input message from frontend
 
-    // Python backend endpoint URL
-    const pythonEndpointUrl = 'https://your-python-api-endpoint-url'; // Replace with actual Python endpoint URL.
+    return new Promise((resolve, reject) => {
+      // Python 실행 명령어 및 인자 설정
+      const pythonProcess = spawn('python3', ['./python/gptapicall.py', '--string', message]);
 
-    // Send POST request to the Python endpoint
-    const response = await fetch(pythonEndpointUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ message }), // Send message in JSON format
+      let output = '';
+      let error = '';
+
+      // stdout의 'data' 이벤트 리스너로 실행 결과를 받아옵니다.
+      pythonProcess.stdout.on('data', (data) => {
+        output += data.toString();
+      });
+
+      // stderr의 'data' 이벤트 리스너로 에러 메시지를 받아옵니다.
+      pythonProcess.stderr.on('data', (data) => {
+        error += data.toString();
+      });
+
+      // Python 프로세스 종료 시, 결과를 반환합니다.
+      pythonProcess.on('close', (code) => {
+        if (code === 0) {
+          try {
+            const jsonData = JSON.parse(output); // Python 결과를 JSON으로 파싱
+            resolve(NextResponse.json(jsonData)); // JSON 응답 반환
+          } catch (parseError) {
+            reject(NextResponse.json({ error: 'Failed to parse JSON output from Python script' }, { status: 500 }));
+          }
+        } else {
+          reject(NextResponse.json({ error: `Python script exited with code ${code}: ${error}` }, { status: 500 }));
+        }
+      });
     });
-
-    if (!response.ok) {
-      throw new Error(`Error fetching data from Python endpoint: ${response.statusText}`);
-    }
-
-    // Directly read the JSON response
-    const data = await response.json();
-
-    // Return JSON data to the frontend
-    return NextResponse.json(data);
   } catch (error) {
     console.error('Error in getGraphData-prompt API route:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
