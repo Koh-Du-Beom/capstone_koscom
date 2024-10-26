@@ -30,95 +30,98 @@ ChartJS.register(
 
 export default function FinancialGraph({ graphData }) {
   const [chartType, setChartType] = useState("Line");
-  const [filterRange, setFilterRange] = useState([0, 1]); // 초기 필터 범위 설정
-  const [years, setYears] = useState([]); // 기간을 담는 배열
-  const [companyNames, setCompanyNames] = useState([]); // 회사 이름 목록
+  const [years, setYears] = useState([]);
+  const [filterRange, setFilterRange] = useState([0, 1]);
 
   // 차트 타입을 토글하는 함수
   const toggleChartType = () => {
     setChartType(chartType === "Bar" ? "Line" : "Bar");
   };
 
-  // graphData가 변경될 때마다 years와 companyNames를 설정
   useEffect(() => {
-    if (graphData.length > 0) {
-      const periods = Object.keys(graphData[0].data); // 기간을 추출 (예: "2023/06", "2023/09")
-      setYears(periods);
-      setFilterRange([0, periods.length - 1]); // 초기 범위를 전체로 설정
-
-      // 모든 지표에서 회사 목록을 수집하여 중복 없이 설정
-      const allCompanies = new Set();
-      graphData.forEach(metricData => {
-        Object.values(metricData.data).forEach(periodData => {
-          Object.keys(periodData).forEach(company => allCompanies.add(company));
-        });
-      });
-      setCompanyNames(Array.from(allCompanies));
+    if (graphData && graphData.length > 0) {
+      // 첫 번째 지표에서 기간을 추출하여 설정
+      const firstMetric = graphData[0];
+      const metricName = Object.keys(firstMetric)[0]; // 첫 번째 지표 이름
+      const metricData = firstMetric[metricName];
+  
+      if (metricData) {
+        const firstCompany = Object.keys(metricData)[0]; // 첫 번째 회사
+        if (firstCompany && metricData[firstCompany]) {
+          const extractedYears = Object.keys(metricData[firstCompany]);
+          setYears(extractedYears);
+          setFilterRange([0, extractedYears.length - 1]); // 슬라이더 범위를 전체로 초기화
+        }
+      }
     }
   }, [graphData]);
-
-  if (years.length === 0 || companyNames.length === 0) {
-    return <p>데이터가 없습니다.</p>;
-  }
-
+  
   // 각 지표별 데이터셋 생성
-  const createDatasetForMetric = (metricData) => {
-    return companyNames.map((company, index) => {
+  const createDatasetForMetric = (metricName, metricData) => {
+    const companies = Object.keys(metricData);
+    const filteredYears = years.slice(filterRange[0], filterRange[1] + 1); // 필터링된 기간
+    
+    const datasets = companies.map((company, index) => {
       const colorIndex = index % graphColors.length;
       return {
         label: company,
-        data: years.slice(filterRange[0], filterRange[1] + 1).map(
-          (year) => metricData.data[year][company] || null // 데이터가 없는 경우 null로 처리
-        ),
+        data: filteredYears.map(year => metricData[company][year] || null), // 필터링된 연도에 맞춰 데이터 슬라이싱
         backgroundColor: graphColors[colorIndex].backgroundColor,
         borderColor: graphColors[colorIndex].borderColor,
         borderWidth: 1,
       };
     });
+
+    return { labels: filteredYears, datasets };
   };
 
-  // 지표별 그래프 생성
-  const graphs = graphData.map((metricData) => {
-    const data = {
-      labels: years.slice(filterRange[0], filterRange[1] + 1),
-      datasets: createDatasetForMetric(metricData),
-    };
+  // 그래프 배열 생성
+  const graphs = graphData.map((metricObj, index) => {
+    const metricName = Object.keys(metricObj)[0]; // 지표 이름 (예: "PER" 또는 "PBR")
+    const metricData = metricObj[metricName];
+    const data = createDatasetForMetric(metricName, metricData);
     const ChartComponent = chartType === "Bar" ? Bar : Line;
 
     return (
-      <div key={metricData.metric} className={classes.chartContainer}>
+      <div key={index} className={classes.chartContainer}>
         <ChartComponent
           data={data}
           options={{
             responsive: true,
             plugins: {
               legend: { position: "top" },
-              title: { display: true, text: metricData.metric },
+              title: { display: true, text: metricName },
+            },
+            scales: {
+              x: { title: { display: true, text: "기간" } },
+              y: { title: { display: true, text: "데이터 크기" } },
             },
           }}
         />
-        <Range
-          step={1}
-          min={0}
-          max={years.length - 1}
-          values={filterRange}
-          onChange={(values) => setFilterRange(values)}
-          renderTrack={({ props, children }) => (
-            <div
-              {...props}
-              className={classes.rangeSliderTrack}
-            >
-              {children}
-            </div>
-          )}
-          renderThumb={({ props, index }) => (
-            <div
-              {...props}
-              key={index}
-              className={classes.rangeSliderThumb}
-            />
-          )}
-        />
+        {years.length > 0 && (
+          <Range
+            step={1}
+            min={0}
+            max={years.length - 1} // years 배열이 비어 있지 않은 경우에만 max 설정
+            values={filterRange}
+            onChange={(values) => setFilterRange(values)}
+            renderTrack={({ props, children }) => (
+              <div
+                {...props}
+                className={classes.rangeSliderTrack}
+              >
+                {children}
+              </div>
+            )}
+            renderThumb={({ props, index }) => (
+              <div
+                {...props}
+                key={index}
+                className={classes.rangeSliderThumb}
+              />
+            )}
+          />
+        )}
         <div className={classes.rangeValue}>
           <span>기간: {years[filterRange[0]]} - {years[filterRange[1]]}</span>
         </div>
