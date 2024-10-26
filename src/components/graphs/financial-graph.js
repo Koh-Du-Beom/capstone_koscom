@@ -56,6 +56,7 @@ export default function FinancialGraph({ graphData }) {
     }
   }, [graphData]);
   
+  
   // 각 지표별 데이터셋 생성
   const createDatasetForMetric = (metricName, metricData) => {
     const companies = Object.keys(metricData);
@@ -94,7 +95,6 @@ export default function FinancialGraph({ graphData }) {
             },
             scales: {
               x: { title: { display: true, text: "기간" } },
-              y: { title: { display: true, text: "데이터 크기" } },
             },
           }}
         />

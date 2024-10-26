@@ -1,43 +1,69 @@
 import { NextResponse } from 'next/server';
 import { spawn } from 'child_process';
+import path from 'path';
 
 export async function POST(request) {
   try {
-    const { message } = await request.json(); // Input message from frontend
+    const { message } = await request.json();
+
+    // message가 문자열인지 확인
+    if (typeof message !== 'string') {
+      return NextResponse.json(
+        { error: 'Invalid input: "message" must be a string.' },
+        { status: 400 }
+      );
+    }
 
     return new Promise((resolve, reject) => {
-      // Python 실행 명령어 및 인자 설정
-      const pythonProcess = spawn('python3', ['./python/gptapicall.py', '--string', message]);
+      const pythonPath = '/home/ubuntu-server/superfantastic/bin/python';
+      const scriptPath = path.resolve('/home/ubuntu-server/gptapicall.py'); // 새로운 경로로 수정
+
+      const pythonProcess = spawn(pythonPath, [scriptPath, '--sentence', message]);
 
       let output = '';
       let error = '';
 
-      // stdout의 'data' 이벤트 리스너로 실행 결과를 받아옵니다.
       pythonProcess.stdout.on('data', (data) => {
         output += data.toString();
       });
 
-      // stderr의 'data' 이벤트 리스너로 에러 메시지를 받아옵니다.
       pythonProcess.stderr.on('data', (data) => {
         error += data.toString();
       });
 
-      // Python 프로세스 종료 시, 결과를 반환합니다.
       pythonProcess.on('close', (code) => {
         if (code === 0) {
+          console.log('output', output);
           try {
-            const jsonData = JSON.parse(output); // Python 결과를 JSON으로 파싱
-            resolve(NextResponse.json(jsonData)); // JSON 응답 반환
+            // output을 배열로 파싱합니다.
+            const jsonData = JSON.parse(output);
+            if (!Array.isArray(jsonData)) {
+              resolve(NextResponse.json([jsonData])); // 객체일 경우 배열로 감싸서 반환
+            } else {
+              resolve(NextResponse.json(jsonData)); // 이미 배열일 경우 그대로 반환
+            }
           } catch (parseError) {
-            reject(NextResponse.json({ error: 'Failed to parse JSON output from Python script' }, { status: 500 }));
+            console.error('JSON 파싱 오류:', parseError.message);
+            reject(
+              NextResponse.json(
+                { error: 'Failed to parse JSON output from Python script' },
+                { status: 500 }
+              )
+            );
           }
         } else {
-          reject(NextResponse.json({ error: `Python script exited with code ${code}: ${error}` }, { status: 500 }));
+          console.error(`Python script error: ${error}`);
+          reject(
+            NextResponse.json(
+              { error: `Python script exited with code ${code}: ${error}` },
+              { status: 501 }
+            )
+          );
         }
       });
     });
   } catch (error) {
     console.error('Error in getGraphData-prompt API route:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 502 });
   }
 }
