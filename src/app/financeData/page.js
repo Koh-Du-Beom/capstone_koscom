@@ -3,22 +3,21 @@ import React, { useState, useEffect } from 'react';
 import FinancialDropdown from '@/components/graphs/financial-data/dropdown/financial-dropdown';
 import classes from './page.module.css';
 import FinancialGraph from '@/components/graphs/financial-graph';
-import InterestedItemsBox from '@/components/interested-items/interested-items-box';
 import dropdownData from '@/components/graphs/financial-data/dropdown/financial-dropdown-data';
 import SelectedStock from '@/components/graphs/selected-stock';
 import FinancialPrompt from '@/components/graphs/financial-data/prompt/financial-prompt';
 
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown');
-  const [checkedItems, setCheckedItems] = useState([]);
+  const [selectedIndicators, setSelectedIndicators] = useState([]);
   const [selectedStocks, setSelectedStocks] = useState([]); 
   const [graphData, setGraphData] = useState([]);
 
   const handleCheckboxChange = (name, checked) => {
     if (checked) {
-      setCheckedItems((prevItems) => [...prevItems, name]);
+      setSelectedIndicators((prevItems) => [...prevItems, name]);
     } else {
-      setCheckedItems((prevItems) => prevItems.filter(item => item !== name));
+      setSelectedIndicators((prevItems) => prevItems.filter(item => item !== name));
     }
   };
 
@@ -30,7 +29,7 @@ export default function FinancialDataShowPage() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ selectedStocks, checkedItems }),
+          body: JSON.stringify({ selectedStocks, selectedIndicators }),
         });
 
         if (!response.ok) {
@@ -41,13 +40,13 @@ export default function FinancialDataShowPage() {
         setGraphData(data);
       } catch (error) {
         console.error('Error fetching data:', error);
-      }
+      } 
     };
 
-    if (checkedItems.length > 0 && selectedStocks.length > 0) {
+    if (selectedIndicators.length > 0 && selectedStocks.length > 0) {
       fetchData();
     }
-  }, [checkedItems, selectedStocks]);
+  }, [selectedIndicators, selectedStocks]);
 
   const handleOptionClick = (option) => {
     setSelectedOption(option); 
@@ -57,7 +56,7 @@ export default function FinancialDataShowPage() {
     setSelectedStocks(Array.isArray(stocks) ? stocks : [stocks]);
   };
 
-	const updateGraphDataWithPrompt = (newData) => {
+  const updateGraphDataWithPrompt = (newData) => {
     setGraphData(newData);
   };
 
@@ -81,19 +80,19 @@ export default function FinancialDataShowPage() {
         </div>
 
         <div className={classes.inputSection}>
-					<SelectedStock onSelectStock={handleSelectStock} />
+          <SelectedStock onSelectStock={handleSelectStock} />
           {selectedOption === 'dropdown' ? (
             dropdownData.map((data, index) => (
               <FinancialDropdown
                 key={index}
                 category={data.category}
                 details={data.details}
-                checkedItems={checkedItems}
+                selectedIndicators={selectedIndicators}
                 handleCheckboxChange={handleCheckboxChange}
               />
             ))
           ) : (
-            <FinancialPrompt />
+            <FinancialPrompt updateGraphData={updateGraphDataWithPrompt}/>
           )}
         </div>
       </div>

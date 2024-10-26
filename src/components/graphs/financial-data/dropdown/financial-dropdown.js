@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import styles from './financial-dropdown.module.css';
 
-export default function FinancialDropDown({ category, details, checkedItems, handleCheckboxChange }) {
+export default function FinancialDropDown({ category, details, selectedIndicators, handleCheckboxChange }) {
   const [isOpen, setIsOpen] = useState(false); // 드롭다운 열리고 닫히는 상태관리
 
   const toggleDropdown = () => {
@@ -30,7 +30,7 @@ export default function FinancialDropDown({ category, details, checkedItems, han
                 type="checkbox"
                 label={detail}
                 name={detail}
-                checked={checkedItems.includes(detail)} // 배열에 해당 항목이 있는지 확인
+                checked={selectedIndicators.includes(detail)} // 배열에 해당 항목이 있는지 확인
                 onChange={handleChange}
                 className={styles.dropdownItem}
               />

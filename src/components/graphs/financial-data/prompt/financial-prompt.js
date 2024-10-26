@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Loading from '@/app/loading';
 import classes from './financial-prompt.module.css';
 import axios from 'axios';
-import { parseCSV } from '@/utils/parseCSV'; // parseCSV 함수를 import
 
 export default function FinancialPrompt({ updateGraphData }) {
   const [messages, setMessages] = useState([]);
@@ -18,25 +17,24 @@ export default function FinancialPrompt({ updateGraphData }) {
       setIsLoading(true);
 
       try {
-        // API 요청을 /api/getGraphData-prompt로 보냄
+        // Send API request to /api/getGraphData-prompt
         const response = await axios.post('/api/getGraphData-prompt', {
           message: inputValue.trim(),
         });
 
-        const csvData = response.data; // 서버로부터 받은 CSV 데이터
-        const parsedData = await parseCSV(csvData); // parseCSV를 사용해 JSON으로 파싱
+        const jsonData = response.data; // Directly use the JSON data from the server
 
-        updateGraphData(parsedData); // 파싱된 데이터를 graphData로 설정
+        updateGraphData(jsonData); // Update graphData with JSON data
 
         setMessages((prevMessages) => [
           ...prevMessages,
-          { type: 'system', content: '처리 완료. 결과를 확인하세요.' },
+          { type: 'system', content: 'Processing complete. Please check the results.' },
         ]);
       } catch (error) {
         console.error("Error fetching financial data:", error);
         setMessages((prevMessages) => [
           ...prevMessages,
-          { type: 'system', content: '오류가 발생했습니다. 다시 시도해주세요.' },
+          { type: 'system', content: 'An error occurred. Please try again.' },
         ]);
       } finally {
         setIsLoading(false);
@@ -68,11 +66,11 @@ export default function FinancialPrompt({ updateGraphData }) {
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          placeholder="질문을 입력하세요"
+          placeholder="Enter your question"
           className={classes.inputField}
         />
         <button type="submit" className={classes.sendButton}>
-          전송
+          Send
         </button>
       </form>
     </div>
