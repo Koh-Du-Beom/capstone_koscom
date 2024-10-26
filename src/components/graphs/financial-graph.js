@@ -16,7 +16,6 @@ import {
 } from "chart.js";
 import GraphLayout from "./GraphLayout"; 
 
-// ChartJS 모듈 등록
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -29,44 +28,44 @@ ChartJS.register(
 );
 
 export default function FinancialGraph({ graphData }) {
-  const [chartType, setChartType] = useState("Line");
+  const [chartTypes, setChartTypes] = useState([]);
   const [years, setYears] = useState([]);
-  const [filterRange, setFilterRange] = useState([0, 1]);
+  const [filterRanges, setFilterRanges] = useState([]);
 
-  // 차트 타입을 토글하는 함수
-  const toggleChartType = () => {
-    setChartType(chartType === "Bar" ? "Line" : "Bar");
+  const toggleChartType = (index) => {
+    setChartTypes((prevTypes) => 
+      prevTypes.map((type, i) => (i === index ? (type === "Bar" ? "Line" : "Bar") : type))
+    );
   };
 
   useEffect(() => {
     if (graphData && graphData.length > 0) {
-      // 첫 번째 지표에서 기간을 추출하여 설정
       const firstMetric = graphData[0];
-      const metricName = Object.keys(firstMetric)[0]; // 첫 번째 지표 이름
+      const metricName = Object.keys(firstMetric)[0];
       const metricData = firstMetric[metricName];
   
       if (metricData) {
-        const firstCompany = Object.keys(metricData)[0]; // 첫 번째 회사
+        const firstCompany = Object.keys(metricData)[0];
         if (firstCompany && metricData[firstCompany]) {
           const extractedYears = Object.keys(metricData[firstCompany]);
           setYears(extractedYears);
-          setFilterRange([0, extractedYears.length - 1]); // 슬라이더 범위를 전체로 초기화
+
+          // 그래프 개수만큼 chartTypes와 filterRanges 초기화
+          setChartTypes(new Array(graphData.length).fill("Line"));
+          setFilterRanges(new Array(graphData.length).fill([0, extractedYears.length - 1]));
         }
       }
     }
   }, [graphData]);
-  
-  
-  // 각 지표별 데이터셋 생성
-  const createDatasetForMetric = (metricName, metricData) => {
+
+  const createDatasetForMetric = (metricName, metricData, filteredYears) => {
     const companies = Object.keys(metricData);
-    const filteredYears = years.slice(filterRange[0], filterRange[1] + 1); // 필터링된 기간
     
     const datasets = companies.map((company, index) => {
       const colorIndex = index % graphColors.length;
       return {
         label: company,
-        data: filteredYears.map(year => metricData[company][year] || null), // 필터링된 연도에 맞춰 데이터 슬라이싱
+        data: filteredYears.map(year => metricData[company][year] || null),
         backgroundColor: graphColors[colorIndex].backgroundColor,
         borderColor: graphColors[colorIndex].borderColor,
         borderWidth: 1,
@@ -76,19 +75,30 @@ export default function FinancialGraph({ graphData }) {
     return { labels: filteredYears, datasets };
   };
 
-  // 그래프 배열 생성
   const graphs = graphData.map((metricObj, index) => {
-    const metricName = Object.keys(metricObj)[0]; // 지표 이름 (예: "PER" 또는 "PBR")
+    const metricName = Object.keys(metricObj)[0];
     const metricData = metricObj[metricName];
-    const data = createDatasetForMetric(metricName, metricData);
-    const ChartComponent = chartType === "Bar" ? Bar : Line;
+
+    if (!filterRanges[index] || !chartTypes[index]) return null;
+
+    const filteredYears = years.slice(filterRanges[index][0] ?? 0, (filterRanges[index][1] ?? 0) + 1);
+    const data = createDatasetForMetric(metricName, metricData, filteredYears);
+    const ChartComponent = chartTypes[index] === "Bar" ? Bar : Line;
 
     return (
       <div key={index} className={classes.chartContainer}>
+        <button 
+          onClick={() => toggleChartType(index)} 
+          className={classes.chartToggleButton}
+        >
+          {chartTypes[index] === "Bar" ? "Line" : "Bar"}
+        </button>
         <ChartComponent
           data={data}
           options={{
             responsive: true,
+            maintainAspectRatio: true, // 비율 유지
+            aspectRatio: 1, // 차트의 가로와 세로 비율 조정 (2:1 비율)
             plugins: {
               legend: { position: "top" },
               title: { display: true, text: metricName },
@@ -102,9 +112,13 @@ export default function FinancialGraph({ graphData }) {
           <Range
             step={1}
             min={0}
-            max={years.length - 1} // years 배열이 비어 있지 않은 경우에만 max 설정
-            values={filterRange}
-            onChange={(values) => setFilterRange(values)}
+            max={years.length - 1}
+            values={filterRanges[index] ?? [0, years.length - 1]}
+            onChange={(values) => 
+              setFilterRanges((prevRanges) => 
+                prevRanges.map((range, i) => (i === index ? values : range))
+              )
+            }
             renderTrack={({ props, children }) => (
               <div
                 {...props}
@@ -123,17 +137,16 @@ export default function FinancialGraph({ graphData }) {
           />
         )}
         <div className={classes.rangeValue}>
-          <span>기간: {years[filterRange[0]]} - {years[filterRange[1]]}</span>
+          <span>기간: {years[filterRanges[index]?.[0] ?? 0]} - {years[filterRanges[index]?.[1] ?? years.length - 1]}</span>
         </div>
       </div>
     );
   });
 
+
+
   return (
     <div className={classes.graphSection}>
-      <button onClick={toggleChartType}>
-        {chartType === "Bar" ? "Line 차트로 보기" : "Bar 차트로 보기"}
-      </button>
       <GraphLayout graphs={graphs} />
     </div>
   );

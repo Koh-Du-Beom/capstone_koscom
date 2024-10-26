@@ -6,6 +6,7 @@ import FinancialGraph from '@/components/graphs/financial-graph';
 import dropdownData from '@/components/graphs/financial-data/dropdown/financial-dropdown-data';
 import SelectedStock from '@/components/graphs/selected-stock';
 import FinancialPrompt from '@/components/graphs/financial-data/prompt/financial-prompt';
+import graph_Mock_data from '@/components/graphs/graphData';
 
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown');
@@ -80,7 +81,7 @@ export default function FinancialDataShowPage() {
         </div>
 
         <div className={classes.inputSection}>
-          <SelectedStock onSelectStock={handleSelectStock} />
+          {selectedOption === 'dropdown' && <SelectedStock onSelectStock={handleSelectStock}/>}
           {selectedOption === 'dropdown' ? (
             dropdownData.map((data, index) => (
               <FinancialDropdown
