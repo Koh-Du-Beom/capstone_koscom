@@ -15,6 +15,7 @@ export default function BackTestingPage() {
   const [rebalancePeriod, setRebalancePeriod] = useState('1일'); // 리밸런싱 주기
   const [method, setMethod] = useState('지정 비중'); // 리밸런싱 방법
   const [rsiPeriod, setRsiPeriod] = useState(14); // RSI 기간, 절대 모멘텀 방식 선택 시 활성화
+  const [startMoney, setStartMoney] = useState(''); // 시작 금액
   const [assets, setAssets] = useState([]); // 테스트 자산 및 비율 저장
   const [totalRatio, setTotalRatio] = useState(0); // 자산 비율의 총합
   const [showModal, setShowModal] = useState(false); // 모달창 열림/닫힘
@@ -32,6 +33,7 @@ export default function BackTestingPage() {
       rebalancePeriod,
       method,
       rsiPeriod,
+      startMoney,
       assets,
     };
     localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(portfolioData));
@@ -42,12 +44,13 @@ export default function BackTestingPage() {
   const handleLoadPortfolio = () => {
     const savedData = localStorage.getItem(PORTFOLIO_STORAGE_KEY);
     if (savedData) {
-      const { startDate, endDate, rebalancePeriod, method, rsiPeriod, assets } = JSON.parse(savedData);
+      const { startDate, endDate, rebalancePeriod, method, rsiPeriod, startMoney, assets } = JSON.parse(savedData);
       setStartDate(startDate);
       setEndDate(endDate);
       setRebalancePeriod(rebalancePeriod);
       setMethod(method);
       setRsiPeriod(rsiPeriod);
+      setStartMoney(startMoney);
       setAssets(assets);
       setTotalRatio(assets.reduce((sum, asset) => sum + asset.ratio, 0)); // 비율 합계 계산하여 상태 업데이트
     } else {
@@ -107,13 +110,25 @@ export default function BackTestingPage() {
     setIsFormValid(totalRatio === 100);
   }, [totalRatio]);
 
+  // 시작 금액 - 세 자릿수마다 콤마 추가 함수
+  const formatMoney = (value) => {
+    const number = parseInt(value.replace(/,/g, '')); // 기존 콤마 제거 후 숫자로 변환
+    if (isNaN(number)) return ''; // 숫자가 아닐 경우 빈 문자열
+    return number.toLocaleString(); // 세 자리마다 콤마 추가
+  };
+
+  // 입력값 처리 함수
+  const handleMoneyChange = (value) => {
+    setStartMoney(formatMoney(value)); // 포맷팅된 값을 상태에 저장
+  };
+
   // 백엔드로 포트폴리오 구성 데이터를 전송하는 함수
   const sendPortfolioDataToBackend = async () => {
     try {
       await fetch('/api/backtest/portfolioData', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startDate, endDate, rebalancePeriod, method, assets })
+        body: JSON.stringify({ startDate, endDate, rebalancePeriod, method, startMoney, assets })
       });
       console.log('포트폴리오 데이터가 백엔드로 전송되었습니다.');
     } catch (error) {
@@ -127,7 +142,7 @@ export default function BackTestingPage() {
       const response = await fetch('/api/backtest/chartData', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startDate, endDate, rebalancePeriod, method, assets })
+        body: JSON.stringify({ startDate, endDate, rebalancePeriod, method, startMoney, assets })
       });
       const data = await response.json();
       setChartData(data);
@@ -142,7 +157,7 @@ export default function BackTestingPage() {
       const response = await fetch('/api/backtest/tableData', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startDate, endDate, rebalancePeriod, method, assets })
+        body: JSON.stringify({ startDate, endDate, rebalancePeriod, method, startMoney, assets })
       });
       const data = await response.json();
       setTableData(data);
@@ -195,34 +210,38 @@ export default function BackTestingPage() {
             </div>
           </div>
 
-          {/* 리밸런싱 주기 선택 */}
-          <div className={classes.formGroup}>
+          {/* 리밸런싱 주기 드롭다운 */}
+          <div className={classes.dropdownContainer}>
             <label className={classes.label}>리밸런싱 주기</label>
-            <select
-              value={rebalancePeriod}
-              onChange={(e) => setRebalancePeriod(e.target.value)}
-              className={classes.select}
-            >
-              <option value="1일">1일</option>
-              <option value="1주일">1주일</option>
-              <option value="1달">1달</option>
-            </select>
+            <div className={classes.dropdownHeader}>
+              <select
+                value={rebalancePeriod}
+                onChange={(e) => setRebalancePeriod(e.target.value)}
+                className={classes.select}
+              >
+                <option value="1일">1일</option>
+                <option value="1주일">1주일</option>
+                <option value="1달">1달</option>
+              </select>
+            </div>
           </div>
 
-          {/* 리밸런싱 방법 선택 */}
-          <div className={classes.formGroup}>
-            <label className={classes.label}>방법</label>
-            <select
-              value={method}
-              onChange={handleMethodChange}
-              className={classes.select}
-            >
-              <option value="지정 비중">지정 비중</option>
-              <option value="동일 비중">동일 비중</option>
-              <option value="절대 모멘텀">절대 모멘텀</option>
-              <option value="최소 분산">최소 분산</option>
-              <option value="최대 다각화">최대 다각화</option>
-            </select>
+          {/* 리밸런싱 방법 드롭다운 */}
+          <div className={classes.dropdownContainer}>
+            <label className={classes.label}>리밸런싱 방법</label>
+            <div className={classes.dropdownHeader}>
+              <select
+                value={method}
+                onChange={handleMethodChange}
+                className={classes.select}
+              >
+                <option value="지정 비중">지정 비중</option>
+                <option value="동일 비중">동일 비중</option>
+                <option value="절대 모멘텀">절대 모멘텀</option>
+                <option value="최소 분산">최소 분산</option>
+                <option value="최대 다각화">최대 다각화</option>
+              </select>
+            </div>
           </div>
 
           {/* RSI 기간 입력 */}
@@ -235,6 +254,21 @@ export default function BackTestingPage() {
               className={classes.input}
               disabled={isRsiDisabled}
             />
+          </div>
+
+          {/* 시작 자금 입력 */}
+          <div className={classes.formGroup}>
+            <label className={classes.label}>시작 금액</label>
+            <div className={classes.moneyInputContainer}>
+              <span className={classes.moneySymbol}>₩</span>
+              <input
+                type="text" // 숫자형 대신 text로 사용
+                value={startMoney}
+                onChange={(e) => handleMoneyChange(e.target.value)}
+                className={classes.moneyInput}
+                placeholder="0"
+              />
+            </div>
           </div>
 
           {/* 테스트 자산 입력 */}
