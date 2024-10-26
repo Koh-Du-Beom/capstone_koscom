@@ -166,3 +166,74 @@
   text-align: right;
   margin-top: 10px;
 }
+
+
+.moneyInputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.moneySymbol {
+  position: absolute;
+  left: 10px;
+}
+
+.moneyInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  padding-left: 20px; /* ₩ 기호 공간 확보 */
+  text-align: right;
+}
+
+.dropdownContainer {
+  width: 100%;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.dropdownHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #fff;
+  color: #000;
+  cursor: pointer;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.select {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.arrowUp {
+  transform: rotate(180deg);
+}
+
+.arrowDown {
+  transform: rotate(0deg);
+}
+
+.dropdownMenu {
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+.dropdownItem {
+  margin: 5px 0;
+  font-size: 14px;
+}
