@@ -1,14 +1,12 @@
-// 백테스트 페이지 컴포넌트
+
 'use client';
 import React, { useState, useEffect } from 'react';
 import classes from './page.module.css';
 import FinancialReportTable from '@/components/tables/FinancialReportTable';
-import PortfolioValueChart from '@/components/graphs/PortfolioValueChart';
-import HoldingsProportionChart from '@/components/graphs/HoldingsProportionChart';
-import SimpleStockListModal from '@/components/modal/simple-stock-list-modal/simple-stock-list-modal';
-import Papa from 'papaparse'; // CSV 파일 파싱 라이브러리
-import { parseCSV } from '@/utils/parseCSV'; // 종목 모달창 CSV 파일
-import { parseCSV2 } from '@/utils/parseCSV2'; // 테스트 파일 CSV 파일 읽어오기
+import FinancialReportTableGraph from '@/components/graphs/FinancialReportTableGraph';
+import SimpleStockListModal from '@/components/modal/simple-stock-list-modal/simple-stock-list-modal'; // 종목 검색 모달
+import { parseCSV } from '@/utils/parseCSV';
+
 
 export default function BackTestingPage() {
   // 백테스트 설정 및 입력값을 위한 상태 변수들
@@ -22,8 +20,10 @@ export default function BackTestingPage() {
   const [totalRatio, setTotalRatio] = useState(0); // 자산 비율의 총합
   const [showModal, setShowModal] = useState(false); // 모달창 열림/닫힘
   const [isFormValid, setIsFormValid] = useState(false); // 포트폴리오 비율이 100%일 때만 활성화
-  const [portfolioChartData, setPortfolioChartData] = useState(null); // 포트폴리오 가치 차트 데이터
-  const [holdingsChartData, setHoldingsChartData] = useState(null); // 보유 비중 차트 데이터
+  const [portfolioReturn, setPortfolioReturn] = useState(null); // 포트폴리오 리턴 차트 값
+  const [holdingsData, setHoldingsData] = useState(null); // 홀딩 데이터 차트 값
+  const [isChartVisible, setIsChartVisible] = useState(false); // 차트 표시 여부
+
 
   const PORTFOLIO_STORAGE_KEY = 'savedPortfolioData'; // 로컬스토리지 키 설정
 
@@ -116,69 +116,47 @@ export default function BackTestingPage() {
     setStartMoney(formatMoney(value)); // 포맷팅된 값을 상태에 저장
   };
 
-  // CSV 데이터 로드 및 파싱 함수
-const loadCSVData = async () => {
-  try {
-    // 포트폴리오 데이터 로드
-    const portfolioChartData = await parseCSV2('/csv/portfolio_values.csv');
-    setPortfolioChartData(portfolioChartData);
+  // 백테스트 실행 함수 - API에서 차트와 테이블 데이터를 가져와 차트 설정
+  const handleRunBacktest = async () => {
+    console.log("백테스트 실행");
 
-    // 보유 비중 데이터 로드
-    const holdingsProportionData = await parseCSV2('/csv/holdings_proportions.csv');
-    setHoldingsChartData(holdingsProportionData);
+    try {
+        // 백테스트 Mock 데이터 로드
+        const response = await fetch('/csv/backtestMockData.txt');
+        const data = await response.json();
 
-    console.log('Portfolio Data:', portfolioChartData); // 로드 확인용 콘솔 출력
-    console.log('Holdings Data:', holdingsProportionData); // 로드 확인용 콘솔 출력
-  } catch (error) {
-    console.error('CSV 데이터 로드 오류:', error);
-  }
+        // Portfolio Returns 데이터 설정
+        setPortfolioReturn({
+            labels: data.portfolio_returns.dates, // dates 배열을 x축 레이블로 사용
+            datasets: [{
+                label: 'Portfolio Returns',
+                data: data.portfolio_returns.returns.map(value => parseFloat(value)), // returns 배열을 y축 데이터로 사용
+                borderColor: 'green',
+                backgroundColor: 'rgba(0, 255, 0, 0.3)',
+                fill: false,
+            }],
+        });
+
+        // Holdings Proportions 데이터 설정
+        setHoldingsData({
+            labels: data.holdings_proportions.map(item => item.date), // date 속성을 x축 레이블로 사용
+            datasets: Object.keys(data.holdings_proportions[0] || {})
+                .filter(key => key !== 'date')
+                .map((asset, index) => ({
+                    label: asset,
+                    data: data.holdings_proportions.map(item => parseFloat(item[asset])),
+                    backgroundColor: `rgba(0, 0, 255, ${0.3 + index * 0.05})`,
+                    borderColor: 'blue',
+                    fill: true,
+                })),
+        });
+
+        setIsChartVisible(true); // 차트 표시 활성화
+    } catch (error) {
+        console.error('Error fetching backtest data:', error);
+    }
 };
 
-
-  // 페이지가 로드될 때 CSV 데이터를 불러옴
-  useEffect(() => {
-    loadCSVData();
-  }, []);
-  
-
-  // // CSV 데이터 불러와 차트에 사용할 수 있도록 설정
-  // const loadChartData = () => {
-  //   // 포트폴리오 가치 차트 데이터 로드
-  //   fetch('/csv/portfolio_values.csv')
-  //     .then(response => response.text())
-  //     .then(text => {
-  //       Papa.parse(text, {
-  //         header: true,
-  //         skipEmptyLines: true,
-  //         complete: (result) => {
-  //           // CSV 파일에서 날짜와 포트폴리오 가치를 추출하여 설정
-  //           const dates = result.data.map(row => row.dates);
-  //           const values = result.data.map(row => parseFloat(row.values));
-  //           setPortfolioChartData({ dates, values });
-  //         },
-  //       });
-  //     });
-
-  //   // 보유 비중 차트 데이터 로드
-  //   fetch('/csv/holdings_proportions.csv')
-  //     .then(response => response.text())
-  //     .then(text => {
-  //       Papa.parse(text, {
-  //         header: true,
-  //         skipEmptyLines: true,
-  //         complete: (result) => {
-  //           // 각 날짜별 종목별 비율 데이터 포맷
-  //           const holdings = result.data.map(row => ({
-  //             date: row.date,
-  //             "005380": parseFloat(row["005380"]),
-  //             "000660": parseFloat(row["000660"]),
-  //             "041510": parseFloat(row["041510"]),
-  //           }));
-  //           setHoldingsChartData(holdings);
-  //         },
-  //       });
-  //     });
-  // };
 
   return (
     <div className={classes.container}>
@@ -191,7 +169,6 @@ const loadCSVData = async () => {
             <h2 className={classes.sectionTitle}>포트폴리오 구성</h2>
             <button className={classes.loadButton} onClick={handleLoadPortfolio}>불러오기</button>
           </div>
-
           {/* 테스트 기간 입력 */}
           <div className={classes.formGroup}>
             <label className={classes.label}>테스트 기간</label>
@@ -318,12 +295,16 @@ const loadCSVData = async () => {
 
         {/* 우측: 그래프 및 요약 보고서 */}
         <div className={classes.resultSection}>
-          <div className={classes.graphSection}>
-            {/* 포트폴리오 가치 차트 */}
-            {portfolioChartData && <PortfolioValueChart data={portfolioChartData} />}
+          {/* Holdings Proportion 영역 차트 렌더링 */}
+          {isChartVisible && holdingsData && (
+            <FinancialReportTableGraph data={holdingsData} title="Holdings Proportions" type="area" />
+          )}
+          
+          {/* Portfolio Returns 라인 차트 렌더링 */}
+          {isChartVisible && portfolioReturn && (
+            <FinancialReportTableGraph data={portfolioReturn} title="Portfolio Returns" type="line" />
+          )}
 
-            {/* 보유 비중 차트 */}
-            {holdingsChartData && <HoldingsProportionChart data={holdingsChartData} />}</div>
         </div>
       </div>
 
