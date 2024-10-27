@@ -1,5 +1,3 @@
-// src/app/backTesting/page.js
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -7,6 +5,7 @@ import classes from './page.module.css';
 import FinancialReportTable from '@/components/tables/FinancialReportTable';
 import FinancialReportTableGraph from '@/components/graphs/FinancialReportTableGraph';
 import SimpleStockListModal from '@/components/modal/simple-stock-list-modal/simple-stock-list-modal'; // 종목 검색 모달
+import { parseCSV } from '@/utils/parseCSV';
 
 export default function BackTestingPage() {
   // 백테스트 설정 및 입력값을 위한 상태 변수들
@@ -20,8 +19,9 @@ export default function BackTestingPage() {
   const [totalRatio, setTotalRatio] = useState(0); // 자산 비율의 총합
   const [showModal, setShowModal] = useState(false); // 모달창 열림/닫힘
   const [isFormValid, setIsFormValid] = useState(false); // 포트폴리오 비율이 100%일 때만 활성화
-  const [chartData, setChartData] = useState(null); // 차트 데이터
-  const [tableData, setTableData] = useState(null); // 테이블 데이터
+  const [portfolioReturn, setPortfolioReturn] = useState(null); // 포트폴리오 리턴 차트 값
+  const [holdingsData, setHoldingsData] = useState(null); // 홀딩 데이터 차트 값
+  const [isChartVisible, setIsChartVisible] = useState(false); // 차트 표시 여부
 
   const PORTFOLIO_STORAGE_KEY = 'savedPortfolioData'; // 로컬스토리지 키 설정
 
@@ -122,55 +122,57 @@ export default function BackTestingPage() {
     setStartMoney(formatMoney(value)); // 포맷팅된 값을 상태에 저장
   };
 
-  // 백엔드로 포트폴리오 구성 데이터를 전송하는 함수
-  const sendPortfolioDataToBackend = async () => {
-    try {
-      await fetch('/api/backtest/portfolioData', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startDate, endDate, rebalancePeriod, method, startMoney, assets })
-      });
-      console.log('포트폴리오 데이터가 백엔드로 전송되었습니다.');
-    } catch (error) {
-      console.error('백엔드로 데이터 전송 중 오류:', error);
-    }
-  };
+  // 포트폴리오 데이터 불러오기 함수
+  useEffect(() => {
+    const loadData = async () => {
+      const holdingsFilePath = '/csv/holdings_proportions.csv';
+      const portfolioFilePath = '/csv/portfolio_returns.csv';
 
-  // 차트 데이터를 백엔드에서 가져오는 함수
-  const fetchChartData = async () => {
-    try {
-      const response = await fetch('/api/backtest/chartData', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startDate, endDate, rebalancePeriod, method, startMoney, assets })
-      });
-      const data = await response.json();
-      setChartData(data);
-    } catch (error) {
-      console.error('차트 데이터 로드 중 오류:', error);
-    }
-  };
+      try {
+        // Holdings Proportions 데이터 파싱
+        const holdingsParsedData = await parseCSV(holdingsFilePath);
+        setHoldingsData({
+          labels: holdingsParsedData.map(row => row.date), // x축 레이블로 date 사용
+          datasets: Object.keys(holdingsParsedData[0] || {})
+            .filter(key => key !== 'date')
+            .map((asset, index) => ({
+              label: asset,
+              data: holdingsParsedData.map(row => parseFloat(row[asset])),
+              backgroundColor: `rgba(0, 0, 255, ${0.3 + index * 0.05})`, // 색상 조정
+              borderColor: 'blue',
+              fill: true,
+            })),
+        });
 
-  // 테이블 데이터를 백엔드에서 가져오는 함수
-  const fetchTableData = async () => {
-    try {
-      const response = await fetch('/api/backtest/tableData', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startDate, endDate, rebalancePeriod, method, startMoney, assets })
-      });
-      const data = await response.json();
-      setTableData(data);
-    } catch (error) {
-      console.error('표 데이터 로드 중 오류:', error);
-    }
-  };
+        // Portfolio Returns 데이터 파싱
+        const portfolioParsedData = await parseCSV(portfolioFilePath);
+        setPortfolioReturn({
+          labels: portfolioParsedData.map(row => row.dates), // x축 레이블로 dates 사용
+          datasets: [
+            {
+              label: 'Portfolio Returns',
+              data: portfolioParsedData.map(row => parseFloat(row.returns)),
+              borderColor: 'green',
+              backgroundColor: 'rgba(0, 255, 0, 0.3)',
+              fill: false,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error('Error loading CSV data:', error);
+      }
+    };
+
+    loadData();
+  }, []);
 
   // 백테스트 실행 함수 - 포트폴리오 데이터 전송 후 차트와 테이블 데이터를 각각 가져옴
   const handleRunBacktest = () => {
-    sendPortfolioDataToBackend();
-    fetchChartData();
-    fetchTableData();
+    console.log("백테스트 실행");
+    setIsChartVisible(true); // 차트를 활성화하여 표시
+    // sendPortfolioDataToBackend();
+    // fetchChartData();
+    // fetchTableData();
   };
 
   return (
@@ -184,7 +186,6 @@ export default function BackTestingPage() {
             <h2 className={classes.sectionTitle}>포트폴리오 구성</h2>
             <button className={classes.loadButton} onClick={handleLoadPortfolio}>불러오기</button>
           </div>
-
           {/* 테스트 기간 입력 */}
           <div className={classes.formGroup}>
             <label className={classes.label}>테스트 기간</label>
@@ -219,9 +220,10 @@ export default function BackTestingPage() {
                 onChange={(e) => setRebalancePeriod(e.target.value)}
                 className={classes.select}
               >
-                <option value="1일">1일</option>
-                <option value="1주일">1주일</option>
-                <option value="1달">1달</option>
+                <option value="1개월">1개월</option>
+                <option value="3개월">3개월</option>
+                <option value="6개월">6개월</option>
+                <option value="1년">1년</option>
               </select>
             </div>
           </div>
@@ -310,12 +312,15 @@ export default function BackTestingPage() {
 
         {/* 우측: 그래프 및 요약 보고서 */}
         <div className={classes.resultSection}>
-          <div className={classes.graphSection}>
-            {chartData && <FinancialReportTableGraph chartData={chartData} />}
-          </div>
-          <div className={classes.tableSection}>
-            {tableData && <FinancialReportTable tableData={tableData} />}
-          </div>
+          {/* Holdings Proportion 영역 차트 렌더링 */}
+          {isChartVisible && holdingsData && (
+            <FinancialReportTableGraph data={holdingsData} title="Holdings Proportions" type="area" />
+          )}
+          
+          {/* Portfolio Returns 라인 차트 렌더링 */}
+          {isChartVisible && portfolioReturn && (
+            <FinancialReportTableGraph data={portfolioReturn} title="Portfolio Returns" type="line" />
+          )}
         </div>
       </div>
 

@@ -18,10 +18,6 @@ export default function FinancialReportTable() {
 
   return (
     <div className={styles.container}>
-      {/* 연도별 자산현황 텍스트와 차트 */}
-      <h2 className={styles.heading2}>연도별 자산현황</h2>
-      <FinancialReportTableGraph chartData={newChartData} /> {/* 차트 */}
-
       {/* 백테스트 요약 보고서 텍스트 */}
       <h3 className={styles.heading3}>백테스트 요약 보고서</h3>
 
