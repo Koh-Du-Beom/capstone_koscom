@@ -22,15 +22,29 @@ export default function FinancialPrompt({ updateGraphData }) {
           message: inputValue.trim(),
         });
 
-        const jsonData = response.data;
+        const newData = response.data;
 
-        // updateGraphData 함수를 사용하여 그래프 데이터를 업데이트
-        updateGraphData(jsonData);
-
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { type: 'system', content: '요청사항을 바탕으로 그래프를 생성했습니다.' },
-        ]);
+        // 응답 데이터가 문자열인지 JSON 형태인지 확인
+        if (typeof newData === 'string') {
+          // 문자열일 경우 메시지로만 표시
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { type: 'system', content: newData },
+          ]);
+        } else if (Array.isArray(newData) || typeof newData === 'object') {
+          // JSON 형태일 경우 그래프 데이터를 업데이트
+          updateGraphData((prev) => [...prev, ...newData]);
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { type: 'system', content: '요청사항을 바탕으로 그래프를 생성했습니다.' },
+          ]);
+        } else {
+          // 예상하지 못한 데이터 형식일 경우 오류 메시지 표시
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { type: 'system', content: '알 수 없는 데이터 형식이 반환되었습니다.' },
+          ]);
+        }
       } catch (error) {
         console.error("Error fetching financial data:", error);
         setMessages((prevMessages) => [

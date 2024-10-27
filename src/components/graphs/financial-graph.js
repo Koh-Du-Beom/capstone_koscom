@@ -16,7 +16,6 @@ import {
 } from "chart.js";
 import GraphLayout from "./GraphLayout"; 
 
-// ChartJS 모듈 등록
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -29,112 +28,114 @@ ChartJS.register(
 );
 
 export default function FinancialGraph({ graphData }) {
-  const [chartType, setChartType] = useState("Line");
-  const [years, setYears] = useState([]);
-  const [filterRange, setFilterRange] = useState([0, 1]);
+  const [chartTypes, setChartTypes] = useState([]);
+  const [filterRanges, setFilterRanges] = useState({}); // 그래프별 filterRanges를 객체로 저장
 
-  // 차트 타입을 토글하는 함수
-  const toggleChartType = () => {
-    setChartType(chartType === "Bar" ? "Line" : "Bar");
+  const toggleChartType = (index) => {
+    setChartTypes((prevTypes) =>
+      prevTypes.map((type, i) => (i === index ? (type === "Bar" ? "Line" : "Bar") : type))
+    );
   };
 
   useEffect(() => {
     if (graphData && graphData.length > 0) {
-      // 첫 번째 지표에서 기간을 추출하여 설정
-      const firstMetric = graphData[0];
-      const metricName = Object.keys(firstMetric)[0]; // 첫 번째 지표 이름
-      const metricData = firstMetric[metricName];
-  
-      if (metricData) {
-        const firstCompany = Object.keys(metricData)[0]; // 첫 번째 회사
-        if (firstCompany && metricData[firstCompany]) {
-          const extractedYears = Object.keys(metricData[firstCompany]);
-          setYears(extractedYears);
-          setFilterRange([0, extractedYears.length - 1]); // 슬라이더 범위를 전체로 초기화
-        }
-      }
+      const initialChartTypes = new Array(graphData.length).fill("Line");
+      const initialFilterRanges = {};
+
+      graphData.forEach((metricObj, index) => {
+        const metricName = Object.keys(metricObj)[0];
+        const metricData = metricObj[metricName];
+        const firstCompany = Object.keys(metricData)[0];
+        const metricYears = firstCompany ? Object.keys(metricData[firstCompany]) : [];
+
+        initialFilterRanges[index] = [0, metricYears.length - 1];
+      });
+
+      setChartTypes(initialChartTypes);
+      setFilterRanges(initialFilterRanges);
     }
   }, [graphData]);
-  
-  // 각 지표별 데이터셋 생성
-  const createDatasetForMetric = (metricName, metricData) => {
+
+  const createDatasetForMetric = (metricName, metricData, years) => {
     const companies = Object.keys(metricData);
-    const filteredYears = years.slice(filterRange[0], filterRange[1] + 1); // 필터링된 기간
     
     const datasets = companies.map((company, index) => {
       const colorIndex = index % graphColors.length;
       return {
         label: company,
-        data: filteredYears.map(year => metricData[company][year] || null), // 필터링된 연도에 맞춰 데이터 슬라이싱
+        data: years.map(year => metricData[company][year] || null),
         backgroundColor: graphColors[colorIndex].backgroundColor,
         borderColor: graphColors[colorIndex].borderColor,
         borderWidth: 1,
       };
     });
-
-    return { labels: filteredYears, datasets };
+  
+    return { labels: years, datasets };
   };
 
-  // 그래프 배열 생성
   const graphs = graphData.map((metricObj, index) => {
-    const metricName = Object.keys(metricObj)[0]; // 지표 이름 (예: "PER" 또는 "PBR")
+    const metricName = Object.keys(metricObj)[0];
     const metricData = metricObj[metricName];
-    const data = createDatasetForMetric(metricName, metricData);
-    const ChartComponent = chartType === "Bar" ? Bar : Line;
+
+    if (!filterRanges[index] || !chartTypes[index]) return null;
+
+    // 각 그래프별로 x축에 사용할 연도를 설정합니다.
+    const metricYears = Object.keys(metricData[Object.keys(metricData)[0]]);
+    const filteredYears = metricYears.slice(filterRanges[index][0], filterRanges[index][1] + 1);
+    const data = createDatasetForMetric(metricName, metricData, filteredYears);
+    const ChartComponent = chartTypes[index] === "Bar" ? Bar : Line;
 
     return (
       <div key={index} className={classes.chartContainer}>
+        <button
+          onClick={() => toggleChartType(index)}
+          className={classes.chartToggleButton}
+        >
+          {chartTypes[index] === "Bar" ? "Line" : "Bar"}
+        </button>
         <ChartComponent
           data={data}
           options={{
             responsive: true,
+            maintainAspectRatio: true,
+            aspectRatio: 1,
             plugins: {
               legend: { position: "top" },
               title: { display: true, text: metricName },
             },
             scales: {
               x: { title: { display: true, text: "기간" } },
-              y: { title: { display: true, text: "데이터 크기" } },
             },
           }}
         />
-        {years.length > 0 && (
+        {metricYears.length > 0 && (
           <Range
             step={1}
             min={0}
-            max={years.length - 1} // years 배열이 비어 있지 않은 경우에만 max 설정
-            values={filterRange}
-            onChange={(values) => setFilterRange(values)}
+            max={metricYears.length - 1}
+            values={filterRanges[index]}
+            onChange={(values) =>
+              setFilterRanges((prevRanges) => ({
+                ...prevRanges,
+                [index]: values,
+              }))
+            }
             renderTrack={({ props, children }) => (
-              <div
-                {...props}
-                className={classes.rangeSliderTrack}
-              >
+              <div {...props} className={classes.rangeSliderTrack}>
                 {children}
               </div>
             )}
             renderThumb={({ props, index }) => (
-              <div
-                {...props}
-                key={index}
-                className={classes.rangeSliderThumb}
-              />
+              <div {...props} key={index} className={classes.rangeSliderThumb} />
             )}
           />
         )}
         <div className={classes.rangeValue}>
-          <span>기간: {years[filterRange[0]]} - {years[filterRange[1]]}</span>
+          <span>기간: {metricYears[filterRanges[index][0]]} - {metricYears[filterRanges[index][1]]}</span>
         </div>
       </div>
     );
   });
 
-  return (
-    <div className={classes.graphSection}>
-      <button onClick={toggleChartType}>
-        {chartType === "Bar" ? "Line 차트로 보기" : "Bar 차트로 보기"}
-      </button>
-      <GraphLayout graphs={graphs} />
-    </div>
-  );
+  return <div className={classes.graphSection}><GraphLayout graphs={graphs} /></div>;
 }

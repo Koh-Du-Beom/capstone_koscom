@@ -1,11 +1,12 @@
-'use client';
 
+'use client';
 import React, { useState, useEffect } from 'react';
 import classes from './page.module.css';
 import FinancialReportTable from '@/components/tables/FinancialReportTable';
 import FinancialReportTableGraph from '@/components/graphs/FinancialReportTableGraph';
 import SimpleStockListModal from '@/components/modal/simple-stock-list-modal/simple-stock-list-modal'; // 종목 검색 모달
 import { parseCSV } from '@/utils/parseCSV';
+
 
 export default function BackTestingPage() {
   // 백테스트 설정 및 입력값을 위한 상태 변수들
@@ -23,19 +24,12 @@ export default function BackTestingPage() {
   const [holdingsData, setHoldingsData] = useState(null); // 홀딩 데이터 차트 값
   const [isChartVisible, setIsChartVisible] = useState(false); // 차트 표시 여부
 
+
   const PORTFOLIO_STORAGE_KEY = 'savedPortfolioData'; // 로컬스토리지 키 설정
 
   // 포트폴리오 저장 함수 - 로컬 스토리지에 포트폴리오 데이터 저장
   const handleSavePortfolio = () => {
-    const portfolioData = {
-      startDate,
-      endDate,
-      rebalancePeriod,
-      method,
-      rsiPeriod,
-      startMoney,
-      assets,
-    };
+    const portfolioData = { startDate, endDate, rebalancePeriod, method, rsiPeriod, startMoney, assets };
     localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(portfolioData));
     alert('포트폴리오가 저장되었습니다.');
   };
@@ -162,6 +156,7 @@ export default function BackTestingPage() {
         console.error('Error fetching backtest data:', error);
     }
 };
+
 
   return (
     <div className={classes.container}>
@@ -291,7 +286,7 @@ export default function BackTestingPage() {
 
           {/* 실행 및 저장 버튼 */}
           <div className={classes.buttonGroup}>
-            <button className={classes.confirmButton} onClick={handleRunBacktest} disabled={!isFormValid}>
+            <button className={classes.confirmButton} onClick={loadCSVData} disabled={!isFormValid}>
               결과 확인
             </button>
             <button className={classes.saveButton} onClick={handleSavePortfolio} disabled={!isFormValid}>포트폴리오 저장</button>
@@ -309,13 +304,12 @@ export default function BackTestingPage() {
           {isChartVisible && portfolioReturn && (
             <FinancialReportTableGraph data={portfolioReturn} title="Portfolio Returns" type="line" />
           )}
+
         </div>
       </div>
 
       {/* 종목 검색 모달 창 */}
-      {showModal && (
-        <SimpleStockListModal onClose={toggleModal} onAddItem={handleSelectStock} />
-      )}
+      {showModal && <SimpleStockListModal onClose={toggleModal} onAddItem={handleSelectStock} />}
     </div>
   );
 }
