@@ -34,22 +34,24 @@ export async function POST(request) {
       pythonProcess.on('close', (code) => {
         if (code === 0) {
           console.log('output', output);
-          try {
-            // output을 배열로 파싱합니다.
-            const jsonData = JSON.parse(output);
-            if (!Array.isArray(jsonData)) {
-              resolve(NextResponse.json([jsonData])); // 객체일 경우 배열로 감싸서 반환
-            } else {
-              resolve(NextResponse.json(jsonData)); // 이미 배열일 경우 그대로 반환
+
+          // output이 JSON 형식인지 문자열인지 구분
+          if (output.trim().startsWith('{') && output.trim().endsWith('}')) {
+            try {
+              const jsonData = JSON.parse(output);
+              resolve(NextResponse.json(Array.isArray(jsonData) ? jsonData : [jsonData]));
+            } catch (parseError) {
+              console.error('JSON 파싱 오류:', parseError.message);
+              reject(
+                NextResponse.json(
+                  { error: 'Failed to parse JSON output from Python script' },
+                  { status: 500 }
+                )
+              );
             }
-          } catch (parseError) {
-            console.error('JSON 파싱 오류:', parseError.message);
-            reject(
-              NextResponse.json(
-                { error: 'Failed to parse JSON output from Python script' },
-                { status: 500 }
-              )
-            );
+          } else {
+            // JSON 형식이 아닌 경우 문자열로 반환
+            resolve(NextResponse.json(output.trim()));
           }
         } else {
           console.error(`Python script error: ${error}`);

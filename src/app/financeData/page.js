@@ -32,26 +32,32 @@ export default function FinancialDataShowPage() {
           },
           body: JSON.stringify({ selectedStocks, selectedIndicators }),
         });
-
+  
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
-
-        const data = await response.json();
-        setGraphData(data);
+  
+        const newData = await response.json();
+        console.log(newData);
+        
+        // 기존 graphData에 새 데이터를 단순히 추가
+        setGraphData((prevData) => [...prevData, ...newData]);
       } catch (error) {
         console.error('Error fetching data:', error);
-      } 
+      }
     };
-
+  
     if (selectedIndicators.length > 0 && selectedStocks.length > 0) {
       fetchData();
     }
   }, [selectedIndicators, selectedStocks]);
 
+
+
   const handleOptionClick = (option) => {
-    setSelectedOption(option); 
-  };
+    setSelectedOption(option);
+    setGraphData([]);  //체크박스 - 프롬프트 변경 시, 종목의 입력값이 전혀 달라 데이터가 다름. 그래프 초기화
+  }; 
 
   const handleSelectStock = (stocks) => {
     setSelectedStocks(Array.isArray(stocks) ? stocks : [stocks]);
@@ -78,6 +84,7 @@ export default function FinancialDataShowPage() {
           >
             Prompt
           </button>
+
         </div>
 
         <div className={classes.inputSection}>
