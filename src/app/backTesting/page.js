@@ -7,7 +7,6 @@ import FinancialReportTableGraph from '@/components/graphs/FinancialReportTableG
 import SimpleStockListModal from '@/components/modal/simple-stock-list-modal/simple-stock-list-modal'; // 종목 검색 모달
 import { parseCSV } from '@/utils/parseCSV';
 
-
 export default function BackTestingPage() {
   // 백테스트 설정 및 입력값을 위한 상태 변수들
   const [startDate, setStartDate] = useState('2013-01'); // 테스트 시작일
@@ -24,12 +23,19 @@ export default function BackTestingPage() {
   const [holdingsData, setHoldingsData] = useState(null); // 홀딩 데이터 차트 값
   const [isChartVisible, setIsChartVisible] = useState(false); // 차트 표시 여부
 
-
   const PORTFOLIO_STORAGE_KEY = 'savedPortfolioData'; // 로컬스토리지 키 설정
 
   // 포트폴리오 저장 함수 - 로컬 스토리지에 포트폴리오 데이터 저장
   const handleSavePortfolio = () => {
-    const portfolioData = { startDate, endDate, rebalancePeriod, method, rsiPeriod, startMoney, assets };
+    const portfolioData = {
+      startDate,
+      endDate,
+      rebalancePeriod,
+      method,
+      rsiPeriod,
+      startMoney,
+      assets,
+    };
     localStorage.setItem(PORTFOLIO_STORAGE_KEY, JSON.stringify(portfolioData));
     alert('포트폴리오가 저장되었습니다.');
   };
@@ -117,46 +123,57 @@ export default function BackTestingPage() {
   };
 
   // 백테스트 실행 함수 - API에서 차트와 테이블 데이터를 가져와 차트 설정
-  const handleRunBacktest = async () => {
-    console.log("백테스트 실행");
+  // 백테스트 실행 함수 - API에서 차트와 테이블 데이터를 가져와 차트 설정
+const handleRunBacktest = async () => {
+  // Format assets to match "종목코드,비율" format, separated by semicolons
+  const formattedAssets = assets.map((asset) => `${asset.code},${asset.ratio}`).join(';');
 
-    try {
-        // 백테스트 Mock 데이터 로드
-        const response = await fetch('/csv/backtestMockData.txt');
-        const data = await response.json();
+  try {
+    const response = await fetch('/api/runBacktesting', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        assets: formattedAssets, // Use formatted assets here
+        rebalancePeriod,
+        method,
+        startDate,
+        endDate,
+      }),
+    });
 
-        // Portfolio Returns 데이터 설정
-        setPortfolioReturn({
-            labels: data.portfolio_returns.dates, // dates 배열을 x축 레이블로 사용
-            datasets: [{
-                label: 'Portfolio Returns',
-                data: data.portfolio_returns.returns.map(value => parseFloat(value)), // returns 배열을 y축 데이터로 사용
-                borderColor: 'green',
-                backgroundColor: 'rgba(0, 255, 0, 0.3)',
-                fill: false,
-            }],
-        });
+    const data = await response.json();
 
-        // Holdings Proportions 데이터 설정
-        setHoldingsData({
-            labels: data.holdings_proportions.map(item => item.date), // date 속성을 x축 레이블로 사용
-            datasets: Object.keys(data.holdings_proportions[0] || {})
-                .filter(key => key !== 'date')
-                .map((asset, index) => ({
-                    label: asset,
-                    data: data.holdings_proportions.map(item => parseFloat(item[asset])),
-                    backgroundColor: `rgba(0, 0, 255, ${0.3 + index * 0.05})`,
-                    borderColor: 'blue',
-                    fill: true,
-                })),
-        });
+    setPortfolioReturn({
+      labels: data.portfolio_returns.dates,
+      datasets: [
+        {
+          label: 'Portfolio Returns',
+          data: data.portfolio_returns.returns,
+          borderColor: 'green',
+          backgroundColor: 'rgba(0, 255, 0, 0.3)',
+          fill: false,
+        },
+      ],
+    });
 
-        setIsChartVisible(true); // 차트 표시 활성화
+    setHoldingsData({
+      labels: data.holdings_proportions.map((item) => item.date),
+      datasets: Object.keys(data.holdings_proportions[0] || {})
+        .filter((key) => key !== 'date')
+        .map((asset, index) => ({
+          label: asset,
+          data: data.holdings_proportions.map((item) => item[asset]),
+          backgroundColor: `rgba(0, 0, 255, ${0.3 + index * 0.05})`,
+          borderColor: 'blue',
+          fill: true,
+        })),
+    });
+
+    setIsChartVisible(true);
     } catch (error) {
-        console.error('Error fetching backtest data:', error);
+      console.error('Error fetching backtest data:', error);
     }
-};
-
+  };
 
   return (
     <div className={classes.container}>
@@ -286,7 +303,7 @@ export default function BackTestingPage() {
 
           {/* 실행 및 저장 버튼 */}
           <div className={classes.buttonGroup}>
-            <button className={classes.confirmButton} onClick={loadCSVData} disabled={!isFormValid}>
+            <button className={classes.confirmButton} onClick={handleRunBacktest} disabled={!isFormValid}>
               결과 확인
             </button>
             <button className={classes.saveButton} onClick={handleSavePortfolio} disabled={!isFormValid}>포트폴리오 저장</button>
@@ -304,12 +321,13 @@ export default function BackTestingPage() {
           {isChartVisible && portfolioReturn && (
             <FinancialReportTableGraph data={portfolioReturn} title="Portfolio Returns" type="line" />
           )}
-
         </div>
       </div>
 
       {/* 종목 검색 모달 창 */}
-      {showModal && <SimpleStockListModal onClose={toggleModal} onAddItem={handleSelectStock} />}
+      {showModal && (
+        <SimpleStockListModal onClose={toggleModal} onAddItem={handleSelectStock} />
+      )}
     </div>
   );
 }
