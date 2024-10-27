@@ -124,56 +124,69 @@ export default function BackTestingPage() {
 
   // 백테스트 실행 함수 - API에서 차트와 테이블 데이터를 가져와 차트 설정
   // 백테스트 실행 함수 - API에서 차트와 테이블 데이터를 가져와 차트 설정
-const handleRunBacktest = async () => {
-  // Format assets to match "종목코드,비율" format, separated by semicolons
-  const formattedAssets = assets.map((asset) => `${asset.code},${asset.ratio}`).join(';');
-
-  try {
-    const response = await fetch('/api/runBacktesting', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        assets: formattedAssets, // Use formatted assets here
-        rebalancePeriod,
-        method,
-        startDate,
-        endDate,
-      }),
-    });
-
-    const data = await response.json();
-
-    setPortfolioReturn({
-      labels: data.portfolio_returns.dates,
-      datasets: [
-        {
-          label: 'Portfolio Returns',
-          data: data.portfolio_returns.returns,
-          borderColor: 'green',
-          backgroundColor: 'rgba(0, 255, 0, 0.3)',
-          fill: false,
-        },
-      ],
-    });
-
-    setHoldingsData({
-      labels: data.holdings_proportions.map((item) => item.date),
-      datasets: Object.keys(data.holdings_proportions[0] || {})
-        .filter((key) => key !== 'date')
-        .map((asset, index) => ({
-          label: asset,
-          data: data.holdings_proportions.map((item) => item[asset]),
-          backgroundColor: `rgba(0, 0, 255, ${0.3 + index * 0.05})`,
-          borderColor: 'blue',
-          fill: true,
-        })),
-    });
-
-    setIsChartVisible(true);
+  const handleRunBacktest = async () => {
+    const formattedAssets = assets.map((asset) => `${asset.code},${asset.ratio}`).join(';');
+  
+    try {
+      const response = await fetch('/api/runBackTesting', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          assets: formattedAssets,
+          rebalancePeriod,
+          method,
+          startDate: startDate,
+          endDate: endDate,
+        }),
+      });
+  
+      const data = await response.json();
+      
+      // 받은 데이터 구조 확인
+      console.log("Backtest Data:", data);
+  
+      // 확인 후 데이터가 예상대로일 때만 상태 업데이트
+      if (data.portfolio_returns && data.portfolio_returns.dates) {
+        setPortfolioReturn({
+          labels: data.portfolio_returns.dates,
+          datasets: [
+            {
+              label: 'Portfolio Returns',
+              data: data.portfolio_returns.returns,
+              borderColor: 'green',
+              backgroundColor: 'rgba(0, 255, 0, 0.3)',
+              fill: false,
+            },
+          ],
+        });
+      } else {
+        console.error("Data structure does not contain 'portfolio_returns.dates'");
+      }
+  
+      if (data.holdings_proportions && data.holdings_proportions.length > 0) {
+        setHoldingsData({
+          labels: data.holdings_proportions.map((item) => item.date),
+          datasets: Object.keys(data.holdings_proportions[0] || {})
+            .filter((key) => key !== 'date')
+            .map((asset, index) => ({
+              label: asset,
+              data: data.holdings_proportions.map((item) => item[asset]),
+              backgroundColor: `rgba(0, 0, 255, ${0.3 + index * 0.05})`,
+              borderColor: 'blue',
+              fill: true,
+            })),
+        });
+      } else {
+        console.error("Data structure does not contain 'holdings_proportions'");
+      }
+  
+      setIsChartVisible(true);
     } catch (error) {
       console.error('Error fetching backtest data:', error);
     }
   };
+
+
 
   return (
     <div className={classes.container}>

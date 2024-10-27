@@ -107,7 +107,7 @@ export default function FinancialDataShowPage() {
 
       <div className={classes.rightSection}>      
         <div className={classes.graphSection}>
-          <FinancialGraph graphData={graph_Mock_data} />
+          <FinancialGraph graphData={graphData} />
         </div>
       </div>
     </div>
