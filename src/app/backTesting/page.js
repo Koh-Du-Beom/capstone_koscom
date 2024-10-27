@@ -11,7 +11,7 @@ export default function BackTestingPage() {
   // 백테스트 설정 및 입력값을 위한 상태 변수들
   const [startDate, setStartDate] = useState('2013-01'); // 테스트 시작일
   const [endDate, setEndDate] = useState('2020-12'); // 테스트 종료일
-  const [rebalancePeriod, setRebalancePeriod] = useState('1일'); // 리밸런싱 주기
+  const [rebalancePeriod, setRebalancePeriod] = useState('1개월'); // 리밸런싱 주기
   const [method, setMethod] = useState('지정 비중'); // 리밸런싱 방법
   const [rsiPeriod, setRsiPeriod] = useState(14); // RSI 기간, 절대 모멘텀 방식 선택 시 활성화
   const [startMoney, setStartMoney] = useState(''); // 시작 금액
@@ -141,13 +141,14 @@ export default function BackTestingPage() {
       });
   
       const data = await response.json();
-      
-      // 받은 데이터 구조 확인
       console.log("Backtest Data:", data);
   
-      // 확인 후 데이터가 예상대로일 때만 상태 업데이트
+      const newGraphData = [];
+
       if (data.portfolio_returns && data.portfolio_returns.dates) {
-        setPortfolioReturn({
+        const portfolioReturnData = {
+          title: 'Portfolio Returns',
+          type: 'line',
           labels: data.portfolio_returns.dates,
           datasets: [
             {
@@ -158,13 +159,14 @@ export default function BackTestingPage() {
               fill: false,
             },
           ],
-        });
-      } else {
-        console.error("Data structure does not contain 'portfolio_returns.dates'");
+        };
+        newGraphData.push(portfolioReturnData);
       }
-  
+
       if (data.holdings_proportions && data.holdings_proportions.length > 0) {
-        setHoldingsData({
+        const holdingsProportionData = {
+          title: 'Holdings Proportions',
+          type: 'area',
           labels: data.holdings_proportions.map((item) => item.date),
           datasets: Object.keys(data.holdings_proportions[0] || {})
             .filter((key) => key !== 'date')
@@ -175,11 +177,11 @@ export default function BackTestingPage() {
               borderColor: 'blue',
               fill: true,
             })),
-        });
-      } else {
-        console.error("Data structure does not contain 'holdings_proportions'");
+        };
+        newGraphData.push(holdingsProportionData);
       }
-  
+
+      setGraphData(newGraphData);
       setIsChartVisible(true);
     } catch (error) {
       console.error('Error fetching backtest data:', error);
