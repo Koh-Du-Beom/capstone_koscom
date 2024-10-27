@@ -37,6 +37,7 @@ const FinancialReportTableGraph = ({ data, title, type }) => {
       y: {
         title: { display: true, text: '비율' },
         stacked: type === 'area', // 영역 차트일 때는 y축을 스택으로 쌓아 올림
+        max: type === 'area' ? 1.0 : undefined, // 영역 차트일 때 y축 최댓값을 1.0으로 고정
       },
     },
   };

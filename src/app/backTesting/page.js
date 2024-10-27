@@ -122,58 +122,46 @@ export default function BackTestingPage() {
     setStartMoney(formatMoney(value)); // 포맷팅된 값을 상태에 저장
   };
 
-  // 포트폴리오 데이터 불러오기 함수
-  useEffect(() => {
-    const loadData = async () => {
-      const holdingsFilePath = '/csv/holdings_proportions.csv';
-      const portfolioFilePath = '/csv/portfolio_returns.csv';
-
-      try {
-        // Holdings Proportions 데이터 파싱
-        const holdingsParsedData = await parseCSV(holdingsFilePath);
-        setHoldingsData({
-          labels: holdingsParsedData.map(row => row.date), // x축 레이블로 date 사용
-          datasets: Object.keys(holdingsParsedData[0] || {})
-            .filter(key => key !== 'date')
-            .map((asset, index) => ({
-              label: asset,
-              data: holdingsParsedData.map(row => parseFloat(row[asset])),
-              backgroundColor: `rgba(0, 0, 255, ${0.3 + index * 0.05})`, // 색상 조정
-              borderColor: 'blue',
-              fill: true,
-            })),
-        });
-
-        // Portfolio Returns 데이터 파싱
-        const portfolioParsedData = await parseCSV(portfolioFilePath);
-        setPortfolioReturn({
-          labels: portfolioParsedData.map(row => row.dates), // x축 레이블로 dates 사용
-          datasets: [
-            {
-              label: 'Portfolio Returns',
-              data: portfolioParsedData.map(row => parseFloat(row.returns)),
-              borderColor: 'green',
-              backgroundColor: 'rgba(0, 255, 0, 0.3)',
-              fill: false,
-            },
-          ],
-        });
-      } catch (error) {
-        console.error('Error loading CSV data:', error);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  // 백테스트 실행 함수 - 포트폴리오 데이터 전송 후 차트와 테이블 데이터를 각각 가져옴
-  const handleRunBacktest = () => {
+  // 백테스트 실행 함수 - API에서 차트와 테이블 데이터를 가져와 차트 설정
+  const handleRunBacktest = async () => {
     console.log("백테스트 실행");
-    setIsChartVisible(true); // 차트를 활성화하여 표시
-    // sendPortfolioDataToBackend();
-    // fetchChartData();
-    // fetchTableData();
-  };
+
+    try {
+        // 백테스트 Mock 데이터 로드
+        const response = await fetch('/csv/backtestMockData.txt');
+        const data = await response.json();
+
+        // Portfolio Returns 데이터 설정
+        setPortfolioReturn({
+            labels: data.portfolio_returns.dates, // dates 배열을 x축 레이블로 사용
+            datasets: [{
+                label: 'Portfolio Returns',
+                data: data.portfolio_returns.returns.map(value => parseFloat(value)), // returns 배열을 y축 데이터로 사용
+                borderColor: 'green',
+                backgroundColor: 'rgba(0, 255, 0, 0.3)',
+                fill: false,
+            }],
+        });
+
+        // Holdings Proportions 데이터 설정
+        setHoldingsData({
+            labels: data.holdings_proportions.map(item => item.date), // date 속성을 x축 레이블로 사용
+            datasets: Object.keys(data.holdings_proportions[0] || {})
+                .filter(key => key !== 'date')
+                .map((asset, index) => ({
+                    label: asset,
+                    data: data.holdings_proportions.map(item => parseFloat(item[asset])),
+                    backgroundColor: `rgba(0, 0, 255, ${0.3 + index * 0.05})`,
+                    borderColor: 'blue',
+                    fill: true,
+                })),
+        });
+
+        setIsChartVisible(true); // 차트 표시 활성화
+    } catch (error) {
+        console.error('Error fetching backtest data:', error);
+    }
+};
 
   return (
     <div className={classes.container}>
@@ -264,7 +252,7 @@ export default function BackTestingPage() {
             <div className={classes.moneyInputContainer}>
               <span className={classes.moneySymbol}>₩</span>
               <input
-                type="text" // 숫자형 대신 text로 사용
+                type="text"
                 value={startMoney}
                 onChange={(e) => handleMoneyChange(e.target.value)}
                 className={classes.moneyInput}
