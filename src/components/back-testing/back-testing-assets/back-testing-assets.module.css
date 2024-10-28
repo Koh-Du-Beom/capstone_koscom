@@ -1,0 +1,90 @@
+.assetContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.stockListContainer {
+  width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stockItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.stockItem span {
+  font-size: 16px;
+  flex-grow: 1; /* 텍스트를 왼쪽으로 정렬 */
+}
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+}
+
+.ratioInput {
+  width: 80px;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  margin-right: 8px;
+}
+
+.ratioInput:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.selectButton {
+  padding: 12px 30px;
+  font-size: 24px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s, box-shadow 0.1s;
+  width: 100%;
+}
+
+.selectButton:hover {
+  background-color: #f0f0f0;
+}
+
+.selectButton:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.deleteButton {
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #fff;
+  background-color: #ff4d4d;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  background-color: #ff1a1a;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+  margin-top: 4px;
+}

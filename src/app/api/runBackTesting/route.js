@@ -21,12 +21,12 @@ export async function POST(request) {
       // 각 인자를 `"data"` 형식으로 전달
       const pythonProcess = spawn(pythonPath, [
         scriptPath,
-        '--assets', `"${assets}"`,
-        '--rebal_period', `"${rebalancePeriod}"`,
-        '--method', `"${method}"`,
-        '--uninvested_asset', `"현금"`,
-        '--start_date', `"${startDate}"`,
-        '--end_date', `"${endDate}"`,
+        '--assets', assets,
+        '--rebal_period', rebalancePeriod,
+        '--method', method,
+        '--uninvested_asset', "현금",
+        '--start_date', startDate,
+        '--end_date', endDate,
       ]);
 
       let output = '';

@@ -1,0 +1,45 @@
+.dropdownContainer {
+  width: 100%;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc; 
+}
+
+.dropdownHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #fff;
+  color: #000;
+  cursor: pointer;
+  font-size: 18px; /* 폰트 크기 증가 */
+  border: 1px solid #ccc; 
+  border-radius: 4px;
+}
+
+.arrowUp {
+  transform: rotate(180deg); 
+}
+
+.arrowDown {
+  transform: rotate(0deg);
+}
+
+.dropdownMenu {
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+.dropdownItem {
+  margin: 5px 0;
+  font-size: 16px; /* 폰트 크기 증가 */
+  padding: 8px;
+  cursor: pointer;
+}
+
+.dropdownItem:hover {
+  background-color: #f0f0f0; /* hover 시 배경색 변경 */
+}

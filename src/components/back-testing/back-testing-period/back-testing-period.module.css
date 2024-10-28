@@ -1,0 +1,44 @@
+.datePickerContainer {
+  width: 100%;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.datePickerInput {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.customHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: #fff;
+  color: #000;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.selectYear,
+.selectMonth {
+  font-size: 16px;
+  padding: 8px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.selectYear:hover,
+.selectMonth:hover {
+  background-color: #f0f0f0; /* hover 시 배경색 변경 */
+}
