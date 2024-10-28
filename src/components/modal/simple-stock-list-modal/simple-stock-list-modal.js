@@ -62,17 +62,19 @@ export default function SimpleStockListModal({ onClose, onAddItem }) {
               <button
                 className={`${classes.marketButton} ${selectedMarket === 'kospi' ? classes.activeButton : ''}`}
                 onClick={() => handleMarketSelect('kospi')}
+                type="button"
               >
                 코스피
               </button>
               <button
                 className={`${classes.marketButton} ${selectedMarket === 'kosdaq' ? classes.activeButton : ''}`}
                 onClick={() => handleMarketSelect('kosdaq')}
+                type="button"
               >
                 코스닥
               </button>
             </div>
-            <button onClick={onClose} className={classes.closeButton}>
+            <button onClick={onClose} className={classes.closeButton} type="button">
               &times;
             </button>
           </div>
@@ -113,6 +115,7 @@ export default function SimpleStockListModal({ onClose, onAddItem }) {
                         <button
                           className={classes.addButton}
                           onClick={() => handleAddItem(stock)}  // 종목 추가 버튼
+                          type="button"
                         >
                           +
                         </button>

@@ -90,6 +90,7 @@ export default function BackTestingAsset({ options, updateParentObject }) {
               <button
                 onClick={() => handleDeleteStock(stock.code)}
                 className={classes.deleteButton}
+                type="button"
               >
                 삭제
               </button>
@@ -100,7 +101,7 @@ export default function BackTestingAsset({ options, updateParentObject }) {
 
       {ratioError && <p className={classes.error}>{ratioError}</p>}
 
-      <button onClick={() => setIsModalOpen(true)} className={classes.selectButton}>+</button>
+      <button type="button" onClick={() => setIsModalOpen(true)} className={classes.selectButton}>+</button>
 
       {isModalOpen && (
         <SimpleStockListModal
