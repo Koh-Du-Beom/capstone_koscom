@@ -64,6 +64,33 @@ export default function BacktestingPageTwo() {
     }
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch('/api/runBackTesting', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(backTestingInfos),
+      });
+
+      if (!response.ok) {
+        throw new Error("데이터 요청에 실패했습니다.");
+      }
+
+      const data = await response.json();
+      setReportData(data); // 응답 데이터 설정
+      console.log(data);
+      
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      alert("데이터 요청 중 문제가 발생했습니다.");
+    }
+  };
+
+  //프론트엔드에서 그래프 표시 임시테스트
   const handleMockSubmit = (event) => {
     event.preventDefault();
     try {
@@ -79,7 +106,7 @@ export default function BacktestingPageTwo() {
   };
 
   return (
-    <form onSubmit={handleMockSubmit} className={classes.container}>
+    <form onSubmit={handleSubmit} className={classes.container}>
       <div className={classes.leftSection}>
         <div className={classes.buttonContainer}>
           <button type="button" onClick={handleSave} className={classes.saveButton}>저장</button>
