@@ -1,9 +1,19 @@
-
 .navbarLink {
+  font-size: 1.1rem; /* 텍스트 크기 조정 */
+  font-weight: bold; /* 글씨 두께 설정 */
+  color: black; /* 글씨 색상 설정 */
+  text-transform: uppercase; /* 대문자로 변환 */
+  letter-spacing: 0.05em; /* 글자 사이 간격 */
+  transition: color 0.3s ease; /* 마우스 호버 시 색상 변화 효과 */
   text-decoration: none; 
 	margin: 0 30px;
 }
 
 .navbarLink:hover {
-  text-decoration: none;
+  text-decoration: underline; /* 마우스 호버 시 밑줄 */
+}
+
+.circularImage {
+  border-radius: 20%; /* 원형으로 만듦 */
+  object-fit: cover; /* 이미지 크기를 비율에 맞게 조정 */
 }

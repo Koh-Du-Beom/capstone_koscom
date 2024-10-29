@@ -286,7 +286,7 @@ export default function BackTestingPage() {
 
           {/* 실행 및 저장 버튼 */}
           <div className={classes.buttonGroup}>
-            <button className={classes.confirmButton} onClick={loadCSVData} disabled={!isFormValid}>
+            <button className={classes.confirmButton} onClick={handleRunBacktest} disabled={!isFormValid}>
               결과 확인
             </button>
             <button className={classes.saveButton} onClick={handleSavePortfolio} disabled={!isFormValid}>포트폴리오 저장</button>
