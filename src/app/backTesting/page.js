@@ -4,7 +4,10 @@ import BackTestingDropdown from "@/components/back-testing/back-testing-methods/
 import BackTestingPeriod from "@/components/back-testing/back-testing-period/back-testing-period";
 import BackTestingAsset from "@/components/back-testing/back-testing-assets/back-testing-assets";
 import { getLocalStorageItems, setLocalStorageItems } from "@/utils/localStorage";
+import FinancialReportGraph from "@/components/graphs/financial-report-graph";
 import classes from "./page.module.css";
+
+import report_Mock_data from "@/components/graphs/financial-report-data";
 
 const PORTFOLIO_STORAGE_KEY = 'savedPortfolioData';
 
@@ -16,11 +19,12 @@ export default function BacktestingPageTwo() {
     method: '',
     rsiPeriod: '',
     startMoney: '',
-    assets: '', // 자산 정보 리스트
+    assets: '',
   });
 
-  const [rsiError, setRsiError] = useState(""); // RSI 입력 오류 메시지 상태
-  const [reportData, setReportData] = useState(null); // 응답 데이터 저장
+  const [rsiError, setRsiError] = useState("");
+  const [portfolioData, setPortfolioData] = useState(null);
+  const [holdingsData, setHoldingsData] = useState(null);
 
   const updateBackTestingInfos = (key, value) => {
     setBackTestingInfos((prev) => ({
@@ -30,14 +34,14 @@ export default function BacktestingPageTwo() {
   };
 
   const handleMoneyChange = (event) => {
-    const input = event.target.value.replace(/[^\d]/g, ""); // 숫자가 아닌 문자는 제거
-    const formattedValue = input.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // 3자리마다 콤마 추가
+    const input = event.target.value.replace(/[^\d]/g, "");
+    const formattedValue = input.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     updateBackTestingInfos("startMoney", formattedValue);
   };
 
   const handleRsiChange = (event) => {
     const value = event.target.value;
-    if (value === "" || /^\d+$/.test(value)) { // 빈 문자열 또는 숫자만 허용
+    if (value === "" || /^\d+$/.test(value)) {
       setRsiError("");
       updateBackTestingInfos("rsiPeriod", value);
     } else {
@@ -45,13 +49,11 @@ export default function BacktestingPageTwo() {
     }
   };
 
-  // 로컬스토리지에 현재 설정 저장
   const handleSave = () => {
     setLocalStorageItems(PORTFOLIO_STORAGE_KEY, backTestingInfos);
     alert("설정이 저장되었습니다.");
   };
 
-  // 로컬스토리지에서 설정 불러오기
   const handleLoad = () => {
     const savedData = getLocalStorageItems(PORTFOLIO_STORAGE_KEY);
     if (savedData) {
@@ -62,35 +64,22 @@ export default function BacktestingPageTwo() {
     }
   };
 
-  // 백엔드 API에 요청을 보내는 함수
-  const handleSubmit = async (event) => {
+  const handleMockSubmit = (event) => {
     event.preventDefault();
-
     try {
-      const response = await fetch('/api/runBackTesting', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(backTestingInfos),
-      });
-
-      if (!response.ok) {
-        throw new Error("데이터 요청에 실패했습니다.");
-      }
-
-      const data = await response.json();
-      setReportData(data); // 응답 데이터 설정
-      console.log(data);
-      
+      const data = report_Mock_data[0];
+      setPortfolioData(data.portfolio_returns);
+      setHoldingsData(data.holdings_proportions[0]);
+      console.log("Mock Portfolio Data:", data.portfolio_returns);
+      console.log("Mock Holdings Data:", data.holdings_proportions[0]);
     } catch (error) {
-      console.error("Error fetching data:", error);
-      alert("데이터 요청 중 문제가 발생했습니다.");
+      console.error("Error parsing mock data:", error);
+      alert("Mock 데이터 처리 중 문제가 발생했습니다.");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={classes.container}>
+    <form onSubmit={handleMockSubmit} className={classes.container}>
       <div className={classes.leftSection}>
         <div className={classes.buttonContainer}>
           <button type="button" onClick={handleSave} className={classes.saveButton}>저장</button>
@@ -147,16 +136,15 @@ export default function BacktestingPageTwo() {
 
         <BackTestingAsset options="assets" updateParentObject={updateBackTestingInfos} />
 
-        {/* 제출 버튼 */}
         <button type="submit" className={classes.submitButton}>백테스트 실행</button>
       </div>
 
       <div className={classes.rightSection}>
-        {/* 결과 데이터를 표시할 영역 */}
-        {reportData ? (
-          <pre>{JSON.stringify(reportData, null, 2)}</pre>
-        ) : (
-          <p>백테스트 결과가 여기에 표시됩니다.</p>
+        {holdingsData && (
+          <FinancialReportGraph graphData={holdingsData} dataType="holdings" />
+        )}
+        {portfolioData && (
+          <FinancialReportGraph graphData={portfolioData} dataType="portfolio" />
         )}
       </div>
     </form>

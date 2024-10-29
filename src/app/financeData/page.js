@@ -4,9 +4,9 @@ import FinancialDropdown from '@/components/graphs/financial-data/dropdown/finan
 import classes from './page.module.css';
 import FinancialGraph from '@/components/graphs/financial-graph';
 import dropdownData from '@/components/graphs/financial-data/dropdown/financial-dropdown-data';
-import SelectedStock from '@/components/graphs/selected-stock';
+import SelectedStock from '@/components/selected-stocks/selected-stock';
 import FinancialPrompt from '@/components/graphs/financial-data/prompt/financial-prompt';
-import graph_Mock_data from '@/components/graphs/graphData';
+import graph_Mock_data from '@/components/graphs/graph-data';
 
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown');
@@ -72,19 +72,20 @@ export default function FinancialDataShowPage() {
       <div className={classes.leftSection}>
         <div className={classes.selectionSection}>
           <h2 className={classes.title}>주식 분석</h2>
-          <button
-            className={`${classes.button} ${selectedOption === 'dropdown' ? classes.activeButton : ''}`}
-            onClick={() => handleOptionClick('dropdown')}
-          >
-            Dropdown
-          </button>
-          <button
-            className={`${classes.button} ${selectedOption === 'prompt' ? classes.activeButton : ''}`}
-            onClick={() => handleOptionClick('prompt')}
-          >
-            Prompt
-          </button>
-
+          <div className={classes.option_container}>
+            <button
+              className={`${classes.button} ${selectedOption === 'dropdown' ? classes.activeButton : ''}`}
+              onClick={() => handleOptionClick('dropdown')}
+            >
+              Dropdown
+            </button>
+            <button
+              className={`${classes.button} ${selectedOption === 'prompt' ? classes.activeButton : ''}`}
+              onClick={() => handleOptionClick('prompt')}
+            >
+              Prompt
+            </button>
+          </div>  
         </div>
 
         <div className={classes.inputSection}>

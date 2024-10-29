@@ -1,0 +1,61 @@
+.chartContainer {
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  height: auto;
+  width: 100%;
+}
+
+.chartContainer canvas {
+  width: 100% !important; /* 가로 전체 차지 */
+  height: auto; /* 세로 자동 조절 */
+}
+
+.chartToggleButton {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 5px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: auto;
+  text-align: center;
+}
+
+.chartToggleButton:hover {
+  background-color: #0056b3;
+}
+
+.rangeSliderTrack {
+  height: 8px;
+  width: 100%;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  position: relative;
+}
+
+.rangeSliderThumb {
+  height: 15px;
+  width: 15px;
+  background-color: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.rangeSliderThumb:hover {
+  background-color: #0056b3;
+}
+
+.rangeValue {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}

@@ -14,7 +14,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import GraphLayout from "./GraphLayout"; 
+import GraphLayout from "./graph-layout"; 
 
 ChartJS.register(
   CategoryScale,
