@@ -1,0 +1,239 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #f8f8f8;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.portfolioSection {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  flex: 1;
+}
+
+.resultSection {
+  flex: 3;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.loadButton {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.formGroup {
+  margin-bottom: 30px;
+}
+
+.label {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.subLabel {
+  font-size: 14px;
+  font-weight: bold;
+  color: #666;
+  margin-right: 10px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+}
+
+.amountInputWrapper {
+  position: relative;
+}
+
+.currencySymbol {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 10px;
+  color: #333;
+}
+
+.inputWithSymbol {
+  width: 100%;
+  padding-left: 25px;
+}
+
+.assetRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.assetInfo {
+  display: flex;
+  align-items: center;
+}
+
+.assetRatio {
+  display: flex;
+  align-items: center;
+}
+
+.inputRatio {
+  width: 60px;
+  text-align: right;
+  padding: 5px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.ratioText {
+  margin-right: 10px;
+}
+
+.removeButton {
+  background-color: transparent;
+  color: black;
+  border: none;
+  cursor: pointer;
+}
+
+.addButton {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.confirmButton, .saveButton {
+  width: 48%;
+  padding: 10px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.confirmButton:hover, .saveButton:hover {
+  background-color: #0056b3;
+}
+
+.ratioSummary {
+  text-align: right;
+  margin-top: 10px;
+}
+
+
+.moneyInputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.moneySymbol {
+  position: absolute;
+  left: 10px;
+}
+
+.moneyInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  padding-left: 20px; /* ₩ 기호 공간 확보 */
+  text-align: right;
+}
+
+.dropdownContainer {
+  width: 100%;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.dropdownHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #fff;
+  color: #000;
+  cursor: pointer;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.select {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.arrowUp {
+  transform: rotate(180deg);
+}
+
+.arrowDown {
+  transform: rotate(0deg);
+}
+
+.dropdownMenu {
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+.dropdownItem {
+  margin: 5px 0;
+  font-size: 14px;
+}
