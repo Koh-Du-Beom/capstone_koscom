@@ -64,6 +64,7 @@ export default function BacktestingPageTwo() {
     }
   };
 
+  // 백엔드 API에 요청을 보내는 함수
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -81,8 +82,13 @@ export default function BacktestingPageTwo() {
       }
 
       const data = await response.json();
-      setReportData(data); // 응답 데이터 설정
-      console.log(data);
+
+      // 받은 데이터를 holdings와 portfolio로 나누어 상태 설정
+      setPortfolioData(data.portfolio_returns); // portfolio 데이터 저장
+      setHoldingsData(data.holdings_proportions[0]); // holdings 데이터 저장
+
+      console.log("Portfolio Data:", data.portfolio_returns);
+      console.log("Holdings Data:", data.holdings_proportions[0]);
       
     } catch (error) {
       console.error("Error fetching data:", error);

@@ -1,18 +1,17 @@
 .container {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
   padding: 20px;
 }
 
-.leftSection {
-  width: 40%;
-  margin-left: 20%; 
+.leftSection,
+.middleSection,
+.rightSection {
+  width: 30%;
 }
 
-.rightSection {
-  width: 40%;
-  margin-right: 15%;
+.middleSection {
+  margin: 0 1%;
 }
 
 .divider {
@@ -21,3 +20,14 @@
   height: 100%;
 }
 
+.leftSection {
+  padding-right: 10px;
+}
+
+.middleSection {
+  padding: 0 10px;
+}
+
+.rightSection {
+  padding-left: 10px;
+}
