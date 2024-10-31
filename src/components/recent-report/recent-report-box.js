@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 import { useInterestedItems } from '@/contexts/InterestedItemsContext';
 import RecentReportItem from '@/components/recent-report/recent-report-item';
 import classes from './recent-report-box.module.css';
-import reportData from './recent-report-data'; // 기존 가짜 데이터셋
-import reportData2 from './recent-report-data2';
 
 export default function RecentReportItemBox() {
   const { interestedItems } = useInterestedItems();
@@ -15,7 +13,37 @@ export default function RecentReportItemBox() {
 
   useEffect(() => {
     setClientItems(interestedItems);
+
+    // 관심종목이 존재할 때 첫 번째 항목을 초기값으로 설정
+    if (interestedItems.length > 0) {
+      const initialStock = interestedItems[0];
+      setSelectedStock(initialStock);
+
+      // 첫 번째 항목에 대한 리포트 데이터 가져오기
+      fetchReports(initialStock.code);
+    }
   }, [interestedItems]);
+
+  const fetchReports = async (stockcode) => {
+    try {
+      // 백엔드 API에 요청을 보내 선택된 stockcode의 리포트 데이터를 받아옴
+      const response = await fetch('/api/get-recent-reports', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stockcode })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch report data');
+      }
+
+      const data = await response.json();
+      setReports(data); // 받은 데이터를 reports 상태에 저장
+    } catch (error) {
+      console.error('Error fetching report data:', error);
+      setReports([]); // 에러 발생 시 reports를 빈 배열로 초기화
+    }
+  };
 
   const handleDropdownChange = async (event) => {
     const selectedCode = event.target.value;
@@ -23,25 +51,7 @@ export default function RecentReportItemBox() {
 
     if (selectedItem) {
       setSelectedStock(selectedItem);
-      
-      try {
-        // 백엔드 API에 요청을 보내 선택된 stockcode의 리포트 데이터를 받아옴
-        const response = await fetch('/api/get-recent-reports', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ stockcode: selectedCode })
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch report data');
-        }
-
-        const data = await response.json();
-        setReports(data); // 받은 데이터를 reports 상태에 저장
-      } catch (error) {
-        console.error('Error fetching report data:', error);
-        setReports([]); // 에러 발생 시 reports를 빈 배열로 초기화
-      }
+      fetchReports(selectedCode); // 선택된 항목의 리포트 데이터 가져오기
     } else {
       setSelectedStock(null);
       setReports([]); // 선택된 항목이 없을 경우 reports를 빈 배열로 초기화
@@ -50,8 +60,7 @@ export default function RecentReportItemBox() {
 
   return (
     <div className={classes.container}>
-      <select onChange={handleDropdownChange} className={classes.dropdown}>
-        <option value="">종목을 선택하세요</option>
+      <select onChange={handleDropdownChange} className={classes.dropdown} value={selectedStock?.code || ''}>
         {clientItems.map((item) => (
           <option key={item.code} value={item.code}>
             {item.name}
