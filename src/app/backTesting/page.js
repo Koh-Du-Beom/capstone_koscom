@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BackTestingDropdown from "@/components/back-testing/back-testing-methods/back-testing-dropdown";
 import BackTestingPeriod from "@/components/back-testing/back-testing-period/back-testing-period";
 import BackTestingAsset from "@/components/back-testing/back-testing-assets/back-testing-assets";
@@ -85,10 +85,11 @@ export default function BacktestingPageTwo() {
 
       // 받은 데이터를 holdings와 portfolio로 나누어 상태 설정
       setPortfolioData(data.portfolio_returns); // portfolio 데이터 저장
-      setHoldingsData(data.holdings_proportions[0]); // holdings 데이터 저장
+      setHoldingsData(data.holdings_proportions); // holdings 데이터 저장
 
       console.log("Portfolio Data:", data.portfolio_returns);
-      console.log("Holdings Data:", data.holdings_proportions[0]);
+      console.log("Holdings Data:", data.holdings_proportions);
+      
       
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -110,6 +111,10 @@ export default function BacktestingPageTwo() {
       alert("Mock 데이터 처리 중 문제가 발생했습니다.");
     }
   };
+  
+  useEffect(() => {
+    console.log(holdingsData);
+  }, [holdingsData])
 
   return (
     <form onSubmit={handleSubmit} className={classes.container}>

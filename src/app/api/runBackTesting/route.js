@@ -43,8 +43,8 @@ export async function POST(request) {
       pythonProcess.on('close', (code) => {
         if (code === 0) {
           try {
-            console.log("Python Script Output:", output);
             const jsonData = JSON.parse(output);
+						console.log(jsonData);
             resolve(NextResponse.json(jsonData));
           } catch (parseError) {
             console.error("JSON Parsing Error:", output);

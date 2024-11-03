@@ -35,6 +35,7 @@ export default function FinancialReportGraph({ graphData, dataType }) {
   const toggleChartType = () => {
     setChartType((prevType) => (prevType === "Line" ? "Bar" : "Line"));
   };
+  
 
   const createDataset = () => {
     if (dataType === "portfolio") {
@@ -90,8 +91,8 @@ export default function FinancialReportGraph({ graphData, dataType }) {
           scales: {
             x: { title: { display: true, text: "Date" } },
             y: {
-              title: { display: true, text: dataType === "portfolio" ? "Returns" : "비중" },
-              stacked: dataType === "holdings", // holdings일 때만 누적형으로 설정
+              title: { display: true, text: dataType === "portfolio" ? "수익" : "비중" },
+              stacked: dataType === "holdings", // holdings일 때만 누적형으로 설정율
               min: dataType === "holdings" ? 0 : undefined,
               max: dataType === "holdings" ? 1 : undefined, // holdings일 때 y축을 0~1로 고정
               ticks: dataType === "holdings" ? {
