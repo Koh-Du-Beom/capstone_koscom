@@ -40,6 +40,22 @@ const reportData2 = [
     targetPrice: "99,000",
     opinion: "Buy",
   },
+  {
+    title: "산업 성장과 함께",
+    organization: "KB증권",
+    fileLink: "https://stock.pstatic.net/stock-research/company/87/20241017_company_345678000.pdf",
+    date: "24.10.17",
+    targetPrice: "95,000",
+    opinion: "매수",
+  },
+  {
+    title: "목표가 상향 조정",
+    organization: "메리츠증권",
+    fileLink: "https://stock.pstatic.net/stock-research/company/95/20241016_company_901234000.pdf",
+    date: "24.10.16",
+    targetPrice: "99,000",
+    opinion: "Buy",
+  },
 ];
 
 export default reportData2;
