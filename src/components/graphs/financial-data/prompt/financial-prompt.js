@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Loading from '@/app/loading';
+import ComponentLoading from '@/components/loading/component-loading';
 import classes from './financial-prompt.module.css';
 import axios from 'axios';
 
@@ -71,7 +72,7 @@ export default function FinancialPrompt({ updateGraphData }) {
 
         {isLoading && (
           <div className={`${classes.message} ${classes.loadingMessage}`}>
-            <Loading />
+            <ComponentLoading />
           </div>
         )}
       </div>

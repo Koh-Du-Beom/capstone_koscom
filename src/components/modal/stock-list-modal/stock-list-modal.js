@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import classes from './stock-list-modal.module.css'; // 스타일 모듈로 분리
-import Loading from '@/app/loading';
+import ComponentLoading from '@/components/loading/component-loading';
 
 export default function StockListModal({ onClose, onAddItem }) {
   const [stocks, setStocks] = useState([]);
@@ -69,7 +69,7 @@ export default function StockListModal({ onClose, onAddItem }) {
                   <tr>
                     <td colSpan="4">
                       <div className={classes.loadingContainer}>
-                        <Loading /> {/* 로딩 컴포넌트를 tbody 중앙에 위치 */}
+                        <ComponentLoading /> {/* 로딩 컴포넌트를 tbody 중앙에 위치 */}
                       </div>
                     </td>
                   </tr>

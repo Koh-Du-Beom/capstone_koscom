@@ -74,14 +74,16 @@ export default function FinancialDataShowPage() {
           <h2 className={classes.title}>주식 분석</h2>
           <div className={classes.option_container}>
             <button
-              className={`${classes.button} ${selectedOption === 'dropdown' ? classes.activeButton : ''}`}
+              className={`${classes.button} ${selectedOption === 'dropdown' ? classes.activeButton : ''} ${selectedOption === 'dropdown' ? classes.disabledButton : ''}`}
               onClick={() => handleOptionClick('dropdown')}
+              disabled={selectedOption === 'dropdown'}
             >
               Dropdown
             </button>
             <button
-              className={`${classes.button} ${selectedOption === 'prompt' ? classes.activeButton : ''}`}
+              className={`${classes.button} ${selectedOption === 'prompt' ? classes.activeButton : ''} ${selectedOption === 'prompt' ? classes.disabledButton : ''}`}
               onClick={() => handleOptionClick('prompt')}
+              disabled={selectedOption === 'prompt'}
             >
               Prompt
             </button>

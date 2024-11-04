@@ -3,8 +3,8 @@ import InterestedNews from "./interested-news";
 import classes from './interested-news-box.module.css';
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import Loading from '@/app/loading';
 import { useInterestedItems } from '@/contexts/InterestedItemsContext';
+import ComponentLoading from "../loading/component-loading";
 
 export default function InterestedNewsBox() {
   const itemsPerPage = 5; // 한 페이지에 보여줄 뉴스 아이템 수
@@ -90,7 +90,7 @@ export default function InterestedNewsBox() {
       <div className={classes.news_wrapper}>
         {isLoading ? (
           <div className={classes.loading_container}>
-            <Loading />
+            <ComponentLoading />
           </div>
         ) : clientItems.length === 0 ? (
           <h1 className={classes.no_items_message}>관심 종목을 등록하세요!</h1>

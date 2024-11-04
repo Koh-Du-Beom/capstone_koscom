@@ -35,21 +35,18 @@
 
 .button {
   padding: 8px 16px;
-  background-color: #f0f0f0;
+  background-color: white;
   border: 1px solid #ccc;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 20px;
   transition: background-color 0.3s;
-  margin-left: 20px;
-}
-
-.button:hover {
-  background-color: #ddd;
+  margin-left: 10px;
+  width: 150px;
 }
 
 .activeButton {
-  background-color: #007bff;
-  color: white;
+  background-color: #9DF1B3;
+  color: #191919;
 }
 
 .inputSection {
@@ -64,4 +61,9 @@
   width: 100%;
   padding: 20px;
   border-radius: 8px;
+}
+
+.disabledButton {
+  opacity: 1; 
+  cursor: not-allowed; 
 }

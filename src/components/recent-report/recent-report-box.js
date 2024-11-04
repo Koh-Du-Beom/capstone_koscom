@@ -5,6 +5,7 @@ import { useInterestedItems } from '@/contexts/InterestedItemsContext';
 import RecentReportItem from '@/components/recent-report/recent-report-item';
 import Loading from '@/app/loading';
 import classes from './recent-report-box.module.css';
+import ComponentLoading from '../loading/component-loading';
 
 export default function RecentReportItemBox() {
   const itemsPerPage = 5; // 한 페이지에 보여줄 리포트 아이템 수
@@ -109,7 +110,7 @@ export default function RecentReportItemBox() {
           <div className={classes.reports}>
             {isLoading ? (
               <div className={classes.loading_container}>
-                <Loading />
+                <ComponentLoading />
               </div>
             ) : (
               currentItems.map((report, index) => (
