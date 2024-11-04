@@ -42,11 +42,17 @@ export default function InterestedNewsBox() {
   };
 
   // 관심 종목이 변경될 때마다 fetchNews 호출
-  useEffect(() => {
-    if (interestedItems.length > 0) {
-      fetchNews(interestedItems);
-    }
-  }, [interestedItems]); // 관심 종목에 의존
+	useEffect(() => {
+		if (interestedItems.length > 0) {
+			fetchNews(interestedItems);
+		} else {
+			// 관심 종목이 없을 경우 뉴스 아이템과 페이지네이션 상태 초기화
+			setNewsItems([]);
+			setCurrentPage(1);
+			setPageGroup(1);
+		}
+	}, [interestedItems]);
+
 
   // 페이지네이션에 맞는 기사들을 계산하는 함수
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -77,49 +83,57 @@ export default function InterestedNewsBox() {
   };
 
   return (
-    <div className={classes.container}>
-      <h2 className={classes.title}>나만의 뉴스</h2>
-
-      <div className={classes.news_wrapper}>
-        {isLoading ? 
-          <div className={classes.loading_container}>
-            <Loading />
-          </div> : currentItems.map((news, index) => (
-            <InterestedNews key={index} news={news} />
-          ))} 
-      </div>
-      
-      <div className={classes.pagination}>
-        {/* 이전 페이지 그룹으로 이동 */}
-        <button
-          onClick={() => handleGroupChange("prev")}
-          disabled={pageGroup === 1}
-        >
-          {"<"}
-        </button>
-
-        {/* 현재 페이지 그룹의 페이지 번호 표시 */}
-        {[...Array(endPage - startPage + 1)].map((_, index) => {
-          const pageNumber = startPage + index;
-          return (
-            <button
-              key={pageNumber}
-              className={currentPage === pageNumber ? classes.activePage : ''}
-              onClick={() => handlePageChange(pageNumber)}
-            >
-              {pageNumber}
-            </button>
-          );
-        })}
-
-        {/* 다음 페이지 그룹으로 이동 */}
-        <button
-          onClick={() => handleGroupChange("next")}
-          disabled={pageGroup === totalPageGroups}
-        >
-          {">"}
-        </button>
-      </div>
-    </div>
-  );
+		<div className={classes.container}>
+			<h2 className={classes.title}>나만의 뉴스</h2>
+	
+			<div className={classes.news_wrapper}>
+				{isLoading ? (
+					<div className={classes.loading_container}>
+						<Loading />
+					</div>
+				) : interestedItems.length === 0 ? (
+					<h1 className={classes.no_items_message}>관심 종목을 등록하세요!</h1>
+				) : (
+					currentItems.map((news, index) => (
+						<InterestedNews key={index} news={news} />
+					))
+				)}
+			</div>
+	
+			{newsItems.length > 0 && (
+				<div className={classes.pagination}>
+					{/* 이전 페이지 그룹으로 이동 */}
+					<button
+						onClick={() => handleGroupChange("prev")}
+						disabled={pageGroup === 1}
+					>
+						{"<"}
+					</button>
+	
+					{/* 현재 페이지 그룹의 페이지 번호 표시 */}
+					{[...Array(endPage - startPage + 1)].map((_, index) => {
+						const pageNumber = startPage + index;
+						return (
+							<button
+								key={pageNumber}
+								className={currentPage === pageNumber ? classes.activePage : ''}
+								onClick={() => handlePageChange(pageNumber)}
+							>
+								{pageNumber}
+							</button>
+						);
+					})}
+	
+					{/* 다음 페이지 그룹으로 이동 */}
+					<button
+						onClick={() => handleGroupChange("next")}
+						disabled={pageGroup === totalPageGroups}
+					>
+						{">"}
+					</button>
+				</div>
+			)}
+		</div>
+	);
+	
 }
