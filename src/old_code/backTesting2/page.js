@@ -2,7 +2,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import classes from './page.module.css';
-import FinancialReportTableGraph from '@/components/graphs/FinancialReportTableGraph';
+import FinancialReportTableGraph from '@/old_code/FinancialReportTableGraph';
 import SimpleStockListModal from '@/components/modal/simple-stock-list-modal/simple-stock-list-modal'; // 종목 검색 모달
 import { parseCSV } from '@/utils/parseCSV';
 

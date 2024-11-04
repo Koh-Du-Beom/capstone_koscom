@@ -1,6 +1,6 @@
 import styles from './FinancialReportTable.module.css';
 import { financialData } from './tableData'; // 테이블 데이터
-import FinancialReportTableGraph from '@/components/graphs/FinancialReportTableGraph'; // 새로운 그래프 컴포넌트 import
+import FinancialReportTableGraph from '@/old_code/FinancialReportTableGraph'; // 새로운 그래프 컴포넌트 import
 import { newChartData } from '@/components/graphs/FinancialReportTableGraphData'; // 새로운 그래프 데이터 가져오기
 
 export default function FinancialReportTable() {
