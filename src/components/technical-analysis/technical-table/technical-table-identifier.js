@@ -1,31 +1,28 @@
-
 import React from 'react';
 import Image from 'next/image';
-import classes from './technical-table-identifier.module.css'
-import kospiLogo from '../../../../../public/svgs/kospi.svg'
-import kosdaqLogo from '../../../../../public/svgs/kosdaq.svg'
-import defaultLogo from '../../../../../public/svgs/krx.svg'
+import classes from './technical-table-identifier.module.css';
 
-export default function TechnicalTableIdentifier({ index, ticker, company_name, exchange_code }){
+export default function TechnicalTableIdentifier({ index, ticker, company_name, exchange_code }) {
+  
 	const getExchangeLogo = (code) => {
     switch (code) {
       case 'KDQ':
-        return kosdaqLogo; // KOSDAQ 로고 경로
+        return '/svgs/kosdaq.svg'; // KOSDAQ 로고 경로
       case 'KRX':
-        return kospiLogo; // KOSPI 로고 경로
+        return '/svgs/kospi.svg'; // KOSPI 로고 경로
       default:
-        return defaultLogo; // 기본 로고 경로
+        return '/svgs/krx.svg'; // 기본 로고 경로
     }
   };
-	
-	return (
-		<div className={classes.identifierContainer}>
+
+  return (
+    <div className={classes.identifierContainer}>
       <span className={classes.index}>{index}</span>
       <Image
         src={getExchangeLogo(exchange_code)}
         alt={`${exchange_code} logo`}
-        width={24}
-        height={24}
+        width={36}
+        height={36}
         className={classes.exchangeLogo}
       />
       <div className={classes.infoContainer}>
@@ -33,5 +30,5 @@ export default function TechnicalTableIdentifier({ index, ticker, company_name, 
         <span className={classes.companyName}>{company_name}</span>
       </div>
     </div>
-	)
+  );
 }

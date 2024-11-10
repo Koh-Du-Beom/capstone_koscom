@@ -1,15 +1,24 @@
-import TechnicalTableIdentifier from "@/components/technical-analysis/technical-table/technical-table-identifier"
 
-export default function PortfolioPage(params) {
+import TechnicalTable from "@/components/technical-analysis/technical-table/technical-table"
+import tableMockData from "@/components/technical-analysis/technical-table/technical-table-mockData"
+
+
+export default function PortfolioPage() {
+
+	const selectedIndicators = [
+		'Awesome Oscillator',
+		'RSI',
+		'Stochastic Oscillator',
+		'Stochastic RSI',
+		'True Strength Index (TSI)',
+		'Ultimate Oscillator',
+		'Williams %R'
+	];
+
 	return (
 		<>
 			page for portfolio
-			<TechnicalTableIdentifier 
-				index='1'
-				ticker='019440'
-				company_name='세아특수강'
-				exchange_code='KRX'
-			/>
+			<TechnicalTable data={tableMockData} selectedIndicators={selectedIndicators}/>
 		</>
 	)
 };
