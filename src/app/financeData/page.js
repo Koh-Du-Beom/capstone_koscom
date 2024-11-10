@@ -21,7 +21,7 @@ export default function FinancialDataShowPage() {
       setSelectedIndicators((prevItems) => prevItems.filter(item => item !== name));
     }
   };
-
+	
   useEffect(() => {
     const fetchData = async () => {
       try {

@@ -1,0 +1,55 @@
+.filterContainer {
+  margin: 20px;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.indicatorLabel {
+  font-size: 16px; /* 글자 크기 키우기 */
+  font-weight: bold;
+}
+
+.inputContainer {
+  display: flex;
+  gap: 10px;
+  flex: 2; /* inputContainer에 flex 값을 부여하여 오른쪽 정렬 일관성 유지 */
+  justify-content: space-between; /* 요소 간 균등 간격 */
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+.select, .textInput, .numberInput {
+  width: 100px;
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.select:disabled, .textInput:disabled, .numberInput:disabled {
+  background-color: #e9e9e9;
+  color: #aaa;
+}
