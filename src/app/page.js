@@ -15,8 +15,8 @@ export default function Home() {
       </div>
 
       <div className={classes.rightSection}>
-        <RecentReportItemBox /> {/* ReportItemBox를 오른쪽 섹션에 추가 */}
-      </div>
+        {/* <RecentReportItemBox />  */}
+			</div>
     </main>
   );
 }

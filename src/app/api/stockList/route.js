@@ -1,42 +1,80 @@
 import axios from 'axios';
+import { JSDOM } from 'jsdom';
 import { NextResponse } from 'next/server';
+import iconv from 'iconv-lite';
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const searchTerm = searchParams.get('itmsNm'); // 검색어 파라미터 받기
-  const apiKey = process.env.KRX_ENCODING_KEY;
- 
-  // API 요청 URL 설정
-  let url = `https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo?serviceKey=${apiKey}&resultType=json`;
+  const stockCode = searchParams.get('code');
 
-  if (searchTerm) {
-    url += `&likeItmsNm=${encodeURIComponent(searchTerm)}`;
+  if (!stockCode) {
+    return NextResponse.json({ error: 'Stock code is required' }, { status: 400 });
   }
 
+  const url = `https://finance.naver.com/item/main.naver?code=${stockCode}`;
+
   try {
-    // API 요청 보내기 (JSON 형식 응답)
-    const response = await axios.get(url);
-	
-    // JSON 응답에서 필요한 데이터가 없을 경우 처리
-    if (!response.data || !response.data.response || !response.data.response.body || !response.data.response.body.items || !response.data.response.body.items.item) {
-      console.log("No data available");
-      return NextResponse.json([]); // 데이터가 없을 때 빈 배열 반환
+    const response = await axios.get(url, {
+      responseType: 'arraybuffer',
+      responseEncoding: 'binary',
+    });
+
+    const htmlContent = iconv.decode(response.data, 'EUC-KR');
+    const dom = new JSDOM(htmlContent);
+    const document = dom.window.document;
+
+    // 종목명
+    const nameElement = document.querySelector('.wrap_company h2');
+    const name = nameElement ? nameElement.textContent.trim() : '';
+
+    // 현재가 (mkp)
+    const mkpElement = document.querySelector('.today .no_today .blind');
+    const mkp = mkpElement ? mkpElement.textContent.replace(/,/g, '').trim() : '';
+
+    // 전일 대비 (priceChange) 및 등락률 (priceChangeRate)
+    const priceChangeElement = document.querySelector('.no_exday em.no_down, .no_exday em.no_up');
+    let priceChange = '';
+    let priceChangeRate = '';
+
+    if (priceChangeElement) {
+      const isDown = priceChangeElement.querySelector('.ico')?.classList.contains('down');
+      const changeValues = priceChangeElement.querySelectorAll('span');
+
+      // changeValues에서 각 숫자 부분을 합쳐서 숫자 값으로 만듭니다.
+      let changeText = '';
+      changeValues.forEach(span => {
+        changeText += span.textContent.trim();
+      });
+
+      priceChange = (isDown ? '-' : '') + changeText;
+
+      // 등락률 처리
+      const priceChangeRateElement = priceChangeElement.parentElement.querySelector('.per');
+      priceChangeRate = priceChangeRateElement
+        ? (isDown ? '-' : '') + priceChangeRateElement.textContent.replace('%', '').trim()
+        : '';
     }
-		
 
-    // 필요한 데이터 추출 (필요한 필드만 추출)
-    const stockItems = response.data.response.body.items.item.map(item => ({
-      name: item.itmsNm,            // 종목 이름
-      code: item.srtnCd,            // 종목 고유 코드
-      priceChange: item.vs,         // 가격 변화 (증가/감소)
-      priceChangeRate: item.fltRt,  // 등락률 (증가/감소 비율)
-      marketCategory: item.mrktCtg, // 시장 구분
-      mkp: item.mkp,                // 시가
-    }));
+    // 시장 구분 (marketCategory)
+    const marketCategoryElement = document.querySelector('.wrap_company .description img');
+    const marketCategory = marketCategoryElement
+      ? marketCategoryElement.alt.includes('코스피') ? 'KOSPI' : 'KOSDAQ'
+      : '';
 
-    return NextResponse.json(stockItems); // JSON 데이터 반환
+    const stockData = {
+      name,
+      code: stockCode,
+      priceChange,
+      priceChangeRate,
+      marketCategory,
+      mkp,
+    };
+
+    console.log(stockData); // 데이터 확인용 로그 추가
+
+    return NextResponse.json(stockData);
   } catch (error) {
-    console.error("Error fetching stock data:", error.message);
+    console.error('Error fetching stock data:', error.message);
     return NextResponse.json({ error: 'Failed to fetch data from external API' }, { status: 500 });
   }
 }
