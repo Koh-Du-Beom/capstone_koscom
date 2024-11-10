@@ -4,6 +4,7 @@
   padding: 20px;
 }
 
+
 .leftSection,
 .middleSection,
 .rightSection {
@@ -22,6 +23,7 @@
 
 .leftSection {
   padding-right: 10px;
+	margin-left: 40px;
 }
 
 .middleSection {

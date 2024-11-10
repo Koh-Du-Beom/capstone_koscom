@@ -2,6 +2,7 @@ const tableMockData = {
 	"items": [
 		{
 			"ticker": "002920",
+
 			"Awesome Oscillator": -81.88529411764694,
 			"score_Awesome Oscillator": 37,
 			"RSI": 31.035655607886056,
@@ -16,12 +17,15 @@ const tableMockData = {
 			"score_Ultimate Oscillator": 59,
 			"Williams %R": -75.63025210084034,
 			"score_Williams %R": 68,
+
 			"score": 53.285714285714285,
 			"adjusted_score": 46.190952828723475,
 			"ranking": 59.142857142857146,
+
 			"company_name": "유성기업",
 			"exchange_code": "KRX",
 			"country": "KOR",
+			
 			"marketCap": 52413.95,
 			"sector": "Consumer Cyclicals",
 			"stockId": "002920.KS"

@@ -1,0 +1,10 @@
+
+
+.filterContainer {
+  display: flex;
+	justify-content: center;
+  width: 100%; /* 페이지 너비의 80%로 설정하여 중앙 배치 */
+  gap: 20px; /* 좌우 간격 조절 */
+  margin-bottom: 20px; /* 아래 요소와의 간격 */
+}
+

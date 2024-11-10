@@ -1,14 +1,68 @@
 .filterContainer {
-  margin: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: white;
+  width: 100%;
+  max-width: 800px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e1e1e1;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.mainTitle {
+  font-size: 18px;
+  font-weight: bold;
+  color: black;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.selectButton, .deselectButton {
+  font-size: 14px;
+	font-weight: bold;
+  color: black;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+	background-color: none;
+}
+
+.selectButton:hover, .deselectButton:hover{
+	background-color: #e1e1e1;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.header {
+  border-bottom: 1px solid #e1e1e1;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: bold;
+  color: black;
 }
 
 .table {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background-color: #f9f9f9;
-  padding: 10px;
-  border-radius: 8px;
 }
 
 .row {
@@ -25,15 +79,16 @@
 }
 
 .indicatorLabel {
-  font-size: 16px; /* 글자 크기 키우기 */
+  font-size: 14px;
   font-weight: bold;
+  color: black;
 }
 
 .inputContainer {
   display: flex;
   gap: 10px;
-  flex: 2; /* inputContainer에 flex 값을 부여하여 오른쪽 정렬 일관성 유지 */
-  justify-content: space-between; /* 요소 간 균등 간격 */
+  flex: 2;
+  justify-content: space-between;
 }
 
 .checkbox {

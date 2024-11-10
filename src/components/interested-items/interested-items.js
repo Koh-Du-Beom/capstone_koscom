@@ -1,6 +1,7 @@
 import classes from './interested-items.module.css';
 import Image from 'next/image';
-import LogoTmp from '../../../public/images/tmpLogo.png';
+import KospiLogo from '../../../public/svgs/kospi.svg';
+import KosdaqLogo from '../../../public/svgs/kosdaq.svg';
 
 export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
   return (
@@ -9,8 +10,8 @@ export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
         <div className={classes.container} key={index}>
           <div className={classes.logo}>
             <Image 
-              src={LogoTmp}
-              alt="tmpLogo"
+              src={item.marketCategory === 'KOSPI' ? KospiLogo : KosdaqLogo}
+              alt={`${item.marketCategory} logo`}
               width={100}
               height={100}
             />
@@ -29,7 +30,7 @@ export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
                   {item.priceChange > 0 ? `+${Number(item.priceChange).toLocaleString()}` : Number(item.priceChange).toLocaleString()} 
                   ({(item.priceChangeRate > 0 ? '+' : '') + parseFloat(item.priceChangeRate).toFixed(2)}%)
                 </h6>
-								<span className={`${classes.arrow} ${item.priceChange > 0 ? classes.arrowUp : classes.arrowDown}`}></span>
+                <span className={`${classes.arrow} ${item.priceChange > 0 ? classes.arrowUp : classes.arrowDown}`}></span>
               </div>
             </div>
           </div>
