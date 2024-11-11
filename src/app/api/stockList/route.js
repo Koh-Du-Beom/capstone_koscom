@@ -1,80 +1,96 @@
-import axios from 'axios';
-import { JSDOM } from 'jsdom';
 import { NextResponse } from 'next/server';
+import axios from 'axios';
 import iconv from 'iconv-lite';
+const cheerio = require('cheerio');
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const stockCode = searchParams.get('code');
+  const code = searchParams.get('code'); // 종목 코드
+  const name = searchParams.get('name'); // 종목명 (파라미터로 전달)
+  const marketCategory = searchParams.get('marketCategory'); // 시장 구분 (파라미터로 전달)
 
-  if (!stockCode) {
-    return NextResponse.json({ error: 'Stock code is required' }, { status: 400 });
-  }
-
-  const url = `https://finance.naver.com/item/main.naver?code=${stockCode}`;
+  // Naver Finance URL 설정
+  const url = `https://finance.naver.com/item/main.naver?code=${code}`;
 
   try {
+    // EUC-KR 인코딩으로 HTML 페이지 가져오기
     const response = await axios.get(url, {
       responseType: 'arraybuffer',
-      responseEncoding: 'binary',
     });
 
-    const htmlContent = iconv.decode(response.data, 'EUC-KR');
-    const dom = new JSDOM(htmlContent);
-    const document = dom.window.document;
+    // 응답 데이터를 EUC-KR에서 UTF-8로 변환
+    const html = iconv.decode(response.data, 'EUC-KR');
 
-    // 종목명
-    const nameElement = document.querySelector('.wrap_company h2');
-    const name = nameElement ? nameElement.textContent.trim() : '';
+    // Cheerio로 HTML 로드
+    const $ = cheerio.load(html);
 
-    // 현재가 (mkp)
-    const mkpElement = document.querySelector('.today .no_today .blind');
-    const mkp = mkpElement ? mkpElement.textContent.replace(/,/g, '').trim() : '';
+    // 가격 변동 텍스트 추출
+    const priceChangeText = $('p.no_exday em').first().text().trim();
 
-    // 전일 대비 (priceChange) 및 등락률 (priceChangeRate)
-    const priceChangeElement = document.querySelector('.no_exday em.no_down, .no_exday em.no_up');
-    let priceChange = '';
-    let priceChangeRate = '';
+    // 가격 변동 부호 결정
+    let priceChangeSign = 1;
 
-    if (priceChangeElement) {
-      const isDown = priceChangeElement.querySelector('.ico')?.classList.contains('down');
-      const changeValues = priceChangeElement.querySelectorAll('span');
-
-      // changeValues에서 각 숫자 부분을 합쳐서 숫자 값으로 만듭니다.
-      let changeText = '';
-      changeValues.forEach(span => {
-        changeText += span.textContent.trim();
-      });
-
-      priceChange = (isDown ? '-' : '') + changeText;
-
-      // 등락률 처리
-      const priceChangeRateElement = priceChangeElement.parentElement.querySelector('.per');
-      priceChangeRate = priceChangeRateElement
-        ? (isDown ? '-' : '') + priceChangeRateElement.textContent.replace('%', '').trim()
-        : '';
+    if (priceChangeText.includes('하락')) {
+      priceChangeSign = -1;
+    } else if (priceChangeText.includes('상승')) {
+      priceChangeSign = 1;
+    } else {
+      priceChangeSign = 1; // 기본값
     }
 
-    // 시장 구분 (marketCategory)
-    const marketCategoryElement = document.querySelector('.wrap_company .description img');
-    const marketCategory = marketCategoryElement
-      ? marketCategoryElement.alt.includes('코스피') ? 'KOSPI' : 'KOSDAQ'
-      : '';
+    // 가격 변동 숫자 부분만 추출
+    const priceChangeValueMatch = priceChangeText.match(/[\d,\.]+/);
+    let priceChangeValue = priceChangeValueMatch ? priceChangeValueMatch[0] : '0';
 
+    // 쉼표 제거 및 숫자로 변환
+    priceChangeValue = parseFloat(priceChangeValue.replace(/,/g, ''));
+
+    // 부호 적용
+    const priceChange = (priceChangeSign * priceChangeValue).toString();
+
+    // 등락률 텍스트 추출
+    const priceChangeRateText = $('p.no_exday em').eq(1).find('span.blind').text().trim();
+
+    // 공백 및 줄바꿈 제거
+    const priceChangeRateTextClean = priceChangeRateText.replace(/\s+/g, '');
+
+    // 등락률 숫자 부분만 추출 (부호 포함)
+    const priceChangeRateMatch = priceChangeRateTextClean.match(/([-+]?\d+(\.\d+)?)/);
+
+    let priceChangeRateValue;
+    if (priceChangeRateMatch && priceChangeRateMatch[1]) {
+      priceChangeRateValue = parseFloat(priceChangeRateMatch[1]);
+    } else {
+      priceChangeRateValue = 0;
+    }
+
+    // 부호를 priceChangeSign에 맞게 적용
+    priceChangeRateValue = priceChangeSign * Math.abs(priceChangeRateValue);
+
+    const priceChangeRate = priceChangeRateValue.toString();
+
+    // 매매 기준가 (현재가) 추출
+    const mkpText = $('p.no_today .blind').first().text().trim();
+    const mkp = mkpText.replace(/,/g, ''); // 쉼표 제거
+
+    // 추출한 데이터를 객체로 생성
     const stockData = {
-      name,
-      code: stockCode,
+      name,           // 파라미터로 받은 종목명
+      code,           // 파라미터로 받은 종목 코드
       priceChange,
       priceChangeRate,
-      marketCategory,
+      marketCategory, // 파라미터로 받은 시장 구분
       mkp,
     };
 
-    console.log(stockData); // 데이터 확인용 로그 추가
+    console.log(stockData);
 
-    return NextResponse.json(stockData);
+    return NextResponse.json(stockData); // JSON 형태로 응답
   } catch (error) {
     console.error('Error fetching stock data:', error.message);
-    return NextResponse.json({ error: 'Failed to fetch data from external API' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch data from external source' },
+      { status: 500 }
+    );
   }
 }
