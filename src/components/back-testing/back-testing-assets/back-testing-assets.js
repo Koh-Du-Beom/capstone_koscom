@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from "react";
-import SimpleStockListModal from "@/components/modal/simple-stock-list-modal/simple-stock-list-modal";
+import SimpleStockListModal from "@/components/modal/stock-list-modal/stock-list-modal";
 import classes from './back-testing-assets.module.css';
 
 export default function BackTestingAsset({ options, updateParentObject }) {

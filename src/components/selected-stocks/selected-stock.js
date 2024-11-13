@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import SelectedStockItems from './selected-stock-items';
-import SimpleStockListModal from '../modal/simple-stock-list-modal/simple-stock-list-modal';
+import SimpleStockListModal from '../modal/stock-list-modal/stock-list-modal';
 import classes from './selected-stock.module.css'; // 스타일 모듈
 import { getLocalStorageItems } from '@/utils/localStorage'; // 로컬스토리지에서 아이템을 가져오는 함수
 

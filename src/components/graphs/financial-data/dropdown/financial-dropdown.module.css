@@ -1,7 +1,8 @@
 .dropdownContainer {
+  position: relative;
   width: 100%;
   margin-bottom: 10px;
-  border-bottom: 1px solid #ccc; 
+  border-bottom: 1px solid #ccc;
 }
 
 .dropdownHeader {
@@ -13,12 +14,12 @@
   color: #000;
   cursor: pointer;
   font-size: 16px;
-  border: 1px solid #ccc; 
+  border: 1px solid #ccc;
   border-radius: 4px;
 }
 
 .arrowUp {
-  transform: rotate(180deg); 
+  transform: rotate(180deg);
 }
 
 .arrowDown {
@@ -26,14 +27,24 @@
 }
 
 .dropdownMenu {
-  padding: 10px;
+  width: 100%; /* 부모 컨테이너의 너비를 기준으로 고정 */
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.1s ease; /* max-height에만 트랜지션 적용 */
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-top: 5px;
+  padding: 0 10px; /* 열리지 않은 상태에서 패딩 제거 */
+  box-sizing: border-box; /* 패딩과 border가 width에 포함되도록 설정 */
+}
+
+.dropdownMenu.open {
+  max-height: 1000px; /* 충분히 큰 값으로 설정 */
+  padding: 10px; /* 열린 상태에서 패딩 추가 */
 }
 
 .dropdownItem {
   margin: 5px 0;
-  font-size: 14px;
+  font-size: 18px;
 }

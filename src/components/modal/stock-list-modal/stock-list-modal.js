@@ -1,40 +1,56 @@
 'use client';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import classes from './stock-list-modal.module.css'; // 스타일 모듈로 분리
+import { useState, useEffect } from 'react';
+import classes from './stock-list-modal.module.css';
 import ComponentLoading from '@/components/loading/component-loading';
+import { parseCSV } from '@/utils/parseCSV';
 
 export default function StockListModal({ onClose, onAddItem }) {
-  const [stocks, setStocks] = useState([]);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(''); // 검색어 상태 추가
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
+  const [stocks, setStocks] = useState([]);  // CSV로부터 얻은 주식 데이터 상태
+  const [searchTerm, setSearchTerm] = useState('');  // 검색어 상태
+  const [isLoading, setIsLoading] = useState(false);  // 로딩 상태
 
+  // CSV 파일 로드 함수
+  const loadCSVData = async () => {
+    setIsLoading(true);
+
+    try {
+      // 두 개의 CSV 파일을 모두 로드
+      const kospiData = await parseCSV('/csv/kospi.csv');
+      const kosdaqData = await parseCSV('/csv/kosdaq.csv');
+
+      // 각 데이터에 종목구분 필드 추가
+      const kospiStocks = kospiData.map(stock => ({ ...stock, 종목구분: 'KOSPI' }));
+      const kosdaqStocks = kosdaqData.map(stock => ({ ...stock, 종목구분: 'KOSDAQ' }));
+
+      // 데이터를 합쳐서 상태 업데이트
+      const combinedData = [...kospiStocks, ...kosdaqStocks];
+      setStocks(combinedData);
+    } catch (error) {
+      console.error('CSV 파싱 중 오류 발생:', error);
+    } finally {
+      setIsLoading(false);  // 로딩 끝
+    }
+  };
+
+  // 컴포넌트 마운트 시 CSV 데이터 로드
   useEffect(() => {
-    const fetchData = async () => {
-      if (searchTerm) {
-        setIsLoading(true);
-        try {
-          const response = await axios.get(`/api/stockList?itmsNm=${searchTerm}`);
-          setStocks(response.data);
-        } catch (error) {
-          setError('Failed to fetch stock data');
-        } finally {
-          setIsLoading(false);
-        }
-      }
+    loadCSVData();
+  }, []);
+
+  // 검색어에 따른 필터링 처리
+  const filteredStocks = stocks.filter(stock => 
+    stock.종목명?.includes(searchTerm) || stock.종목코드?.includes(searchTerm)
+  );
+
+  // 종목 추가 버튼 클릭 시, 부모 컴포넌트로 종목코드와 종목명 전달
+  const handleAddItem = (stock) => {
+    const item = {
+      code: stock.종목코드,        // 종목 코드 필드
+      name: stock.종목명,          // 종목 명 필드
+      marketCategory: stock.종목구분  // 종목 구분 필드
     };
-
-    const delayDebounceFn = setTimeout(() => {
-      fetchData();
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm]);
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+    onAddItem(item);  // 부모 컴포넌트에 전달
+  };
 
   return (
     <div>
@@ -42,25 +58,27 @@ export default function StockListModal({ onClose, onAddItem }) {
       <div className={classes.modal}>
         <div className={classes.modalContent}>
           <div className={classes.modalHeader}>
-            <input
-              type="text"
-              placeholder="종목 검색"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className={classes.searchInput}
-            />
-            <button onClick={onClose} className={classes.closeButton}>
+            <button onClick={onClose} className={classes.closeButton} type="button">
               &times;
             </button>
           </div>
+
+          {/* 검색 필드 */}
+          <input
+            type="text"
+            placeholder="종목 검색"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className={classes.searchInput}
+          />
 
           <div className={classes.tableContainer}>
             <table className={classes.modalTable}>
               <thead>
                 <tr>
-                  <th>시장구분</th>
+                  <th>종목구분</th>
                   <th>종목코드</th>
-                  <th>종목이름</th>
+                  <th>종목명</th>
                   <th>추가</th>
                 </tr>
               </thead>
@@ -69,20 +87,21 @@ export default function StockListModal({ onClose, onAddItem }) {
                   <tr>
                     <td colSpan="4">
                       <div className={classes.loadingContainer}>
-                        <ComponentLoading /> {/* 로딩 컴포넌트를 tbody 중앙에 위치 */}
+                        <ComponentLoading />
                       </div>
                     </td>
                   </tr>
-                ) : stocks.length > 0 ? (
-                  stocks.map((stock, index) => (
+                ) : filteredStocks.length > 0 ? (
+                  filteredStocks.map((stock, index) => (
                     <tr key={index}>
-                      <td>{stock.marketCategory}</td>
-                      <td>{stock.code}</td>
-                      <td>{stock.name}</td>
+                      <td>{stock.종목구분}</td>
+                      <td>{stock.종목코드}</td>
+                      <td>{stock.종목명}</td>
                       <td>
                         <button
                           className={classes.addButton}
-                          onClick={() => onAddItem(stock)}
+                          onClick={() => handleAddItem(stock)}
+                          type="button"
                         >
                           +
                         </button>

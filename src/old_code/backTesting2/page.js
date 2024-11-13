@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import classes from './page.module.css';
 import FinancialReportTableGraph from '@/old_code/FinancialReportTableGraph';
-import SimpleStockListModal from '@/components/modal/simple-stock-list-modal/simple-stock-list-modal'; // 종목 검색 모달
+import SimpleStockListModal from '@/components/modal/stock-list-modal/stock-list-modal'; // 종목 검색 모달
 import { parseCSV } from '@/utils/parseCSV';
 
 export default function BackTestingPage() {

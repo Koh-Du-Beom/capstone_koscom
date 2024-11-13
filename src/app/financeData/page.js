@@ -1,70 +1,27 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import FinancialDropdown from '@/components/graphs/financial-data/dropdown/financial-dropdown';
+import React, { useState } from 'react';
 import classes from './page.module.css';
 import FinancialGraph from '@/components/graphs/financial-graph';
-import dropdownData from '@/components/graphs/financial-data/dropdown/financial-dropdown-data';
-import SelectedStock from '@/components/selected-stocks/selected-stock';
+import FinancialDropdownBox from '@/components/graphs/financial-data/dropdown/financial-dropdown-box'; // 새로 생성된 FinancialDropdownBox 컴포넌트 import
 import FinancialPrompt from '@/components/graphs/financial-data/prompt/financial-prompt';
-import graph_Mock_data from '@/components/graphs/graph-data';
 
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown');
-  const [selectedIndicators, setSelectedIndicators] = useState([]);
-  const [selectedStocks, setSelectedStocks] = useState([]); 
   const [graphData, setGraphData] = useState([]);
 
-  const handleCheckboxChange = (name, checked) => {
-    if (checked) {
-      setSelectedIndicators((prevItems) => [...prevItems, name]);
-    } else {
-      setSelectedIndicators((prevItems) => prevItems.filter(item => item !== name));
-    }
-  };
-	
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/getGraphData-checkBox', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ selectedStocks, selectedIndicators }),
-        });
-  
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-  
-        const newData = await response.json();
-        console.log(newData);
-        
-        // 기존 graphData에 새 데이터를 단순히 추가
-        setGraphData((prevData) => [...prevData, ...newData]);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-  
-    if (selectedIndicators.length > 0 && selectedStocks.length > 0) {
-      fetchData();
-    }
-  }, [selectedIndicators, selectedStocks]);
-
-
-
-  const handleOptionClick = (option) => {
-    setSelectedOption(option);
-    setGraphData([]);  //체크박스 - 프롬프트 변경 시, 종목의 입력값이 전혀 달라 데이터가 다름. 그래프 초기화
-  }; 
-
-  const handleSelectStock = (stocks) => {
-    setSelectedStocks(Array.isArray(stocks) ? stocks : [stocks]);
+  const updateGraphDataWithDropdown = (newData) => {
+    // 기존 graphData에 새 데이터를 추가
+    setGraphData((prevData) => [...prevData, ...newData]);
   };
 
   const updateGraphDataWithPrompt = (newData) => {
+    // 프롬프트로 받은 데이터로 그래프를 업데이트
     setGraphData(newData);
+  };
+
+  const handleOptionClick = (option) => {
+    setSelectedOption(option);
+    setGraphData([]); // 옵션이 변경될 때마다 그래프 데이터 초기화
   };
 
   return (
@@ -91,19 +48,10 @@ export default function FinancialDataShowPage() {
         </div>
 
         <div className={classes.inputSection}>
-          {selectedOption === 'dropdown' && <SelectedStock onSelectStock={handleSelectStock}/>}
           {selectedOption === 'dropdown' ? (
-            dropdownData.map((data, index) => (
-              <FinancialDropdown
-                key={index}
-                category={data.category}
-                details={data.details}
-                selectedIndicators={selectedIndicators}
-                handleCheckboxChange={handleCheckboxChange}
-              />
-            ))
+            <FinancialDropdownBox updateGraphData={updateGraphDataWithDropdown} />
           ) : (
-            <FinancialPrompt updateGraphData={updateGraphDataWithPrompt}/>
+            <FinancialPrompt updateGraphData={updateGraphDataWithPrompt} />
           )}
         </div>
       </div>
