@@ -154,7 +154,7 @@ export default function BacktestingPageTwo() {
 
           <BackTestingAsset options="assets" updateParentObject={updateBackTestingInfos} />
 
-          <button type="submit" className={classes.submitButton}>백테스트 실행</button>
+          <button type="submit" className={classes.submitButton} onClick={handleSubmit}>백테스트 실행</button>
         </div>
       </div>
 

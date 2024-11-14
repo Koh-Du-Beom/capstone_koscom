@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import classes from './page.module.css';
 import FinancialGraph from '@/components/graphs/financial-graph';
-import FinancialDropdownBox from '@/components/graphs/financial-data/dropdown/financial-dropdown-box'; // 새로 생성된 FinancialDropdownBox 컴포넌트 import
-import FinancialPrompt from '@/components/graphs/financial-data/prompt/financial-prompt';
+import FinancialDropdownBox from '@/components/financial-data/dropdown/financial-dropdown-box'; // 새로 생성된 FinancialDropdownBox 컴포넌트 import
+import FinancialPrompt from '@/components/financial-data/prompt/financial-prompt';
 
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown');

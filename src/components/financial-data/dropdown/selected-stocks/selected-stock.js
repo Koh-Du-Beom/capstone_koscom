@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import SelectedStockItems from './selected-stock-items';
-import SimpleStockListModal from '../../../../modal/stock-list-modal/stock-list-modal';
+import SimpleStockListModal from '../../../modal/stock-list-modal/stock-list-modal';
 import classes from './selected-stock.module.css';
 import { getLocalStorageItems } from '@/utils/localStorage';
 
@@ -44,12 +44,10 @@ const SelectedStock = ({ onSelectStock }) => {
 
       const graphData = await response.json();
       console.log('Fetched Graph Data:', graphData); // 데이터를 콘솔에 출력
-      // onSelectStock(graphData); // 그래프 데이터 전달
+      onSelectStock(graphData); // 그래프 데이터 전달
     } catch (error) {
       console.error('Error fetching graph data:', error);
     }
-
-    
   };
 
   const fetchMockGraphData = async () => {
@@ -79,6 +77,12 @@ const SelectedStock = ({ onSelectStock }) => {
     });
     toggleModal();
   };
+
+	useEffect(() => {
+    if (items.length > 0) {
+      fetchGraphData();
+    }
+  }, [items]); // items를 의존성 배열에 추가
 
   return (
     <section className={classes.container}>

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useInterestedItems } from '@/contexts/InterestedItemsContext';
 import RecentReportItem from '@/components/recent-report/recent-report-item';
-import Loading from '@/app/loading';
 import classes from './recent-report-box.module.css';
 import ComponentLoading from '../loading/component-loading';
 

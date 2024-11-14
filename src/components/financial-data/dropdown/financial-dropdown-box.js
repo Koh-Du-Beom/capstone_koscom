@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SelectedStock from './selected-stocks/selected-stock';
-import FinancialDropdown from '@/components/graphs/financial-data/dropdown/financial-dropdown';
-import dropdownData from '@/components/graphs/financial-data/dropdown/financial-dropdown-data';
+import FinancialDropdown from '@/components/financial-data/dropdown/financial-dropdown';
+import dropdownData from '@/components/financial-data/dropdown/financial-dropdown-data';
 
 export default function FinancialDropdownBox({ updateGraphData }) {
   const [selectedIndicators, setSelectedIndicators] = useState([]);
@@ -17,7 +17,7 @@ export default function FinancialDropdownBox({ updateGraphData }) {
     if (stockData.length === 0 || selectedIndicators.length === 0) return;
 
     const restructuredData = selectedIndicators.reduce((acc, indicator) => {
-      const indicatorData = stockData.reduce((stocksAcc, { companyName, data }) => {
+      const indicatorData = stockData.reduce((stocksAcc, { stockName, data }) => {
         const stockIndicatorData = Object.entries(data)
           .sort(([a], [b]) => a.localeCompare(b)) // 연도를 오름차순으로 정렬
           .reduce((datesAcc, [date, values]) => {
@@ -28,7 +28,7 @@ export default function FinancialDropdownBox({ updateGraphData }) {
           }, {});
 
         if (Object.keys(stockIndicatorData).length > 0) {
-          stocksAcc[companyName] = stockIndicatorData;
+          stocksAcc[stockName] = stockIndicatorData; // stockName을 key로 사용
         }
         return stocksAcc;
       }, {});
@@ -39,6 +39,7 @@ export default function FinancialDropdownBox({ updateGraphData }) {
       return acc;
     }, []);
     
+    console.log("parsed_data : ", restructuredData);
     updateGraphData(restructuredData);
   }, [selectedIndicators]);
 
