@@ -1,13 +1,28 @@
 import Spinner from 'react-bootstrap/Spinner';
 
-function Loading() {
+// app/loading.js
+export default function Loading() {
   return (
-    <>
-      <Spinner animation="border" variant="primary" />
-    </>
+    <div style={styles.loadingContainer}>
+      <Spinner animation="border" variant="success" />
+      <p style={styles.loadingText}>페이지 로딩 중...</p>
+    </div>
   );
 }
 
-export default Loading;
+const styles = {
+  loadingContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    backgroundColor: '#f8f9fa',
+  },
+  loadingText: {
+    marginTop: '16px',
+    fontSize: '18px',
+    color: '#007bff',
+  },
+};
 
-// 이걸 로딩페이지 컴포넌트 자체로 쓰고, 모달창 로딩은 다르게 해야할듯.

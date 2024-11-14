@@ -21,23 +21,21 @@ export default function FinancialDropDown({ category, details, selectedIndicator
         <span className={isOpen ? styles.arrowUp : styles.arrowDown}>▼</span>
       </div>
 
-      {isOpen && (
-        <div className={styles.dropdownMenu}>
-          <Form>
-            {details && details.map((detail, index) => (
-              <Form.Check
-                key={index}
-                type="checkbox"
-                label={detail}
-                name={detail}
-                checked={selectedIndicators.includes(detail)} // 배열에 해당 항목이 있는지 확인
-                onChange={handleChange}
-                className={styles.dropdownItem}
-              />
-            ))}
-          </Form>
-        </div>
-      )}
+      <div className={`${styles.dropdownMenu} ${isOpen ? styles.open : ''}`}>
+        <Form>
+          {details && details.map((detail, index) => (
+            <Form.Check
+              key={index}
+              type="checkbox"
+              label={detail}
+              name={detail}
+              checked={selectedIndicators.includes(detail)} // 배열에 해당 항목이 있는지 확인
+              onChange={handleChange}
+              className={styles.dropdownItem}
+            />
+          ))}
+        </Form>
+      </div>
     </div>
   );
 }

@@ -102,8 +102,8 @@
 }
 
 .sendButton {
-  background-color: #007bff;
-  color: white;
+  background-color: #9DF1B3;
+  color: #191919;
   border: none;
   padding: 10px 20px;
   border-radius: 20px;
@@ -112,5 +112,6 @@
 }
 
 .sendButton:hover {
-  background-color: #0056b3;
+  background-color: #f1f1f1;
+	color: #191919;
 }
