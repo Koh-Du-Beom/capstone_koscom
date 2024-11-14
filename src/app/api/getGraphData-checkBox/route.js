@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { reconstructData } from '@/utils/dropdowndata-reconstruction';
 
 export async function POST(request) {
   try {
@@ -14,9 +15,9 @@ export async function POST(request) {
       );
     }
 
-    // 모든 주식 데이터 불러오기
+    // 모든 주식 데이터 불러오기 및 재구성
     const stockDataPromises = selectedStocks.map(async (stock) => {
-      const filePath = path.resolve(`/home/ubuntu-server/data/${stock}.json`);
+      const filePath = path.resolve(`/home/ubuntu-server/financial_statement/${stock}.json`);
 
       return new Promise((resolve, reject) => {
         fs.readFile(filePath, 'utf8', (err, data) => {
@@ -26,7 +27,9 @@ export async function POST(request) {
           } else {
             try {
               const jsonData = JSON.parse(data);
-              resolve({ stockName: stock, data: jsonData });
+              // reconstructData 함수로 데이터 재구성
+              const reconstructedData = reconstructData(jsonData);
+              resolve({ stockName: stock, data: reconstructedData });
             } catch (parseError) {
               console.error(`JSON parsing error for stock ${stock}:`, parseError.message);
               resolve({ error: `Failed to parse data for ${stock}` });
@@ -38,6 +41,9 @@ export async function POST(request) {
 
     // 모든 Promise가 완료될 때까지 기다림
     const allStockData = await Promise.all(stockDataPromises);
+
+    console.log(allStockData);
+    
 
     // JSON 데이터로 응답 반환
     return NextResponse.json(allStockData);

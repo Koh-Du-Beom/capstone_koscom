@@ -43,33 +43,26 @@ const SelectedStock = ({ onSelectStock }) => {
       }
 
       const graphData = await response.json();
-      onSelectStock(graphData); // 요청된 데이터를 FinancialDropdownBox로 전달
+      console.log('Fetched Graph Data:', graphData); // 데이터를 콘솔에 출력
+      // onSelectStock(graphData); // 그래프 데이터 전달
     } catch (error) {
       console.error('Error fetching graph data:', error);
     }
   };
 
-
-  
-  const fetchMockGraphData = async () => {
-    try {
-      const response = await fetch('/api/encode-json');
-      if (!response.ok) {
-        throw new Error('Failed to fetch fixed data');
-      }
-      const data = await response.json();
-      console.log(data);
-      
-      
-      onSelectStock(data); // 복원된 데이터를 상위 컴포넌트로 전달
-    
-      
-    } catch (error) {
-      console.error('Error fetching fixed data:', error);
-    }
-  };
-    
-
+  // const fetchMockGraphData = async () => {
+  //   try {
+  //     const response = await fetch('/api/encode-json');
+  //     if (!response.ok) {
+  //       throw new Error('Failed to fetch fixed data');
+  //     }
+  //     const data = await response.json();
+  //     console.log('Mock Graph Data:', data); // 복원된 데이터를 콘솔에 출력
+  //     onSelectStock(data); // 복원된 데이터를 상위 컴포넌트로 전달
+  //   } catch (error) {
+  //     console.error('Error fetching fixed data:', error);
+  //   }
+  // };
 
   const removeStockItem = (stockCode) => {
     setItems((prevItems) => prevItems.filter((item) => item.code !== stockCode));
@@ -97,7 +90,7 @@ const SelectedStock = ({ onSelectStock }) => {
           </span>
           <span className={classes.action} onClick={toggleModal}>추가</span>
           <span className={classes.action} onClick={fetchInterestedItems}>관심종목 불러오기</span>
-          <span className={classes.action} onClick={fetchMockGraphData}>그래프 데이터 요청</span>
+          <span className={classes.action} onClick={fetchGraphData}>그래프 데이터 요청</span> {/* fetchGraphData를 버튼에 연결 */}
         </div>
       </div>
 
