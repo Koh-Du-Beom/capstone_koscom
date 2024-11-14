@@ -5,30 +5,42 @@ import dropdownData from '@/components/graphs/financial-data/dropdown/financial-
 
 export default function FinancialDropdownBox({ updateGraphData }) {
   const [selectedIndicators, setSelectedIndicators] = useState([]);
-  const [stockData, setStockData] = useState([]); // SelectedStock에서 전달받은 그래프 데이터
+  const [stockData, setStockData] = useState([]);
 
-  // SelectedStock에서 전달된 데이터를 설정하는 함수
+  // SelectedStock에서 데이터를 받는 함수
   const handleSelectStock = (data) => {
-    setStockData(data); // 그래프 데이터를 설정
+    setStockData(Array.isArray(data) ? data : [data]); // 데이터가 배열인지 확인
   };
 
-  // 선택된 지표로 데이터 필터링
+  // 데이터 필터링 및 재구성
   useEffect(() => {
     if (stockData.length === 0 || selectedIndicators.length === 0) return;
 
-    const filteredData = stockData.map((data) => {
-      const filteredIndicators = selectedIndicators.reduce((acc, indicator) => {
-        if (data.data[indicator]) {
-          acc[indicator] = data.data[indicator];
+    const restructuredData = selectedIndicators.reduce((acc, indicator) => {
+      const indicatorData = stockData.reduce((stocksAcc, { companyName, data }) => {
+        const stockIndicatorData = Object.entries(data)
+          .sort(([a], [b]) => a.localeCompare(b)) // 연도를 오름차순으로 정렬
+          .reduce((datesAcc, [date, values]) => {
+            if (values[indicator] !== undefined) {
+              datesAcc[date] = values[indicator];
+            }
+            return datesAcc;
+          }, {});
+
+        if (Object.keys(stockIndicatorData).length > 0) {
+          stocksAcc[companyName] = stockIndicatorData;
         }
-        return acc;
+        return stocksAcc;
       }, {});
 
-      return { stockName: data.stockName, data: filteredIndicators };
-    });
+      if (Object.keys(indicatorData).length > 0) {
+        acc.push({ [indicator]: indicatorData });
+      }
+      return acc;
+    }, []);
     
-    updateGraphData(filteredData); // 필터링된 데이터 부모 컴포넌트에 전달
-  }, [stockData, selectedIndicators, updateGraphData]);
+    updateGraphData(restructuredData);
+  }, [selectedIndicators]);
 
   return (
     <>
@@ -40,11 +52,9 @@ export default function FinancialDropdownBox({ updateGraphData }) {
           details={data.details}
           selectedIndicators={selectedIndicators}
           handleCheckboxChange={(name, checked) => {
-            if (checked) {
-              setSelectedIndicators((prev) => [...prev, name]);
-            } else {
-              setSelectedIndicators((prev) => prev.filter((item) => item !== name));
-            }
+            setSelectedIndicators((prev) =>
+              checked ? [...prev, name] : prev.filter((item) => item !== name)
+            );
           }}
         />
       ))}

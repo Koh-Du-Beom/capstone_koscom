@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useState, useEffect } from "react";
 import BackTestingDropdown from "@/components/back-testing/back-testing-methods/back-testing-dropdown";
 import BackTestingPeriod from "@/components/back-testing/back-testing-period/back-testing-period";
@@ -86,10 +86,6 @@ export default function BacktestingPageTwo() {
       // 받은 데이터를 holdings와 portfolio로 나누어 상태 설정
       setPortfolioData(data.portfolio_returns); // portfolio 데이터 저장
       setHoldingsData(data.holdings_proportions); // holdings 데이터 저장
-
-      console.log("Portfolio Data:", data.portfolio_returns);
-      console.log("Holdings Data:", data.holdings_proportions);
-      
       
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -97,84 +93,69 @@ export default function BacktestingPageTwo() {
     }
   };
 
-  //프론트엔드에서 그래프 표시 임시테스트
-  const handleMockSubmit = (event) => {
-    event.preventDefault();
-    try {
-      const data = report_Mock_data[0];
-      setPortfolioData(data.portfolio_returns);
-      setHoldingsData(data.holdings_proportions[0]);
-      console.log("Mock Portfolio Data:", data.portfolio_returns);
-      console.log("Mock Holdings Data:", data.holdings_proportions[0]);
-    } catch (error) {
-      console.error("Error parsing mock data:", error);
-      alert("Mock 데이터 처리 중 문제가 발생했습니다.");
-    }
-  };
-  
-  useEffect(() => {
-    console.log(holdingsData);
-  }, [holdingsData])
-
   return (
-    <form onSubmit={handleSubmit} className={classes.container}>
+    <div className={classes.container}>
       <div className={classes.leftSection}>
-        <div className={classes.buttonContainer}>
+        <h2 className={classes.title}>백테스팅 설정</h2> {/* 타이틀 스타일 변경 */}
+        
+        <div className={classes.buttonContainer}> {/* 버튼 컨테이너 추가 */}
           <button type="button" onClick={handleSave} className={classes.saveButton}>저장</button>
           <button type="button" onClick={handleLoad} className={classes.loadButton}>불러오기</button>
         </div>
         
-        <h6>시작일</h6>
-        <BackTestingPeriod options="startDate" updateParentObject={updateBackTestingInfos} />
-        <h6>종료일</h6>
-        <BackTestingPeriod options="endDate" updateParentObject={updateBackTestingInfos} />
-        
-        <h6>리밸런싱 주기</h6>
-        <BackTestingDropdown
-          options={['1개월', '3개월', '6개월', '1년']}
-          targetKey="rebalancePeriod"
-          updateParentObject={updateBackTestingInfos}
-        />
+        <div className={classes.inputSection}> {/* inputSection 스타일 추가 */}
+          <h6>시작일</h6>
+          <BackTestingPeriod options="startDate" updateParentObject={updateBackTestingInfos} />
+          <h6>종료일</h6>
+          <BackTestingPeriod options="endDate" updateParentObject={updateBackTestingInfos} />
+          
+          <h6>리밸런싱 주기</h6>
+          <BackTestingDropdown
+            options={['1개월', '3개월', '6개월', '1년']}
+            targetKey="rebalancePeriod"
+            updateParentObject={updateBackTestingInfos}
+          />
 
-        <h6>리밸런싱 방법</h6>
-        <BackTestingDropdown
-          options={['지정 비중', '동일 비중', '절대 모멘텀', '최소 분산', '최대 다각화']}
-          targetKey="method"
-          updateParentObject={updateBackTestingInfos}
-        />
+          <h6>리밸런싱 방법</h6>
+          <BackTestingDropdown
+            options={['지정 비중', '동일 비중', '절대 모멘텀', '최소 분산', '최대 다각화']}
+            targetKey="method"
+            updateParentObject={updateBackTestingInfos}
+          />
 
-        {backTestingInfos.method === '절대 모멘텀' && (
-          <div className={classes.rsiContainer}>
+          {backTestingInfos.method === '절대 모멘텀' && (
+            <div className={classes.rsiContainer}>
+              <label className={classes.label}>
+                RSI 기간 (일):
+                <input
+                  type="text"
+                  value={backTestingInfos.rsiPeriod}
+                  onChange={handleRsiChange}
+                  placeholder="숫자를 입력해주세요"
+                  className={classes.input}
+                />
+              </label>
+              {rsiError && <p className={classes.error}>{rsiError}</p>}
+            </div>
+          )}
+
+          <div className={classes.moneyContainer}>
             <label className={classes.label}>
-              RSI 기간 (일):
+              시작 금액 (₩):
               <input
                 type="text"
-                value={backTestingInfos.rsiPeriod}
-                onChange={handleRsiChange}
-                placeholder="숫자를 입력해주세요"
+                value={`${backTestingInfos.startMoney}₩`}
+                onChange={handleMoneyChange}
+                placeholder="금액 입력"
                 className={classes.input}
               />
             </label>
-            {rsiError && <p className={classes.error}>{rsiError}</p>}
           </div>
-        )}
 
-        <div className={classes.moneyContainer}>
-          <label className={classes.label}>
-            <h6>시작 금액 (₩):</h6>
-            <input
-              type="text"
-              value={`${backTestingInfos.startMoney}₩`}
-              onChange={handleMoneyChange}
-              placeholder="금액 입력"
-              className={classes.input}
-            />
-          </label>
+          <BackTestingAsset options="assets" updateParentObject={updateBackTestingInfos} />
+
+          <button type="submit" className={classes.submitButton}>백테스트 실행</button>
         </div>
-
-        <BackTestingAsset options="assets" updateParentObject={updateBackTestingInfos} />
-
-        <button type="submit" className={classes.submitButton}>백테스트 실행</button>
       </div>
 
       <div className={classes.rightSection}>
@@ -185,6 +166,6 @@ export default function BacktestingPageTwo() {
           <FinancialReportGraph graphData={portfolioData} dataType="portfolio" />
         )}
       </div>
-    </form>
+    </div>
   );
 }

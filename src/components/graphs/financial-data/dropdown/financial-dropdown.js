@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Form } from 'react-bootstrap';
 import styles from './financial-dropdown.module.css';
 
 export default function FinancialDropDown({ category, details, selectedIndicators, handleCheckboxChange }) {
@@ -21,21 +20,21 @@ export default function FinancialDropDown({ category, details, selectedIndicator
         <span className={isOpen ? styles.arrowUp : styles.arrowDown}>▼</span>
       </div>
 
-      <div className={`${styles.dropdownMenu} ${isOpen ? styles.open : ''}`}>
-        <Form>
+      {isOpen && (
+        <div className={styles.dropdownMenu}>
           {details && details.map((detail, index) => (
-            <Form.Check
-              key={index}
-              type="checkbox"
-              label={detail}
-              name={detail}
-              checked={selectedIndicators.includes(detail)} // 배열에 해당 항목이 있는지 확인
-              onChange={handleChange}
-              className={styles.dropdownItem}
-            />
+            <label key={index} className={styles.dropdownItem}>
+              <input
+                type="checkbox"
+                name={detail}
+                checked={selectedIndicators.includes(detail)} // 배열에 해당 항목이 있는지 확인
+                onChange={handleChange}
+              />
+              {detail}
+            </label>
           ))}
-        </Form>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
