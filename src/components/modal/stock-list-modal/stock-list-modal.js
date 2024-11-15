@@ -3,62 +3,55 @@ import { useState, useEffect } from 'react';
 import classes from './stock-list-modal.module.css';
 import ComponentLoading from '@/components/loading/component-loading';
 import { parseCSV } from '@/utils/parseCSV';
+import Image from 'next/image';
+import helpIcon from '../../../../public/svgs/help.svg'
 
-let cachedStocks = null; // 캐시된 데이터를 저장할 전역 변수
+let cachedStocks = null;
 
 export default function StockListModal({ onClose, onAddItem }) {
-  const [stocks, setStocks] = useState([]);  // CSV로부터 얻은 주식 데이터 상태
-  const [searchTerm, setSearchTerm] = useState('');  // 검색어 상태
-  const [isLoading, setIsLoading] = useState(false);  // 로딩 상태
+  const [stocks, setStocks] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
-  // CSV 파일 로드 함수
   const loadCSVData = async () => {
-    // 캐시된 데이터가 있는지 확인
     if (cachedStocks) {
       setStocks(cachedStocks);
       return;
     }
-
     setIsLoading(true);
-
     try {
-      // 두 개의 CSV 파일을 모두 로드
       const kospiData = await parseCSV('/csv/kospi.csv');
       const kosdaqData = await parseCSV('/csv/kosdaq.csv');
-
-      // 각 데이터에 종목구분 필드 추가
       const kospiStocks = kospiData.map(stock => ({ ...stock, 종목구분: 'KOSPI' }));
       const kosdaqStocks = kosdaqData.map(stock => ({ ...stock, 종목구분: 'KOSDAQ' }));
-
-      // 데이터를 합쳐서 상태 업데이트 및 캐시에 저장
       const combinedData = [...kospiStocks, ...kosdaqStocks];
-      cachedStocks = combinedData; // 캐시에 저장
+      cachedStocks = combinedData;
       setStocks(combinedData);
     } catch (error) {
       console.error('CSV 파싱 중 오류 발생:', error);
     } finally {
-      setIsLoading(false);  // 로딩 끝
+      setIsLoading(false);
     }
   };
 
-  // 컴포넌트가 최초 로딩될 때만 CSV 데이터를 캐시에 로드
   useEffect(() => {
     loadCSVData();
   }, []);
 
-  // 검색어에 따른 필터링 처리
-  const filteredStocks = stocks.filter(stock => 
-    stock.종목명?.includes(searchTerm) || stock.종목코드?.includes(searchTerm)
+  // 대소문자 구분 없이 필터링
+  const filteredStocks = stocks.filter(stock =>
+    stock.종목명?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    stock.종목코드?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // 종목 추가 버튼 클릭 시, 부모 컴포넌트로 종목코드와 종목명 전달
   const handleAddItem = (stock) => {
     const item = {
-      code: stock.종목코드,        // 종목 코드 필드
-      name: stock.종목명,          // 종목 명 필드
-      marketCategory: stock.종목구분  // 종목 구분 필드
+      code: stock.종목코드,
+      name: stock.종목명,
+      marketCategory: stock.종목구분
     };
-    onAddItem(item);  // 부모 컴포넌트에 전달
+    onAddItem(item);
   };
 
   return (
@@ -72,14 +65,34 @@ export default function StockListModal({ onClose, onAddItem }) {
             </button>
           </div>
 
-          {/* 검색 필드 */}
-          <input
-            type="text"
-            placeholder="종목 검색"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={classes.searchInput}
-          />
+          <div className={classes.searchContainer}>
+            {/* 검색 필드 */}
+            <input
+              type="text"
+              placeholder="종목 검색"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={classes.searchInput}
+            />
+            {/* 도움말 아이콘 */}
+            <span
+              className={classes.helpIcon}
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+            >
+              <Image 
+                src={helpIcon}
+                alt={`help_icon`}
+                width={25}
+                height={25}
+              />  
+              {showTooltip && (
+                <span className={classes.tooltip}>
+                  추가 버튼을 눌러 종목을 추가하세요
+                </span>
+              )}
+            </span>
+          </div>
 
           <div className={classes.tableContainer}>
             <table className={classes.modalTable}>

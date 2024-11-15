@@ -40,137 +40,107 @@
   padding-bottom: 10px;
 }
 
-/* 시장 선택 버튼 영역 */
-.marketSelection {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.marketButton {
-  background-color: #C8E6C9; /* 부드러운 민트색 */
-  color: black;
-  border: 1px solid black;
-  padding: 12px 24px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  border-radius: 8px;
-  margin: 0 10px;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-/* hover 상태에서 스타일 변경 */
-.marketButton:hover {
-  background-color: #AED6AF; /* hover 시 진한 민트색 */
-  color: black;
-}
-
-/* 선택된 버튼(active) 상태 */
-.activeButton {
-  background-color: #AED6AF; /* active 상태 진한 민트 */
-  color: black;
-  border-color: black;
-}
-
-/* 모달 닫기 버튼 */
-.closeButton {
-  background-color: transparent;
-  border: none;
-  font-size: 1.5rem;
-  color: black;
-  cursor: pointer;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 닫기 버튼 hover 효과 */
-.closeButton:hover {
-  background-color: #C8E6C9;
-  color: black;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-/* 모달 테이블 */
 .modalTable {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
   color: black;
+  table-layout: fixed;
 }
 
 .modalTable th, .modalTable td {
   padding: 10px;
-  text-align: center; /* 가로 가운데 정렬 */
-  vertical-align: middle; /* 세로 가운데 정렬 */
-  border-bottom: 1px solid black;
-  border-right: 1px solid black; /* 세로선 추가 */
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid black; /* 행 구분선만 남김 */
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
-.modalTable th:last-child, .modalTable td:last-child {
-  border-right: none; /* 마지막 열의 세로선 제거 */
+.modalTable td{
+  padding-right: 0;
 }
 
 .modalTable th {
-  background-color: #C8E6C9;
+  background-color: #B2DFDB;
   color: black;
   position: sticky;
   top: 0;
   z-index: 1;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1); /* 헤더 고정 */
-  text-align: center; /* 헤더 가로 가운데 정렬 */
 }
 
-/* tbody에만 스크롤 적용 */
 .modalTable tbody {
   display: block;
-  max-height: 300px; /* 스크롤 높이 설정 */
+  max-height: 300px;
   overflow-y: auto;
 }
 
 .modalTable thead, .modalTable tbody tr {
   display: table;
   width: 100%;
-  table-layout: fixed; /* 열 너비 고정 */
+  table-layout: fixed;
 }
 
-/* 추가 버튼 */
 .addButton {
-  background-color: #C8E6C9;
+  background-color: #B2DFDB;
   color: black;
   border: 1px solid black;
-  padding: 10px 20px; /* 크기 확대 */
+  padding: 10px 20px;
   cursor: pointer;
   border-radius: 4px;
-  font-size: 1.2rem; /* 글씨 크기 확대 */
-  font-weight: bold; /* 텍스트 굵게 */
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .addButton:hover {
-  background-color: #AED6AF;
+  background-color: #80CBC4;
   color: black;
 }
 
-/* 로딩 컨테이너 */
-.loadingContainer {
+.searchContainer {
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 100px; 
+  margin-bottom: 10px;
 }
 
-/* 검색 입력창 스타일 */
-.searchInput {
-  width: 100%;
-  padding: 8px 12px;
-  margin-bottom: 10px;
-  border: 1px solid black;
-  border-radius: 4px;
+.helpIcon {
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
   color: black;
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  top: -30px;
+  left: 20px;
+  background-color: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.closeButton {
+  background-color: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: black;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+  width: 24px;
+  height: 24px;
+  padding: 5px;
+  border-radius: 50%;
+}
+
+.closeButton:hover {
+  background-color: red;
+  color: white;
 }
