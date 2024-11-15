@@ -4,6 +4,8 @@ import classes from './stock-list-modal.module.css';
 import ComponentLoading from '@/components/loading/component-loading';
 import { parseCSV } from '@/utils/parseCSV';
 
+let cachedStocks = null; // 캐시된 데이터를 저장할 전역 변수
+
 export default function StockListModal({ onClose, onAddItem }) {
   const [stocks, setStocks] = useState([]);  // CSV로부터 얻은 주식 데이터 상태
   const [searchTerm, setSearchTerm] = useState('');  // 검색어 상태
@@ -11,6 +13,12 @@ export default function StockListModal({ onClose, onAddItem }) {
 
   // CSV 파일 로드 함수
   const loadCSVData = async () => {
+    // 캐시된 데이터가 있는지 확인
+    if (cachedStocks) {
+      setStocks(cachedStocks);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -22,8 +30,9 @@ export default function StockListModal({ onClose, onAddItem }) {
       const kospiStocks = kospiData.map(stock => ({ ...stock, 종목구분: 'KOSPI' }));
       const kosdaqStocks = kosdaqData.map(stock => ({ ...stock, 종목구분: 'KOSDAQ' }));
 
-      // 데이터를 합쳐서 상태 업데이트
+      // 데이터를 합쳐서 상태 업데이트 및 캐시에 저장
       const combinedData = [...kospiStocks, ...kosdaqStocks];
+      cachedStocks = combinedData; // 캐시에 저장
       setStocks(combinedData);
     } catch (error) {
       console.error('CSV 파싱 중 오류 발생:', error);
@@ -32,7 +41,7 @@ export default function StockListModal({ onClose, onAddItem }) {
     }
   };
 
-  // 컴포넌트 마운트 시 CSV 데이터 로드
+  // 컴포넌트가 최초 로딩될 때만 CSV 데이터를 캐시에 로드
   useEffect(() => {
     loadCSVData();
   }, []);
@@ -91,7 +100,7 @@ export default function StockListModal({ onClose, onAddItem }) {
                       </div>
                     </td>
                   </tr>
-                ) : filteredStocks.length > 0 ? (
+                ) : searchTerm && filteredStocks.length > 0 ? (
                   filteredStocks.map((stock, index) => (
                     <tr key={index}>
                       <td>{stock.종목구분}</td>
@@ -111,7 +120,7 @@ export default function StockListModal({ onClose, onAddItem }) {
                 ) : (
                   <tr>
                     <td style={{ textAlign: 'center' }} colSpan="4">
-                      검색 결과가 없습니다.
+                      {searchTerm ? '검색 결과가 없습니다.' : '검색어를 입력해 주세요.'}
                     </td>
                   </tr>
                 )}

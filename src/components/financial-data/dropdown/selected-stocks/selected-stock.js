@@ -96,7 +96,6 @@ const SelectedStock = ({ onSelectStock }) => {
           </span>
           <span className={classes.action} onClick={toggleModal}>추가</span>
           <span className={classes.action} onClick={fetchInterestedItems}>관심종목 불러오기</span>
-          <span className={classes.action} onClick={fetchGraphData}>그래프 데이터 요청</span> {/* fetchGraphData를 버튼에 연결 */}
         </div>
       </div>
 
