@@ -1,5 +1,4 @@
-'use client';
-
+'use client'
 import { useState, useEffect } from 'react';
 import { useInterestedItems } from '@/contexts/InterestedItemsContext';
 import RecentReportItem from '@/components/recent-report/recent-report-item';
@@ -7,7 +6,7 @@ import classes from './recent-report-box.module.css';
 import ComponentLoading from '../loading/component-loading';
 
 export default function RecentReportItemBox() {
-  const itemsPerPage = 5; // 한 페이지에 보여줄 리포트 아이템 수
+  const itemsPerPage = 5;
   const { interestedItems } = useInterestedItems();
   const [selectedStock, setSelectedStock] = useState(null);
   const [clientItems, setClientItems] = useState([]);
@@ -15,6 +14,7 @@ export default function RecentReportItemBox() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageGroup, setPageGroup] = useState(1);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     setClientItems(interestedItems);
@@ -41,8 +41,8 @@ export default function RecentReportItemBox() {
 
       const data = await response.json();
       setReports(data);
-      setCurrentPage(1); // 페이지 초기화
-      setPageGroup(1); // 페이지 그룹 초기화
+      setCurrentPage(1);
+      setPageGroup(1);
     } catch (error) {
       console.error('Error fetching report data:', error);
       setReports([]);
@@ -51,39 +51,30 @@ export default function RecentReportItemBox() {
     }
   };
 
-  const handleDropdownChange = async (event) => {
-    const selectedCode = event.target.value;
-    const selectedItem = clientItems.find(item => item.code === selectedCode);
-
-    if (selectedItem) {
-      setSelectedStock(selectedItem);
-      fetchReports(selectedCode);
-    } else {
-      setSelectedStock(null);
-      setReports([]);
-    }
+  const handleDropdownToggle = () => {
+    setIsDropdownOpen((prev) => !prev);
   };
 
-  // 페이지네이션에 맞는 기사들을 계산하는 함수
+  const handleSelectItem = (item) => {
+    setSelectedStock(item);
+    fetchReports(item.code);
+    setIsDropdownOpen(false);
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = reports.slice(indexOfFirstItem, indexOfLastItem);
 
-  // 총 페이지 수 계산
   const totalPages = Math.ceil(reports.length / itemsPerPage);
-  
-  // 한 번에 보여줄 페이지 버튼 수 (5개 단위)
   const pagesPerGroup = 5;
   const totalPageGroups = Math.ceil(totalPages / pagesPerGroup);
   const startPage = (pageGroup - 1) * pagesPerGroup + 1;
   const endPage = Math.min(pageGroup * pagesPerGroup, totalPages);
 
-  // 페이지 변경하기
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  // 페이지 그룹 변경하기 (화살표 버튼으로 이동)
   const handleGroupChange = (direction) => {
     if (direction === "prev" && pageGroup > 1) {
       setPageGroup(pageGroup - 1);
@@ -98,13 +89,25 @@ export default function RecentReportItemBox() {
 
       {clientItems.length > 0 ? (
         <>
-          <select onChange={handleDropdownChange} className={classes.dropdown} value={selectedStock?.code || ''}>
-            {clientItems.map((item) => (
-              <option key={item.code} value={item.code}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+          <div className={classes.dropdownContainer}>
+            <div className={classes.dropdownHeader} onClick={handleDropdownToggle}>
+              {selectedStock ? selectedStock.name : '종목을 선택하세요'}
+              <span className={isDropdownOpen ? classes.arrowUp : classes.arrowDown}>▼</span>
+            </div>
+            {isDropdownOpen && (
+              <div className={classes.dropdownMenu}>
+                {clientItems.map((item) => (
+                  <div
+                    key={item.code}
+                    className={classes.dropdownItem}
+                    onClick={() => handleSelectItem(item)}
+                  >
+                    {item.name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className={classes.reports}>
             {isLoading ? (
@@ -118,7 +121,6 @@ export default function RecentReportItemBox() {
             )}
           </div>
 
-          {/* 페이지네이션 컨트롤 */}
           {reports.length > 0 && (
             <div className={classes.pagination}>
               <button
@@ -127,7 +129,6 @@ export default function RecentReportItemBox() {
               >
                 {"<"}
               </button>
-
               {[...Array(endPage - startPage + 1)].map((_, index) => {
                 const pageNumber = startPage + index;
                 return (
@@ -140,7 +141,6 @@ export default function RecentReportItemBox() {
                   </button>
                 );
               })}
-
               <button
                 onClick={() => handleGroupChange("next")}
                 disabled={pageGroup === totalPageGroups}
