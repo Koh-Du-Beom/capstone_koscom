@@ -1,7 +1,7 @@
 .dropdownContainer {
   width: 100%;
   margin-bottom: 10px;
-  border-bottom: 1px solid #ccc; 
+  position: relative;
 }
 
 .dropdownHeader {
@@ -10,15 +10,20 @@
   align-items: center;
   padding: 12px;
   background-color: #fff;
-  color: #000;
+  color: #333;
   cursor: pointer;
-  font-size: 18px; /* 폰트 크기 증가 */
-  border: 1px solid #ccc; 
+  font-size: 16px;
+  border: 1px solid #ccc;
   border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.dropdownHeader:hover {
+  background-color: #f9f9f9; /* 헤더 호버 시 배경색 변경 */
 }
 
 .arrowUp {
-  transform: rotate(180deg); 
+  transform: rotate(180deg);
 }
 
 .arrowDown {
@@ -26,20 +31,28 @@
 }
 
 .dropdownMenu {
-  padding: 10px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px; /* 드롭다운 최대 높이 제한 */
+  overflow-y: auto; /* 스크롤 추가 */
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 드롭다운 그림자 추가 */
   margin-top: 5px;
+  z-index: 10;
 }
 
 .dropdownItem {
-  margin: 5px 0;
-  font-size: 16px; /* 폰트 크기 증가 */
-  padding: 8px;
+  padding: 10px;
+  font-size: 16px;
+  color: #333;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .dropdownItem:hover {
-  background-color: #f0f0f0; /* hover 시 배경색 변경 */
+  background-color: #f0f0f0; /* 항목 호버 시 배경색 변경 */
 }

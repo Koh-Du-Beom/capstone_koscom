@@ -42,9 +42,6 @@ export async function POST(request) {
     // 모든 Promise가 완료될 때까지 기다림
     const allStockData = await Promise.all(stockDataPromises);
 
-    console.log(allStockData);
-    
-
     // JSON 데이터로 응답 반환
     return NextResponse.json(allStockData);
   } catch (error) {

@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import SelectedStockItems from './selected-stock-items';
-import SimpleStockListModal from '../../../../modal/stock-list-modal/stock-list-modal';
+import SimpleStockListModal from '../../../modal/stock-list-modal/stock-list-modal';
 import classes from './selected-stock.module.css';
 import { getLocalStorageItems } from '@/utils/localStorage';
 
@@ -44,25 +44,25 @@ const SelectedStock = ({ onSelectStock }) => {
 
       const graphData = await response.json();
       console.log('Fetched Graph Data:', graphData); // 데이터를 콘솔에 출력
-      // onSelectStock(graphData); // 그래프 데이터 전달
+      onSelectStock(graphData); // 그래프 데이터 전달
     } catch (error) {
       console.error('Error fetching graph data:', error);
     }
   };
 
-  // const fetchMockGraphData = async () => {
-  //   try {
-  //     const response = await fetch('/api/encode-json');
-  //     if (!response.ok) {
-  //       throw new Error('Failed to fetch fixed data');
-  //     }
-  //     const data = await response.json();
-  //     console.log('Mock Graph Data:', data); // 복원된 데이터를 콘솔에 출력
-  //     onSelectStock(data); // 복원된 데이터를 상위 컴포넌트로 전달
-  //   } catch (error) {
-  //     console.error('Error fetching fixed data:', error);
-  //   }
-  // };
+  const fetchMockGraphData = async () => {
+    try {
+      const response = await fetch('/api/encode-json');
+      if (!response.ok) {
+        throw new Error('Failed to fetch fixed data');
+      }
+      const data = await response.json();
+      console.log('Mock Graph Data:', data); // 복원된 데이터를 콘솔에 출력
+      onSelectStock(data); // 복원된 데이터를 상위 컴포넌트로 전달
+    } catch (error) {
+      console.error('Error fetching fixed data:', error);
+    }
+  };
 
   const removeStockItem = (stockCode) => {
     setItems((prevItems) => prevItems.filter((item) => item.code !== stockCode));
@@ -78,6 +78,12 @@ const SelectedStock = ({ onSelectStock }) => {
     toggleModal();
   };
 
+	useEffect(() => {
+    if (items.length > 0) {
+      fetchGraphData();
+    }
+  }, [items]); // items를 의존성 배열에 추가
+
   return (
     <section className={classes.container}>
       <div className={classes.header}>
@@ -90,7 +96,6 @@ const SelectedStock = ({ onSelectStock }) => {
           </span>
           <span className={classes.action} onClick={toggleModal}>추가</span>
           <span className={classes.action} onClick={fetchInterestedItems}>관심종목 불러오기</span>
-          <span className={classes.action} onClick={fetchGraphData}>그래프 데이터 요청</span> {/* fetchGraphData를 버튼에 연결 */}
         </div>
       </div>
 

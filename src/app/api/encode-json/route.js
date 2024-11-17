@@ -15,7 +15,7 @@ export async function GET(request) {
     const fixedData = reconstructData(corruptedData);
 
     // 결과 반환
-    return NextResponse.json(fixedData);
+    return NextResponse.json({ companyName: "CJ", data: fixedData });
   } catch (error) {
     console.error('Error processing data:', error);
     return NextResponse.json(

@@ -63,6 +63,14 @@
   border-radius: 8px;
 }
 
+.emptyState {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #666; /* 부드러운 텍스트 색상 */
+  text-align: center;
+  width: 100%;
+}
+
 .disabledButton {
   opacity: 1; 
   cursor: not-allowed; 
