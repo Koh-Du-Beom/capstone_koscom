@@ -66,7 +66,7 @@ export default function BacktestingPageTwo() {
 
   // 백엔드 API에 요청을 보내는 함수
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); // 폼의 기본 동작 방지
 
     try {
       const response = await fetch('/api/runBackTesting', {
@@ -96,14 +96,15 @@ export default function BacktestingPageTwo() {
   return (
     <div className={classes.container}>
       <div className={classes.leftSection}>
-        <h2 className={classes.title}>백테스팅 설정</h2> {/* 타이틀 스타일 변경 */}
+        <h2 className={classes.title}>백테스팅 설정</h2>
         
-        <div className={classes.buttonContainer}> {/* 버튼 컨테이너 추가 */}
+        <div className={classes.buttonContainer}>
           <button type="button" onClick={handleSave} className={classes.saveButton}>저장</button>
           <button type="button" onClick={handleLoad} className={classes.loadButton}>불러오기</button>
         </div>
         
-        <div className={classes.inputSection}> {/* inputSection 스타일 추가 */}
+        {/* 폼 시작 */}
+        <form onSubmit={handleSubmit} className={classes.inputSection}>
           <h6>시작일</h6>
           <BackTestingPeriod options="startDate" updateParentObject={updateBackTestingInfos} />
           <h6>종료일</h6>
@@ -154,8 +155,9 @@ export default function BacktestingPageTwo() {
 
           <BackTestingAsset options="assets" updateParentObject={updateBackTestingInfos} />
 
-          <button type="submit" className={classes.submitButton} onClick={handleSubmit}>백테스트 실행</button>
-        </div>
+          <button type="submit" className={classes.submitButton}>백테스트 실행</button>
+        </form>
+        {/* 폼 종료 */}
       </div>
 
       <div className={classes.rightSection}>

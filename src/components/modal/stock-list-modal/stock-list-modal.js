@@ -4,7 +4,8 @@ import classes from './stock-list-modal.module.css';
 import ComponentLoading from '@/components/loading/component-loading';
 import { parseCSV } from '@/utils/parseCSV';
 import Image from 'next/image';
-import helpIcon from '../../../../public/svgs/help.svg'
+import helpIcon from '../../../../public/svgs/help.svg';
+import { engToKor } from '@/utils/english_korean_mapping';
 
 let cachedStocks = null;
 
@@ -39,10 +40,12 @@ export default function StockListModal({ onClose, onAddItem }) {
     loadCSVData();
   }, []);
 
-  // 대소문자 구분 없이 필터링
+  const convertedSearchTerm = engToKor(searchTerm);
+
   const filteredStocks = stocks.filter(stock =>
-    stock.종목명?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    stock.종목코드?.toLowerCase().includes(searchTerm.toLowerCase())
+    stock.종목명?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    stock.종목코드?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    stock.종목명?.toLowerCase().includes(convertedSearchTerm.toLowerCase())
   );
 
   const handleAddItem = (stock) => {
@@ -80,12 +83,12 @@ export default function StockListModal({ onClose, onAddItem }) {
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
             >
-              <Image 
+              <Image
                 src={helpIcon}
                 alt={`help_icon`}
                 width={25}
                 height={25}
-              />  
+              />
               {showTooltip && (
                 <span className={classes.tooltip}>
                   추가 버튼을 눌러 종목을 추가하세요
