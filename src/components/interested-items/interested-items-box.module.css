@@ -4,8 +4,8 @@
   border-radius: 8px;
   background-color: white;
   width: 100%;
-  max-width: 450px;
-	min-height: 300px;
+  min-height: 300px;
+  position: relative; /* 로딩 컴포넌트 위치 조정을 위해 추가 */
 }
 
 .header {
@@ -48,18 +48,18 @@
   cursor: pointer;
   padding: 5px 10px;
   border-radius: 4px;
-	font-weight: 600;
-  transition: background-color 0.3s ease; 
+  font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
 .action:hover {
-  background-color: #f0f0f0; 
-  color: #333; 
+  background-color: #f0f0f0;
+  color: #333;
 }
 
 .scrollContainer {
-  max-height: 300px; 
-  overflow-y: auto; 
+  max-height: 300px;
+  overflow-y: auto;
   overflow-x: hidden;
   margin-top: 10px;
   padding-right: 10px;
@@ -78,9 +78,20 @@
 
 .noItemsMessage {
   display: flex;
-  justify-content: center; 
-  align-items: center; 
-  height: 150px; 
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  font-size: 16px;
+  color: #6c757d;
+  text-align: center;
+}
+
+/* 로딩 컨테이너 스타일 */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px; /* 중앙 배치를 위한 높이 설정 */
   font-size: 16px;
   color: #6c757d;
   text-align: center;

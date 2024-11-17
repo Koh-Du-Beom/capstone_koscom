@@ -1,13 +1,14 @@
+/* 컨테이너 */
 .filterContainer {
   padding: 15px;
   border-radius: 8px;
   background-color: white;
   width: 100%;
-  max-width: 800px;
-  max-height: 500px;
+  max-height: 600px; /* 최대 높이를 늘려 스크롤 영역 증가 */
   overflow-y: auto;
 }
 
+/* 타이틀 컨테이너 */
 .titleContainer {
   display: flex;
   justify-content: space-between;
@@ -17,32 +18,37 @@
   margin-bottom: 20px;
 }
 
+/* 타이틀 */
 .mainTitle {
   font-size: 18px;
   font-weight: bold;
   color: black;
 }
 
+/* 버튼 컨테이너 */
 .actionButtons {
   display: flex;
   gap: 10px;
 }
 
-.selectButton, .deselectButton {
+/* 필터 적용 버튼 */
+.applyFilterButton {
   font-size: 14px;
-	font-weight: bold;
-  color: black;
+  font-weight: bold;
+  color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
-	background-color: none;
+  background-color: #4CAF50;
+  transition: background-color 0.3s ease;
 }
 
-.selectButton:hover, .deselectButton:hover{
-	background-color: #e1e1e1;
+.applyFilterButton:hover {
+  background-color: #45a049;
 }
 
+/* 섹션 스타일 */
 .section {
   margin-bottom: 20px;
 }
@@ -59,22 +65,24 @@
   color: black;
 }
 
+/* 테이블 스타일 */
 .table {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px; /* 행 간격 증가 */
 }
 
 .row {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 30px; /* 라벨과 입력 필드 간격 증가 */
 }
 
+/* 체크박스 및 라벨 */
 .checkboxContainer {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
 }
 
@@ -82,13 +90,17 @@
   font-size: 14px;
   font-weight: bold;
   color: black;
+  width: 250px; /* 라벨의 너비 확장 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* 입력 컨테이너 */
 .inputContainer {
   display: flex;
-  gap: 10px;
+  gap: 15px; /* 입력 필드 간격 추가 */
   flex: 2;
-  justify-content: space-between;
 }
 
 .checkbox {
@@ -96,15 +108,76 @@
   height: 16px;
 }
 
-.select, .textInput, .numberInput {
-  width: 100px;
+/* 드롭다운 스타일 */
+.select {
+  width: 200px; /* 드롭다운 너비 확장 */
   padding: 5px;
   font-size: 14px;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.select:disabled, .textInput:disabled, .numberInput:disabled {
+.select:disabled {
   background-color: #e9e9e9;
   color: #aaa;
+}
+
+/* 드롭다운 컨테이너 스타일 */
+.dropdownContainer {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* 드롭다운 헤더 */
+.dropdownHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #fff;
+  color: #000;
+  cursor: pointer;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* 화살표 스타일 */
+.arrowUp {
+  transform: rotate(180deg);
+}
+
+.arrowDown {
+  transform: rotate(0deg);
+}
+
+/* 드롭다운 메뉴 */
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+/* 드롭다운 항목 */
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.dropdownItem input {
+  margin-right: 8px;
 }
