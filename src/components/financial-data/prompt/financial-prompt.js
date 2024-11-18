@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Loading from '@/app/loading';
 import ComponentLoading from '@/components/loading/component-loading';
 import classes from './financial-prompt.module.css';
 import axios from 'axios';
@@ -13,44 +12,47 @@ export default function FinancialPrompt({ updateGraphData }) {
     event.preventDefault();
 
     if (inputValue.trim()) {
-      setMessages((prevMessages) => [...prevMessages, { type: 'user', content: inputValue.trim() }]);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { type: 'user', content: inputValue.trim() },
+      ]);
       setInputValue('');
       setIsLoading(true);
 
       try {
-        // /api/getGraphData-prompt에 요청을 보냅니다.
+        // API 요청
         const response = await axios.post('/api/getGraphData-prompt', {
           message: inputValue.trim(),
         });
 
-        const newData = response.data;
+        const responseData = response.data;
 
-        // 응답 데이터가 문자열인지 JSON 형태인지 확인
-        if (typeof newData === 'string') {
-          // 문자열일 경우 메시지로만 표시
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { type: 'system', content: newData },
-          ]);
-        } else if (Array.isArray(newData) || typeof newData === 'object') {
-          // JSON 형태일 경우 그래프 데이터를 업데이트
-          updateGraphData((prev) => [...prev, ...newData]);
+        // 응답 데이터 유형에 따라 처리
+        if (Array.isArray(responseData)) {
+          // 그래프 데이터 응답
+          updateGraphData((prev) => [...prev, ...responseData]);
           setMessages((prevMessages) => [
             ...prevMessages,
             { type: 'system', content: '요청사항을 바탕으로 그래프를 생성했습니다.' },
           ]);
+        } else if (typeof responseData === 'object' && responseData.message) {
+          // 단순 메시지 응답
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { type: 'system', content: responseData.message },
+          ]);
         } else {
-          // 예상하지 못한 데이터 형식일 경우 오류 메시지 표시
+          // 예상치 못한 데이터 형식
           setMessages((prevMessages) => [
             ...prevMessages,
             { type: 'system', content: '알 수 없는 데이터 형식이 반환되었습니다.' },
           ]);
         }
       } catch (error) {
-        console.error("Error fetching financial data:", error);
+        console.error('Error fetching financial data:', error);
         setMessages((prevMessages) => [
           ...prevMessages,
-          { type: 'system', content: '오류가 발생했습니다. 다시 입력해주세요.' },
+          { type: 'system', content: '오류가 발생했습니다. 다시 시도해주세요.' },
         ]);
       } finally {
         setIsLoading(false);
@@ -64,7 +66,9 @@ export default function FinancialPrompt({ updateGraphData }) {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`${classes.message} ${message.type === 'user' ? classes.userMessage : classes.systemMessage}`}
+            className={`${classes.message} ${
+              message.type === 'user' ? classes.userMessage : classes.systemMessage
+            }`}
           >
             {message.content}
           </div>
