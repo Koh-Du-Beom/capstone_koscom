@@ -4,6 +4,7 @@ import classes from './page.module.css';
 import FinancialGraph from '@/components/graphs/financial-graph';
 import FinancialDropdownBox from '@/components/financial-data/dropdown/financial-dropdown-box'; // 새로 생성된 FinancialDropdownBox 컴포넌트 import
 import FinancialPrompt from '@/components/financial-data/prompt/financial-prompt';
+import graph_Mock_data from '@/components/graphs/graph-data';
 
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown');
@@ -55,9 +56,9 @@ export default function FinancialDataShowPage() {
 
       <div className={classes.rightSection}>      
         <div className={classes.graphSection}>
-        {graphData.length > 0 ? (
+        {graphData.length == 0 ? (
           <div className={classes.graphSection}>
-            <FinancialGraph graphData={graphData} />
+            <FinancialGraph graphData={graph_Mock_data} />
           </div>
         ) : (
           <div className={classes.emptyState}>보고싶은 지표를 선택해주세요!</div>

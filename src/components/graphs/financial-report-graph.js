@@ -100,6 +100,11 @@ export default function FinancialReportGraph({ graphData, dataType }) {
               } : {},
             },
           },
+          elements :{
+            point : {
+              radius : 0,
+            }
+          }
         }}
       />
       <Range
