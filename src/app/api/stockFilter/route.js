@@ -7,9 +7,9 @@ export async function POST(request) {
     const { stocks, selectedIndicators } = await request.json();
 
     // 요청 데이터 유효성 검사
-    if (!Array.isArray(stocks) || !Array.isArray(selectedIndicators)) {
+    if (!Array.isArray(stocks) || typeof selectedIndicators !== 'object' || selectedIndicators === null) {
       return NextResponse.json(
-        { error: 'Invalid request: stocks and selectedIndicators must be arrays.' },
+        { error: 'Invalid request: stocks must be an array and selectedIndicators must be an object.' },
         { status: 400 }
       );
     }
@@ -34,7 +34,7 @@ export async function POST(request) {
         };
 
         // 선택된 지표에 해당하는 score_ 값을 추출
-        selectedIndicators.forEach((indicator) => {
+        Object.keys(selectedIndicators).forEach((indicator) => {
           const scoreKey = `score_${indicator}`;
           if (item[indicator] !== undefined) {
             result[scoreKey] = item[indicator];

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import InterestedItems from './interested-items';
 import SimpleStockListModal from '../modal/stock-list-modal/stock-list-modal';
 import classes from './interested-items-box.module.css';
@@ -9,56 +9,63 @@ import ComponentLoading from '../loading/component-loading';
 
 const InterestedItemsBox = () => {
   const { interestedItems, addInterestedItem, removeInterestedItem } = useInterestedItems();
-  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림/닫힘 상태
-  const [isEditMode, setIsEditMode] = useState(false); // 편집 모드 상태
-  const [hasMounted, setHasMounted] = useState(false); // 클라이언트에서만 렌더링되는 상태
-  const [loading, setLoading] = useState(false); // 로딩 상태 관리
-
-  // 가격 정보를 저장할 상태
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [stockDataList, setStockDataList] = useState([]);
+  const hasFetchedData = useRef(false); // API 호출 여부 상태
+  const fetchInProgress = useRef(false); // 중복 호출 방지
+  const [hasMounted, setHasMounted] = useState(false); // 클라이언트 렌더링 상태
 
-  // 클라이언트에서만 실행되도록 설정
+  // 클라이언트에서만 렌더링
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
-  // 관심 종목 목록이 변경될 때마다 가격 정보를 가져오는 함수
-  useEffect(() => {
-    const fetchStockData = async () => {
-      setLoading(true); // 로딩 시작
-      try {
-        const promises = interestedItems.map(async (stock) => {
-          const response = await axios.get('/api/stockList', {
-            params: {
-              code: stock.code,
-              name: stock.name,
-              marketCategory: stock.marketCategory,
-            },
-          });
-          return response.data;
+  // 관심 종목 데이터를 서버에서 가져오는 함수
+  const fetchStockData = useCallback(async () => {
+    if (fetchInProgress.current || hasFetchedData.current || interestedItems.length === 0) {
+      return; // 이미 호출 중이거나 호출된 경우
+    }
+
+    fetchInProgress.current = true; // 호출 상태 설정
+    setLoading(true);
+    try {
+      const promises = interestedItems.map(async (stock) => {
+        const response = await axios.get('/api/stockList', {
+          params: {
+            code: stock.code,
+            name: stock.name,
+            marketCategory: stock.marketCategory,
+          },
         });
+        return response.data;
+      });
 
-        const results = await Promise.all(promises);
-        setStockDataList(results);
-      } catch (error) {
-        console.error('Failed to fetch stock data:', error.message);
-      } finally {
-        setLoading(false); // 로딩 종료
-      }
-    };
-
-    fetchStockData();
-
-    // 주기적으로 가격 정보를 업데이트 (1시간마다)
-    const interval = setInterval(fetchStockData, 60 * 1000 * 60); // 60,000ms = 1분
-
-    // 컴포넌트 언마운트 시 인터벌 정리
-    return () => clearInterval(interval);
+      const results = await Promise.all(promises);
+      setStockDataList(results);
+      hasFetchedData.current = true; // 호출 완료
+    } catch (error) {
+      console.error('Failed to fetch stock data:', error.message);
+    } finally {
+      fetchInProgress.current = false; // 호출 상태 해제
+      setLoading(false);
+    }
   }, [interestedItems]);
 
-  if (!hasMounted) {
-    return null;
-  }
+  // 초기 렌더링 및 주기적 데이터 갱신
+  useEffect(() => {
+    if (!hasFetchedData.current) {
+      fetchStockData(); // 초기 렌더링 시 한 번 호출
+    }
+
+    const interval = setInterval(() => {
+      hasFetchedData.current = false; // 데이터 갱신 플래그 초기화
+      fetchStockData(); // 주기적으로 호출
+    }, 60 * 1000 * 60); // 1시간마다 호출
+
+    return () => clearInterval(interval);
+  }, [fetchStockData]);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -68,27 +75,40 @@ const InterestedItemsBox = () => {
     setIsEditMode(!isEditMode);
   };
 
-  // 선택된 종목 데이터를 받아 관심 목록에 추가
   const addStockItem = (stock) => {
     if (interestedItems.find((item) => item.code === stock.code)) {
       return;
     }
 
-    // 로컬 스토리지에 name, code, marketCategory만 저장
     addInterestedItem({
       name: stock.name,
       code: stock.code,
       marketCategory: stock.marketCategory,
     });
 
+    hasFetchedData.current = false; // 새 데이터 요청을 위해 초기화
+    fetchStockData(); // 새로운 데이터 가져오기
     setIsModalOpen(false);
   };
 
-  // 관심 종목을 종목 코드로 제거하는 함수
   const removeStockItem = (stockCode) => {
-    // 관심 목록에서 종목 코드를 찾아 제거
-    removeInterestedItem(stockCode);
-  };
+		removeInterestedItem(stockCode);
+	
+		// 상태 업데이트: 삭제된 아이템 제외한 데이터로 갱신
+		const updatedStockDataList = stockDataList.filter((item) => item.code !== stockCode);
+		setStockDataList(updatedStockDataList);
+	
+		// 데이터가 없으면 fetch 플래그 초기화 (추후 추가 시 갱신 가능)
+		if (updatedStockDataList.length === 0) {
+			hasFetchedData.current = false;
+		}
+	};
+	
+
+  if (!hasMounted) {
+    // 클라이언트가 마운트되기 전에는 렌더링하지 않음
+    return null;
+  }
 
   return (
     <section className={classes.container}>
@@ -106,17 +126,17 @@ const InterestedItemsBox = () => {
       </div>
 
       {loading ? (
-				<div className={classes.loadingContainer}>
-					<ComponentLoading />
-				</div>
-      ) : interestedItems.length === 0 ? (
+        <div className={classes.loadingContainer}>
+          <ComponentLoading />
+        </div>
+      ) : stockDataList.length === 0 ? (
         <h1 className={classes.noItemsMessage}>
           관심종목을 등록하세요!
         </h1>
       ) : (
         <div className={classes.scrollContainer}>
           <div className={classes.itemsList}>
-            <InterestedItems 
+            <InterestedItems
               items={stockDataList}
               isEditMode={isEditMode}
               onRemoveItem={removeStockItem}

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useInterestedItems } from '@/contexts/InterestedItemsContext'; // 관심 종목 컨텍스트
 import TechnicalFilter from '@/components/technical-analysis/technical-filter/technical-filter';
 import InterestedItemsBox from '@/components/interested-items/interested-items-box';
@@ -12,13 +12,13 @@ export default function StockFilterPage() {
   const { interestedItems } = useInterestedItems();
 
   // 선택된 지표 상태
-  const [selectedIndicators, setSelectedIndicators] = useState([
-    'Awesome Oscillator',
-    'RSI',
-    'Stochastic Oscillator',
-    'Stochastic RSI',
-    'True Strength Index (TSI)',
-  ]);
+  const [selectedIndicators, setSelectedIndicators] = useState({
+    'Awesome Oscillator': '상향돌파',
+    'RSI': '상향돌파',
+    'Stochastic Oscillator': '상향돌파',
+    'Stochastic RSI': '상향돌파',
+    'True Strength Index (TSI)': '상향돌파',
+  });
 
   // API 응답 데이터 저장 상태
   const [apiResponse, setApiResponse] = useState(null); // 초기 상태는 null
@@ -30,7 +30,7 @@ export default function StockFilterPage() {
       return;
     }
 
-    if (selectedIndicators.length === 0) {
+    if (Object.keys(selectedIndicators).length === 0) {
       console.warn('선택된 지표가 없습니다.');
       return;
     }
