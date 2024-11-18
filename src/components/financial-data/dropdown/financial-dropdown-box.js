@@ -19,7 +19,6 @@ export default function FinancialDropdownBox({ updateGraphData }) {
     const restructuredData = selectedIndicators.reduce((acc, indicator) => {
       const indicatorData = stockData.reduce((stocksAcc, { stockName, data }) => {
         const stockIndicatorData = Object.entries(data)
-          .sort(([a], [b]) => a.localeCompare(b)) // 연도를 오름차순으로 정렬
           .reduce((datesAcc, [date, values]) => {
             if (values[indicator] !== undefined) {
               datesAcc[date] = values[indicator];

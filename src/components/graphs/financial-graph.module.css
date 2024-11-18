@@ -18,19 +18,15 @@
 	margin-bottom: 10px;
 	padding: 5px 15px;
 	font-size: 14px;
-	font-weight: 500;
-	color: #fff;
-	background-color: #007bff;
+	font-weight: bold;
+	color: #191919;
+	background-color: #8DE3A5;
 	border: none;
 	border-radius: 5px;
 	cursor: pointer;
 	transition: background-color 0.3s;
 	width: auto;
 	text-align: center;
-}
-
-.chartToggleButton:hover {
-	background-color: #0056b3;
 }
 
 
@@ -45,14 +41,9 @@
 .rangeSliderThumb {
 	height: 15px;
 	width: 15px;
-	background-color: #007bff;
+	background-color: #8DE3A5;
 	border-radius: 50%;
-	cursor: pointer;
 	transition: background-color 0.3s;
-}
-
-.rangeSliderThumb:hover {
-	background-color: #0056b3; /* hover 시 더 진한 파란색 */
 }
 
 .rangeValue {

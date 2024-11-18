@@ -56,21 +56,39 @@ export default function FinancialGraph({ graphData }) {
     }
   }, [graphData]);
 
+  const formatYearToQuarter = (year) => {
+    const [yearPart, monthPart] = year.split("-");
+    const quarter =
+      monthPart === "03" ? "Q1" :
+      monthPart === "06" ? "Q2" :
+      monthPart === "09" ? "Q3" :
+      monthPart === "12" ? "Q4" : "";
+    return `${yearPart}${quarter}`;
+  };
+
   const createDatasetForMetric = (metricName, metricData, years) => {
     const companies = Object.keys(metricData);
     
     const datasets = companies.map((company, index) => {
       const colorIndex = index % graphColors.length;
+
+      // 연도를 정렬하고 포맷 변환
+      const sortedYears = [...years].sort((a, b) => new Date(a) - new Date(b));
+      const formattedYears = sortedYears.map(formatYearToQuarter);
+
       return {
         label: company,
-        data: years.map(year => metricData[company][year] || null),
+        data: sortedYears.map(year => metricData[company][year] || null),
         backgroundColor: graphColors[colorIndex].backgroundColor,
         borderColor: graphColors[colorIndex].borderColor,
         borderWidth: 1,
       };
     });
-  
-    return { labels: years, datasets };
+
+    const sortedYears = [...years].sort((a, b) => new Date(a) - new Date(b));
+    const formattedYears = sortedYears.map(formatYearToQuarter);
+
+    return { labels: formattedYears, datasets }; // 포맷된 연도를 labels로 사용
   };
 
   const graphs = graphData.map((metricObj, index) => {
@@ -81,7 +99,8 @@ export default function FinancialGraph({ graphData }) {
 
     // 각 그래프별로 x축에 사용할 연도를 설정합니다.
     const metricYears = Object.keys(metricData[Object.keys(metricData)[0]]);
-    const filteredYears = metricYears.slice(filterRanges[index][0], filterRanges[index][1] + 1);
+    const sortedYears = [...metricYears].sort((a, b) => new Date(a) - new Date(b)); // 날짜 기준 정렬
+    const filteredYears = sortedYears.slice(filterRanges[index][0], filterRanges[index][1] + 1);
     const data = createDatasetForMetric(metricName, metricData, filteredYears);
     const ChartComponent = chartTypes[index] === "Bar" ? Bar : Line;
 
@@ -136,7 +155,7 @@ export default function FinancialGraph({ graphData }) {
           />
         )}
         <div className={classes.rangeValue}>
-          <span>기간: {metricYears[filterRanges[index][0]]} - {metricYears[filterRanges[index][1]]}</span>
+          <span>기간: {sortedYears[filterRanges[index][0]]} - {sortedYears[filterRanges[index][1]]}</span>
         </div>
       </div>
     );

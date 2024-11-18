@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { spawn } from 'child_process';
 import path from 'path';
+import { isValidGraphData } from '@/utils/graph-reconstruction';
 
 export async function POST(request) {
   try {
     const { message } = await request.json();
 
-    // message가 문자열인지 확인
     if (typeof message !== 'string') {
       return NextResponse.json(
         { error: 'Invalid input: "message" must be a string.' },
@@ -16,7 +16,7 @@ export async function POST(request) {
 
     return new Promise((resolve, reject) => {
       const pythonPath = '/home/ubuntu-server/superfantastic/bin/python';
-      const scriptPath = path.resolve('/home/ubuntu-server/gptapicall.py'); // 새로운 경로로 수정
+      const scriptPath = path.resolve('/home/ubuntu-server/gptapicall.py');
 
       const pythonProcess = spawn(pythonPath, [scriptPath, '--sentence', message]);
 
@@ -35,10 +35,19 @@ export async function POST(request) {
         if (code === 0) {
           console.log('output', output);
 
-          // output이 JSON 형식인지 문자열인지 구분
           if (output.trim().startsWith('{') && output.trim().endsWith('}')) {
             try {
               const jsonData = JSON.parse(output);
+
+              if (!isValidGraphData(jsonData)) {
+                return resolve(
+                  NextResponse.json(
+                    { error: 'Invalid data format returned from Python script.' },
+                    { status: 400 }
+                  )
+                );
+              }
+
               resolve(NextResponse.json(Array.isArray(jsonData) ? jsonData : [jsonData]));
             } catch (parseError) {
               console.error('JSON 파싱 오류:', parseError.message);
@@ -50,8 +59,8 @@ export async function POST(request) {
               );
             }
           } else {
-            // JSON 형식이 아닌 경우 문자열로 반환
-            resolve(NextResponse.json(output.trim()));
+            // JSON이 아니면 단순 텍스트 응답
+            resolve(NextResponse.json({ message: output.trim() }));
           }
         } else {
           console.error(`Python script error: ${error}`);
