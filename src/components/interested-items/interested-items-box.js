@@ -5,12 +5,14 @@ import SimpleStockListModal from '../modal/stock-list-modal/stock-list-modal';
 import classes from './interested-items-box.module.css';
 import { useInterestedItems } from '@/contexts/InterestedItemsContext';
 import axios from 'axios';
+import ComponentLoading from '../loading/component-loading';
 
 const InterestedItemsBox = () => {
   const { interestedItems, addInterestedItem, removeInterestedItem } = useInterestedItems();
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림/닫힘 상태
   const [isEditMode, setIsEditMode] = useState(false); // 편집 모드 상태
   const [hasMounted, setHasMounted] = useState(false); // 클라이언트에서만 렌더링되는 상태
+  const [loading, setLoading] = useState(false); // 로딩 상태 관리
 
   // 가격 정보를 저장할 상태
   const [stockDataList, setStockDataList] = useState([]);
@@ -23,6 +25,7 @@ const InterestedItemsBox = () => {
   // 관심 종목 목록이 변경될 때마다 가격 정보를 가져오는 함수
   useEffect(() => {
     const fetchStockData = async () => {
+      setLoading(true); // 로딩 시작
       try {
         const promises = interestedItems.map(async (stock) => {
           const response = await axios.get('/api/stockList', {
@@ -39,6 +42,8 @@ const InterestedItemsBox = () => {
         setStockDataList(results);
       } catch (error) {
         console.error('Failed to fetch stock data:', error.message);
+      } finally {
+        setLoading(false); // 로딩 종료
       }
     };
 
@@ -100,7 +105,11 @@ const InterestedItemsBox = () => {
         </div>
       </div>
 
-      {interestedItems.length === 0 ? (
+      {loading ? (
+				<div className={classes.loadingContainer}>
+					<ComponentLoading />
+				</div>
+      ) : interestedItems.length === 0 ? (
         <h1 className={classes.noItemsMessage}>
           관심종목을 등록하세요!
         </h1>

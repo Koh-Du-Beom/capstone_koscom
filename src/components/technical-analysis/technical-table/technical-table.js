@@ -1,11 +1,15 @@
-// TechnicalTable.js
-
 import React from 'react';
 import TechnicalPointBar from './technical-table-point-bar';
 import TechnicalTableIdentifier from './technical-table-identifier';
 import classes from './technical-table.module.css';
 
 export default function TechnicalTable({ data, selectedIndicators }) {
+  const MAX_COLUMNS = 6; // 최대 칼럼 개수 (종목명, Rating 포함)
+
+  // 기본 칼럼(종목명, Rating) + 선택된 필터
+  const visibleIndicators = [...selectedIndicators];
+  const additionalEmptyColumns = MAX_COLUMNS - 2 - visibleIndicators.length;
+
   return (
     <div className={classes.tableContainer}>
       <table className={classes.table}>
@@ -13,15 +17,19 @@ export default function TechnicalTable({ data, selectedIndicators }) {
           <tr>
             <th>종목명</th>
             <th>Rating</th>
-            {selectedIndicators.map((indicator) => (
-              <th key={indicator}>{indicator}</th>
+            {visibleIndicators.map((indicator, index) => (
+              <th key={`indicator-${index}`}>{indicator}</th>
+            ))}
+            {/* 빈 칼럼을 추가 */}
+            {Array.from({ length: additionalEmptyColumns }).map((_, index) => (
+              <th key={`empty-${index}`}></th>
             ))}
           </tr>
         </thead>
         <tbody>
           {data.items.map((item, index) => (
             <tr key={item.ticker}>
-              {/* 첫 번째 칼럼: 종목명, 티커 및 거래소 코드 */}
+              {/* 첫 번째 칼럼: 종목명 */}
               <td>
                 <TechnicalTableIdentifier
                   index={index + 1}
@@ -38,10 +46,8 @@ export default function TechnicalTable({ data, selectedIndicators }) {
                   subScore={0}
                 />
               </td>
-
-              {/* 동적 지표 칼럼 */}
-              {selectedIndicators.map((indicator) => {
-                // 그대로 지표 이름을 사용하여 mainScore와 subScore에 접근
+              {/* 선택된 지표 데이터 */}
+              {visibleIndicators.map((indicator) => {
                 const mainScore = item[`score_${indicator}`];
                 const subScore = item[indicator];
 
@@ -49,12 +55,16 @@ export default function TechnicalTable({ data, selectedIndicators }) {
                   <td key={indicator}>
                     <TechnicalPointBar
                       indicator={indicator}
-                      mainScore={mainScore !== undefined ? mainScore : 0}  // mainScore가 없을 경우 0으로 설정
-                      subScore={subScore !== undefined ? subScore : 0}     // subScore가 없을 경우 0으로 설정
+                      mainScore={mainScore !== undefined ? mainScore : 0}
+                      subScore={subScore !== undefined ? subScore : 0}
                     />
                   </td>
                 );
               })}
+              {/* 빈 칼럼 데이터 */}
+              {Array.from({ length: additionalEmptyColumns }).map((_, index) => (
+                <td key={`empty-data-${index}`}></td>
+              ))}
             </tr>
           ))}
         </tbody>
