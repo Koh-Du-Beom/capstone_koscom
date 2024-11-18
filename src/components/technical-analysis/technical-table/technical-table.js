@@ -1,6 +1,7 @@
 import React from 'react';
 import TechnicalTableIdentifier from './technical-table-identifier';
 import classes from './technical-table.module.css';
+import TableCircularProgressBar from './technical-table-circular-progress-bar';
 
 export default function TechnicalTable({ data }) {
   if (!data || !data.items) {
@@ -44,12 +45,21 @@ export default function TechnicalTable({ data }) {
                     exchange_code={item.exchangeCode || '-'}
                   />
                 </td>
+                {/* 두 번쨰 칼럼은 전체점수 반영 */}
+
                 {/* 동적으로 생성된 헤더 데이터 렌더링 */}
-                {headers.map((header) => (
-                  <td key={`data-${header}`}>
-                    {item[header] !== undefined ? item[header] : '-'}
-                  </td>
-                ))}
+                {headers.map((header) => {
+                  const value = item[header];
+                  return (
+                    <td key={`data-${header}`}>
+                      {value !== undefined ? (
+                        <TableCircularProgressBar point={value} />
+                      ) : (
+                        '-'
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

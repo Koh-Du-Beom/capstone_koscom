@@ -13,7 +13,7 @@ export default function TechnicalTableIdentifier({ index, ticker, company_name, 
       default:
         return '/svgs/krx.svg'; // 기본 로고 경로
     }
-  };
+  }; //로고도 변경하기
 
   return (
     <div className={classes.identifierContainer}>
