@@ -1,74 +1,60 @@
 import React from 'react';
-import TechnicalPointBar from './technical-table-point-bar';
 import TechnicalTableIdentifier from './technical-table-identifier';
 import classes from './technical-table.module.css';
 
-export default function TechnicalTable({ data, selectedIndicators }) {
-  const MAX_COLUMNS = 6; // 최대 칼럼 개수 (종목명, Rating 포함)
+export default function TechnicalTable({ data }) {
+  if (!data || !data.items) {
+    return <div>데이터가 없습니다.</div>;
+  }
 
-  // 기본 칼럼(종목명, Rating) + 선택된 필터
-  const visibleIndicators = [...selectedIndicators];
-  const additionalEmptyColumns = MAX_COLUMNS - 2 - visibleIndicators.length;
+  // 헤더 데이터 생성 (ticker와 companyName 제외)
+  const headers = Object.keys(data.items[0]).filter(
+    (key) => key !== 'ticker' && key !== 'companyName'
+  );
 
   return (
-    <div className={classes.tableContainer}>
-      <table className={classes.table}>
-        <thead>
-          <tr>
-            <th>종목명</th>
-            <th>Rating</th>
-            {visibleIndicators.map((indicator, index) => (
-              <th key={`indicator-${index}`}>{indicator}</th>
-            ))}
-            {/* 빈 칼럼을 추가 */}
-            {Array.from({ length: additionalEmptyColumns }).map((_, index) => (
-              <th key={`empty-${index}`}></th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.items.map((item, index) => (
-            <tr key={item.ticker}>
-              {/* 첫 번째 칼럼: 종목명 */}
-              <td>
-                <TechnicalTableIdentifier
-                  index={index + 1}
-                  ticker={item.ticker}
-                  company_name={item.company_name}
-                  exchange_code={item.exchange_code}
-                />
-              </td>
-              {/* 두 번째 칼럼: Rating */}
-              <td>
-                <TechnicalPointBar
-                  indicator="Rating"
-                  mainScore={Math.round(item.ranking) || 0}
-                  subScore={0}
-                />
-              </td>
-              {/* 선택된 지표 데이터 */}
-              {visibleIndicators.map((indicator) => {
-                const mainScore = item[`score_${indicator}`];
-                const subScore = item[indicator];
-
-                return (
-                  <td key={indicator}>
-                    <TechnicalPointBar
-                      indicator={indicator}
-                      mainScore={mainScore !== undefined ? mainScore : 0}
-                      subScore={subScore !== undefined ? subScore : 0}
-                    />
-                  </td>
-                );
-              })}
-              {/* 빈 칼럼 데이터 */}
-              {Array.from({ length: additionalEmptyColumns }).map((_, index) => (
-                <td key={`empty-data-${index}`}></td>
+    <>
+      {/* 데이터 기준 날짜를 테이블 컨테이너 밖에 배치 */}
+      {data.date && (
+        <div className={classes.dateContainer}>
+          <strong>데이터 기준 날짜:</strong> {data.date}
+        </div>
+      )}
+      <div className={classes.tableContainer}>
+        <table className={classes.table}>
+          <thead>
+            <tr>
+              <th>종목명</th>
+              {headers.map((header, index) => (
+                <th key={`header-${index}`}>
+                  {header.replace('score_', '') /* score_ 제거 */}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {data.items.map((item, index) => (
+              <tr key={item.ticker}>
+                {/* 첫 번째 칼럼: 종목명 */}
+                <td>
+                  <TechnicalTableIdentifier
+                    index={index + 1}
+                    ticker={item.ticker}
+                    company_name={item.companyName}
+                    exchange_code={item.exchangeCode || '-'}
+                  />
+                </td>
+                {/* 동적으로 생성된 헤더 데이터 렌더링 */}
+                {headers.map((header) => (
+                  <td key={`data-${header}`}>
+                    {item[header] !== undefined ? item[header] : '-'}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

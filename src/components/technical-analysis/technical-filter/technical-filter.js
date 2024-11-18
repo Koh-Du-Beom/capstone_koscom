@@ -48,26 +48,12 @@ export default function TechnicalFilter({ selectedIndicators, setSelectedIndicat
     );
   };
 
-  const applyFilter = () => {
-    console.log('필터 적용:', selectedIndicators);
-  };
-
   return (
     <div className={classes.filterContainer}>
-      {/* 상단 타이틀과 버튼 */}
       <div className={classes.titleContainer}>
-        <h2 className={classes.mainTitle}>종목 필터</h2>
-        <div className={classes.actionButtons}>
-          <button
-            className={classes.applyFilterButton}
-            onClick={applyFilter}
-          >
-            필터 적용
-          </button>
-        </div>
+        <h1 className={classes.mainTitle}>종목 필터</h1>
       </div>
       
-      {/* 지표 목록 */}
       {Object.entries(indicators).map(([section, items]) => (
         <div key={section} className={classes.section}>
           <div className={classes.header}>

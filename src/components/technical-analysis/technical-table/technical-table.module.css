@@ -3,9 +3,22 @@
   overflow-x: auto; /* 수평 스크롤 */
   margin: 0;
   display: flex;
+  flex-direction: column; /* 세로 배치 */
   justify-content: flex-start; /* 테이블을 왼쪽 정렬 */
   align-items: flex-start;
   padding: 0 20px;
+}
+
+.dateContainer {
+  text-align: right; /* 오른쪽 정렬 */
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff; /* 배경색 추가 */
+  z-index: 2; /* 테이블보다 위에 표시 */
+  padding: 5px 10px;
+  border: 1px solid #ddd; /* 구분선 추가 */
+  border-radius: 4px;
 }
 
 .table {
@@ -27,7 +40,7 @@
   font-weight: bold;
   color: #555;
   position: sticky; /* 헤더 고정 */
-  top: 0;
+  top: 0; /* 화면 상단에 고정 */
   background-color: #f8f9fa;
   z-index: 1;
 }
@@ -46,15 +59,9 @@
   width: 200px;
 }
 
-/* 두 번째 칼럼의 너비 고정 */
-.table tr th:nth-child(2),
-.table tr td:nth-child(2) {
-  width: 200px;
-}
-
 /* 기본 칼럼과 추가 칼럼의 너비 */
-.table tr th:nth-child(n+3),
-.table tr td:nth-child(n+3) {
+.table tr th:nth-child(n+2),
+.table tr td:nth-child(n+2) {
   width: 200px;
 }
 
@@ -64,8 +71,19 @@
   border-right: none;
 }
 
-/* 빈 칼럼 스타일 */
-.table th:empty,
-.table td:empty {
+/* 짝수 행 배경색 */
+.table tbody tr:nth-child(even) {
   background-color: #f9f9f9;
+}
+
+/* 호버 스타일 */
+.table tbody tr:hover {
+  background-color: #e9ecef;
+  transition: background-color 0.3s;
+}
+
+/* 세로 가운데 정렬 */
+.table td,
+.table th {
+  vertical-align: middle;
 }
