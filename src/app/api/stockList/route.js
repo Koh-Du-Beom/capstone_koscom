@@ -83,8 +83,6 @@ export async function GET(request) {
       mkp,
     };
 
-    console.log(stockData);
-
     return NextResponse.json(stockData); // JSON 형태로 응답
   } catch (error) {
     console.error('Error fetching stock data:', error.message);

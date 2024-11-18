@@ -3,8 +3,8 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import ko from 'date-fns/locale/ko';
 import 'react-datepicker/dist/react-datepicker.css';
 import styles from './back-testing-period.module.css';
+import CustomCalendarIcon from './calendar-icon';
 
-// 한국어 로케일 등록
 registerLocale('ko', ko);
 
 export default function BackTestingPeriod({ options, updateParentObject }) {
@@ -36,10 +36,9 @@ export default function BackTestingPeriod({ options, updateParentObject }) {
         onChange={handleDateChange}
         dateFormat="yyyy년 MM월 dd일"
         locale="ko"
-        className={styles.datePickerInput}
         placeholderText="날짜를 선택하세요"
         onKeyDown={(e) => e.preventDefault()} // 키보드 입력 차단
-        ref={datePickerRef}
+        customInput={<CustomCalendarIcon placeholder="날짜를 선택하세요" />}
         renderCustomHeader={({ date, changeYear, changeMonth }) => (
           <div className={styles.customHeader}>
             <select
@@ -67,6 +66,7 @@ export default function BackTestingPeriod({ options, updateParentObject }) {
           </div>
         )}
       />
+
     </div>
   );
 }

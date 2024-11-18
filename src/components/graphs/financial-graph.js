@@ -106,6 +106,11 @@ export default function FinancialGraph({ graphData }) {
             scales: {
               x: { title: { display: true, text: "기간" } },
             },
+            elements: {
+              point: {
+                radius: 0,
+              }
+            }
           }}
         />
         {metricYears.length > 0 && (
