@@ -151,3 +151,14 @@
 .sortIcon:hover {
   background-color: #f0f0f0; /* 원하는 호버 배경색으로 변경 */
 }
+
+/* 정렬된 헤더 스타일 */
+.sortedHeader {
+  border-bottom: 2px solid #007bff;
+  background-color: #f1f8ff;
+}
+
+/* 정렬된 데이터 셀 스타일 */
+.sortedCell {
+  background-color: #f1f8ff;
+}

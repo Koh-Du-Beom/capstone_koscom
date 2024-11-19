@@ -26,10 +26,41 @@ export default function TechnicalTable({ data, indicatorWeights }) {
 
   const sortedItems = React.useMemo(() => {
     let sortableItems = [...data.items];
+
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
-        const aValue = a[sortConfig.key];
-        const bValue = b[sortConfig.key];
+        let aValue, bValue;
+
+        if (sortConfig.key === 'Rating') {
+          // a와 b의 Rating 값 계산
+          const calculateRating = (item) => {
+            const scores = headers
+              .map((header) => {
+                const score = item[header];
+                const indicatorName = header.replace('score_', '');
+                const weight = indicatorWeights[indicatorName];
+                return {
+                  score,
+                  weight: weight !== undefined ? weight : 0,
+                };
+              })
+              .filter(({ score, weight }) => typeof score === 'number' && weight > 0);
+
+            const totalWeight = scores.reduce((sum, { weight }) => sum + weight, 0);
+            const weightedScore =
+              totalWeight > 0
+                ? scores.reduce((sum, { score, weight }) => sum + score * weight, 0) / totalWeight
+                : null;
+            return weightedScore;
+          };
+
+          aValue = calculateRating(a);
+          bValue = calculateRating(b);
+        } else {
+          aValue = a[sortConfig.key];
+          bValue = b[sortConfig.key];
+        }
+
         if (aValue === undefined || bValue === undefined) return 0;
         if (aValue < bValue) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
@@ -41,7 +72,7 @@ export default function TechnicalTable({ data, indicatorWeights }) {
       });
     }
     return sortableItems;
-  }, [data.items, sortConfig]);
+  }, [data.items, sortConfig, headers, indicatorWeights]);
 
   return (
     <>
@@ -55,7 +86,11 @@ export default function TechnicalTable({ data, indicatorWeights }) {
           <thead>
             <tr>
               <th>종목명</th>
-              <th className={classes.ratingHeader}>
+              <th
+                className={`${classes.ratingHeader} ${
+                  sortConfig && sortConfig.key === 'Rating' ? classes.sortedHeader : ''
+                }`}
+              >
                 Rating
                 <span className={classes.infoIcon}>
                   <Image
@@ -77,25 +112,28 @@ export default function TechnicalTable({ data, indicatorWeights }) {
                   />
                 </span>
               </th>
-              {headers.map((header, index) => (
-                <th
-                  key={`header-${index}`}
-                  className={classes.sortableHeader}
-                >
-                  {header.replace('score_', '')}
-                  <span 
-                    className={classes.sortIcon}
-                    onClick={() => handleSort(header)}
+              {headers.map((header, index) => {
+                const isSortedColumn = sortConfig && sortConfig.key === header;
+                return (
+                  <th
+                    key={`header-${index}`}
+                    className={`${classes.sortableHeader} ${isSortedColumn ? classes.sortedHeader : ''}`}
                   >
-                    <Image
-                      src="/svgs/sort.svg"
-                      alt="sortIcon"
-                      width={16}
-                      height={16}
-                    />
-                  </span>
-                </th>
-              ))}
+                    {header.replace('score_', '')}
+                    <span 
+                      className={classes.sortIcon}
+                      onClick={() => handleSort(header)}
+                    >
+                      <Image
+                        src="/svgs/sort.svg"
+                        alt="sortIcon"
+                        width={16}
+                        height={16}
+                      />
+                    </span>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
@@ -129,7 +167,7 @@ export default function TechnicalTable({ data, indicatorWeights }) {
                       exchange_code={item.exchangeCode || '-'}
                     />
                   </td>
-                  <td>
+                  <td className={sortConfig && sortConfig.key === 'Rating' ? classes.sortedCell : ''}>
                     {formattedScore !== null ? (
                       <TableCircularProgressBar point={parseFloat(formattedScore)} />
                     ) : (
@@ -138,8 +176,9 @@ export default function TechnicalTable({ data, indicatorWeights }) {
                   </td>
                   {headers.map((header) => {
                     const value = item[header];
+                    const isSortedColumn = sortConfig && sortConfig.key === header;
                     return (
-                      <td key={`data-${header}`}>
+                      <td key={`data-${header}`} className={isSortedColumn ? classes.sortedCell : ''}>
                         {value !== undefined ? (
                           <TableCircularProgressBar point={value} />
                         ) : (
