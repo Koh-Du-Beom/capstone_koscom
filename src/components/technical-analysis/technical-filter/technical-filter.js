@@ -11,7 +11,7 @@ export default function TechnicalFilter({ selectedIndicators, setSelectedIndicat
       'Stochastic RSI',
       'True Strength Index (TSI)',
       'Ultimate Oscillator',
-      'Williams %R'
+      'Williams %R',
     ],
     Trend: [
       'Commodity Channel Index',
@@ -25,49 +25,46 @@ export default function TechnicalFilter({ selectedIndicators, setSelectedIndicat
       'SMA 60',
       'SMA 120',
       'SMA 250',
-      'Triple Exponential Averages'
+      'Triple Exponential Averages',
     ],
     Volume: [
       'Accumulation/Distribution Index',
       'Chaikin Money Flow',
       'On-Balance Volume',
-      'Price Volume Trend'
+      'Price Volume Trend',
     ],
-    Volatility: [
-      'Bollinger Band',
-      'Donchian Channel',
-      'Keltner Channel'
-    ]
+    Volatility: ['Bollinger Band', 'Donchian Channel', 'Keltner Channel'],
   };
 
+  // 체크박스 변경 핸들러
   const handleCheckboxChange = (indicator) => {
-    setSelectedIndicators((prev) =>
-      prev.includes(indicator)
-        ? prev.filter((i) => i !== indicator)
-        : [...prev, indicator]
-    );
+    setSelectedIndicators((prev) => {
+      const newSelected = { ...prev };
+      if (newSelected[indicator]) {
+        // 이미 선택되어 있으면 제거
+        delete newSelected[indicator];
+      } else {
+        // 선택되지 않았으면 기본값으로 추가
+        newSelected[indicator] = '상향돌파';
+      }
+      return newSelected;
+    });
   };
 
-  const applyFilter = () => {
-    console.log('필터 적용:', selectedIndicators);
+  // 셀렉트 박스 변경 핸들러
+  const handleSelectChange = (indicator, value) => {
+    setSelectedIndicators((prev) => ({
+      ...prev,
+      [indicator]: value,
+    }));
   };
 
   return (
     <div className={classes.filterContainer}>
-      {/* 상단 타이틀과 버튼 */}
       <div className={classes.titleContainer}>
-        <h2 className={classes.mainTitle}>종목 필터</h2>
-        <div className={classes.actionButtons}>
-          <button
-            className={classes.applyFilterButton}
-            onClick={applyFilter}
-          >
-            필터 적용
-          </button>
-        </div>
+        <h1 className={classes.mainTitle}>종목 필터</h1>
       </div>
-      
-      {/* 지표 목록 */}
+
       {Object.entries(indicators).map(([section, items]) => (
         <div key={section} className={classes.section}>
           <div className={classes.header}>
@@ -80,7 +77,7 @@ export default function TechnicalFilter({ selectedIndicators, setSelectedIndicat
                   <input
                     type="checkbox"
                     className={classes.checkbox}
-                    checked={selectedIndicators.includes(indicator)}
+                    checked={selectedIndicators.hasOwnProperty(indicator)}
                     onChange={() => handleCheckboxChange(indicator)}
                   />
                   <label className={classes.indicatorLabel}>{indicator}</label>
@@ -88,7 +85,9 @@ export default function TechnicalFilter({ selectedIndicators, setSelectedIndicat
                 <div className={classes.inputContainer}>
                   <select
                     className={classes.select}
-                    disabled={!selectedIndicators.includes(indicator)}
+                    disabled={!selectedIndicators.hasOwnProperty(indicator)}
+                    value={selectedIndicators[indicator] || '상향돌파'}
+                    onChange={(e) => handleSelectChange(indicator, e.target.value)}
                   >
                     <option value="상향돌파">상향돌파</option>
                     <option value="하향돌파">하향돌파</option>
