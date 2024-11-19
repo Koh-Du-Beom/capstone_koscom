@@ -132,3 +132,22 @@
   transition: opacity 0.3s ease-in-out;
 }
 
+/* technical-table.module.css */
+.sortableHeader {
+  position: relative;
+}
+
+.sortIcon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px;           /* 호버 영역을 넓히기 위해 패딩 추가 */
+  border-radius: 4px;     /* 선택 사항: 모서리를 둥글게 처리 */
+  transition: background-color 0.1s ease; /* 부드러운 전환 효과 추가 */
+  cursor: pointer;
+}
+
+.sortIcon:hover {
+  background-color: #f0f0f0; /* 원하는 호버 배경색으로 변경 */
+}

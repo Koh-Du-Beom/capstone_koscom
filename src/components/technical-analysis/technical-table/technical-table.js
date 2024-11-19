@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import TechnicalTableIdentifier from './technical-table-identifier';
 import classes from './technical-table.module.css';
 import TableCircularProgressBar from './technical-table-circular-progress-bar';
 import Image from 'next/image';
 
 export default function TechnicalTable({ data, indicatorWeights }) {
+  const [sortConfig, setSortConfig] = useState(null);
+
   if (!data || !data.items) {
     return <div>데이터가 없습니다.</div>;
   }
@@ -14,9 +16,35 @@ export default function TechnicalTable({ data, indicatorWeights }) {
     (key) => key !== 'ticker' && key !== 'companyName'
   );
 
+  const handleSort = (header) => {
+    let direction = 'descending';
+    if (sortConfig && sortConfig.key === header && sortConfig.direction === 'descending') {
+      direction = 'ascending';
+    }
+    setSortConfig({ key: header, direction });
+  };
+
+  const sortedItems = React.useMemo(() => {
+    let sortableItems = [...data.items];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+        if (aValue === undefined || bValue === undefined) return 0;
+        if (aValue < bValue) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [data.items, sortConfig]);
+
   return (
     <>
-      {/* 데이터 기준 날짜를 테이블 컨테이너 밖에 배치 */}
       {data.date && (
         <div className={classes.dateContainer}>
           <strong>데이터 기준 날짜:</strong> {data.date}
@@ -29,27 +57,49 @@ export default function TechnicalTable({ data, indicatorWeights }) {
               <th>종목명</th>
               <th className={classes.ratingHeader}>
                 Rating
-                <span
-                  className={classes.infoIcon}
-                  
+                <span className={classes.infoIcon}>
+                  <Image
+                    src="/svgs/help.svg"
+                    alt="helpIcon"
+                    width={16}
+                    height={16}
+                  />
+                </span>
+                <span 
+                  className={classes.sortIcon}
+                  onClick={() => handleSort('Rating')}
                 >
                   <Image
-                    src="/svgs/help.svg" // public 폴더 하위 경로만 입력
-                    alt="helpIcon"
-                    width={16} // 원하는 너비로 설정
-                    height={16} // 원하는 높이로 설정
+                    src="/svgs/sort.svg"
+                    alt="sortIcon"
+                    width={16}
+                    height={16}
                   />
                 </span>
               </th>
               {headers.map((header, index) => (
-                <th key={`header-${index}`}>
-                  {header.replace('score_', '') /* score_ 제거 */}
+                <th
+                  key={`header-${index}`}
+                  className={classes.sortableHeader}
+                >
+                  {header.replace('score_', '')}
+                  <span 
+                    className={classes.sortIcon}
+                    onClick={() => handleSort(header)}
+                  >
+                    <Image
+                      src="/svgs/sort.svg"
+                      alt="sortIcon"
+                      width={16}
+                      height={16}
+                    />
+                  </span>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {data.items.map((item, index) => {
+            {sortedItems.map((item, index) => {
               const scores = headers
                 .map((header) => {
                   const score = item[header];
