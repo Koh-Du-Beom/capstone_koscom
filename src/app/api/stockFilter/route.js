@@ -6,8 +6,6 @@ export async function POST(request) {
   try {
     const { stocks, selectedIndicators } = await request.json();
 
-    console.log(selectedIndicators);
-
     // 요청 데이터 유효성 검사
     if (
       !Array.isArray(stocks) ||
@@ -43,9 +41,12 @@ export async function POST(request) {
       .filter((item) => stocks.some((stock) => stock.code === item.ticker)) // 선택된 종목 필터링
       .map((item) => {
         const matchedStock = stocks.find((stock) => stock.code === item.ticker);
+				console.log(matchedStock);
+				
         const result = {
           ticker: item.ticker,
           companyName: matchedStock?.name || '', // companyName 추가
+					exchange_code : matchedStock.exchange_code,
         };
 
         // 선택된 지표에 해당하는 score_ 값을 추출 및 방향에 따른 처리
@@ -71,8 +72,6 @@ export async function POST(request) {
       date: formattedDate,
       items: filteredItems,
     };
-
-    console.log('response data', responseData);
 
     // 결과 반환
     return NextResponse.json(responseData);

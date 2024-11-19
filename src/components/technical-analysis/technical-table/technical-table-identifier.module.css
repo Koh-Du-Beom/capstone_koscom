@@ -22,14 +22,9 @@
   flex-direction: column;
 }
 
-.ticker {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
-}
 
 .companyName {
-  font-size: 14px;
+  font-size: 18px;
 	font-weight: bold;
-  color: #666;
+  color: #191919;
 }

@@ -13,7 +13,7 @@ export default function TechnicalTable({ data, indicatorWeights }) {
 
   // 헤더 데이터 생성 (ticker와 companyName 제외)
   const headers = Object.keys(data.items[0]).filter(
-    (key) => key !== 'ticker' && key !== 'companyName'
+    (key) => key !== 'ticker' && key !== 'companyName' && key !== 'exchange_code'
   );
 
   const handleSort = (header) => {
@@ -162,9 +162,8 @@ export default function TechnicalTable({ data, indicatorWeights }) {
                   <td>
                     <TechnicalTableIdentifier
                       index={index + 1}
-                      ticker={item.ticker}
                       company_name={item.companyName}
-                      exchange_code={item.exchangeCode || '-'}
+                      exchange_code={item.exchange_code || '-'}
                     />
                   </td>
                   <td className={sortConfig && sortConfig.key === 'Rating' ? classes.sortedCell : ''}>

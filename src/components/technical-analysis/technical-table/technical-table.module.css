@@ -58,10 +58,12 @@
   width: 200px;
 }
 
+
+
 /* 기본 칼럼과 추가 칼럼의 너비 */
 .table tr th:nth-child(n+2),
 .table tr td:nth-child(n+2) {
-  width: 200px;
+  width: 250px;
 }
 
 /* 마지막 열의 경계선 제거 */
@@ -100,7 +102,6 @@
 
 .infoIcon {
   cursor: pointer;
-  font-size: 14px;
   color: #555;
   position: relative;
 }
