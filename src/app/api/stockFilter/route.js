@@ -6,6 +6,8 @@ export async function POST(request) {
   try {
     const { stocks, selectedIndicators } = await request.json();
 
+    console.log(selectedIndicators);
+
     // 요청 데이터 유효성 검사
     if (
       !Array.isArray(stocks) ||
@@ -46,11 +48,18 @@ export async function POST(request) {
           companyName: matchedStock?.name || '', // companyName 추가
         };
 
-        // 선택된 지표에 해당하는 score_ 값을 추출
+        // 선택된 지표에 해당하는 score_ 값을 추출 및 방향에 따른 처리
         Object.keys(selectedIndicators).forEach((indicator) => {
           const scoreKey = `score_${indicator}`;
           if (item[scoreKey] !== undefined) {
-            result[scoreKey] = item[scoreKey];
+            const direction = selectedIndicators[indicator]; // '상향돌파' 또는 '하향돌파'
+            let score = item[scoreKey];
+
+            if (direction === '하향돌파') {
+              score = 100 - score;
+            }
+
+            result[scoreKey] = score;
           }
         });
 
@@ -63,7 +72,7 @@ export async function POST(request) {
       items: filteredItems,
     };
 
-    console.log(responseData);
+    console.log('response data', responseData);
 
     // 결과 반환
     return NextResponse.json(responseData);

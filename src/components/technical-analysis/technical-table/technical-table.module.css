@@ -6,7 +6,7 @@
   flex-direction: column; /* 세로 배치 */
   justify-content: flex-start; /* 테이블을 왼쪽 정렬 */
   align-items: flex-start;
-  padding: 0 20px;
+  padding: 30px 20px;
 }
 
 .dateContainer {
@@ -86,3 +86,49 @@
 .table th {
   vertical-align: middle;
 }
+
+.hoverableHeader {
+  position: relative;
+  cursor: pointer; /* 마우스 포인터 변경 */
+}
+
+.ratingHeader {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Rating 텍스트와 아이콘 사이 간격 */
+}
+
+.infoIcon {
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+  position: relative;
+}
+
+.infoIcon:hover::after {
+  content: '가중치 변경 버튼을 눌러 종합점수를 확인하세요'; /* 툴팁 텍스트 */
+  position: absolute;
+  top: -30px; /* 아이콘 위쪽에 표시 */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333; /* 어두운 배경 */
+  color: #fff; /* 흰색 텍스트 */
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.infoIcon::after {
+  content: '';
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out;
+}
+
