@@ -7,15 +7,28 @@ export async function POST(request) {
     const { stocks, selectedIndicators } = await request.json();
 
     // 요청 데이터 유효성 검사
-    if (!Array.isArray(stocks) || typeof selectedIndicators !== 'object' || selectedIndicators === null) {
+    if (
+      !Array.isArray(stocks) ||
+      typeof selectedIndicators !== 'object' ||
+      selectedIndicators === null
+    ) {
       return NextResponse.json(
-        { error: 'Invalid request: stocks must be an array and selectedIndicators must be an object.' },
+        {
+          error:
+            'Invalid request: stocks must be an array and selectedIndicators must be an object.',
+        },
         { status: 400 }
       );
     }
 
     // 데이터 파일 경로
-    const filePath = path.join(process.cwd(), 'src', 'app', 'data', 'data_processed.json');
+    const filePath = path.join(
+      process.cwd(),
+      'src',
+      'app',
+      'data',
+      'data_processed.json'
+    );
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const allData = JSON.parse(fileContent);
 
@@ -36,8 +49,8 @@ export async function POST(request) {
         // 선택된 지표에 해당하는 score_ 값을 추출
         Object.keys(selectedIndicators).forEach((indicator) => {
           const scoreKey = `score_${indicator}`;
-          if (item[indicator] !== undefined) {
-            result[scoreKey] = item[indicator];
+          if (item[scoreKey] !== undefined) {
+            result[scoreKey] = item[scoreKey];
           }
         });
 

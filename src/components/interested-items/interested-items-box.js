@@ -79,17 +79,19 @@ const InterestedItemsBox = () => {
     if (interestedItems.find((item) => item.code === stock.code)) {
       return;
     }
-
+  
     addInterestedItem({
       name: stock.name,
       code: stock.code,
       marketCategory: stock.marketCategory,
     });
-
-    hasFetchedData.current = false; // 새 데이터 요청을 위해 초기화
-    fetchStockData(); // 새로운 데이터 가져오기
+  
+    // 데이터 fetch 플래그 초기화 및 강제 fetch 호출
+    hasFetchedData.current = false;
+    setTimeout(fetchStockData, 0); // 상태 업데이트 직후 fetch 보장
     setIsModalOpen(false);
   };
+  
 
   const removeStockItem = (stockCode) => {
 		removeInterestedItem(stockCode);

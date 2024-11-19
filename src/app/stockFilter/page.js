@@ -1,9 +1,12 @@
+
 'use client';
 import React, { useState } from 'react';
 import { useInterestedItems } from '@/contexts/InterestedItemsContext'; // 관심 종목 컨텍스트
 import TechnicalFilter from '@/components/technical-analysis/technical-filter/technical-filter';
 import InterestedItemsBox from '@/components/interested-items/interested-items-box';
 import TechnicalTable from '@/components/technical-analysis/technical-table/technical-table'; // 테이블 컴포넌트
+import TechnicalWeightsManager from '@/components/technical-analysis/technical-table/technical-weight/technical-weights-manager';
+import TechnicalAnalysisModal from '@/components/modal/technical-analysis-modal/technical-analysis-modal';
 import classes from './page.module.css';
 import axios from 'axios';
 
@@ -22,6 +25,12 @@ export default function StockFilterPage() {
 
   // API 응답 데이터 저장 상태
   const [apiResponse, setApiResponse] = useState(null); // 초기 상태는 null
+
+  // 가중치 상태 추가
+  const [indicatorWeights, setIndicatorWeights] = useState({});
+
+  // 가중치 설정 모달 상태
+  const [isWeightModalOpen, setIsWeightModalOpen] = useState(false);
 
   // API 호출 함수
   const fetchDataFromBackend = async () => {
@@ -70,10 +79,31 @@ export default function StockFilterPage() {
           <button className={classes.apiButton} onClick={fetchDataFromBackend}>
             데이터 호출
           </button>
+          <button
+            className={classes.apiButton}
+            onClick={() => setIsWeightModalOpen(true)}
+          >
+            가중치 변경
+          </button>
         </div>
-        {/* TechnicalTable에 API 응답 데이터 전달 */}
-        {apiResponse && <TechnicalTable data={apiResponse} />}
+        {/* TechnicalTable에 API 응답 데이터와 가중치 정보 전달 */}
+        {apiResponse && (
+          <TechnicalTable data={apiResponse} indicatorWeights={indicatorWeights} />
+        )}
       </div>
+
+      {/* 가중치 설정 모달 */}
+      {isWeightModalOpen && (
+        <TechnicalAnalysisModal onClose={() => setIsWeightModalOpen(false)}>
+          <TechnicalWeightsManager
+            selectedIndicators={Object.keys(selectedIndicators)} // 객체의 키를 배열로 변환하여 전달
+            updateWeights={(weights) => {
+              setIndicatorWeights(weights);
+              setIsWeightModalOpen(false);
+            }}
+          />
+        </TechnicalAnalysisModal>
+      )}
     </div>
   );
 }
