@@ -49,6 +49,7 @@ export default function StockFilterPage() {
       const stocks = interestedItems.map((item) => ({
         code: item.code,
         name: item.name,
+				exchange_code : item.marketCategory,
       }));
 
       const response = await axios.post('/api/stockFilter', {

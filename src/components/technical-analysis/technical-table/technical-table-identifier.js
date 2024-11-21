@@ -2,13 +2,13 @@ import React from 'react';
 import Image from 'next/image';
 import classes from './technical-table-identifier.module.css';
 
-export default function TechnicalTableIdentifier({ index, ticker, company_name, exchange_code }) {
+export default function TechnicalTableIdentifier({ index, company_name, exchange_code}) {
   
 	const getExchangeLogo = (code) => {
     switch (code) {
-      case 'KDQ':
+      case 'KOSDAQ':
         return '/svgs/kosdaq.svg'; // KOSDAQ 로고 경로
-      case 'KRX':
+      case 'KOSPI':
         return '/svgs/kospi.svg'; // KOSPI 로고 경로
       default:
         return '/svgs/krx.svg'; // 기본 로고 경로
@@ -26,7 +26,6 @@ export default function TechnicalTableIdentifier({ index, ticker, company_name, 
         className={classes.exchangeLogo}
       />
       <div className={classes.infoContainer}>
-        <span className={classes.ticker}>{ticker}</span>
         <span className={classes.companyName}>{company_name}</span>
       </div>
     </div>

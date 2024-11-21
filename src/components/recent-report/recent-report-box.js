@@ -6,7 +6,7 @@ import classes from './recent-report-box.module.css';
 import ComponentLoading from '../loading/component-loading';
 
 export default function RecentReportItemBox() {
-  const itemsPerPage = 5;
+  const itemsPerPage = 3;
   const { interestedItems } = useInterestedItems();
   const [selectedStock, setSelectedStock] = useState(null);
   const [clientItems, setClientItems] = useState([]);
