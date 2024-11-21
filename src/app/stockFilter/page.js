@@ -16,11 +16,7 @@ export default function StockFilterPage() {
 
   // 선택된 지표 상태
   const [selectedIndicators, setSelectedIndicators] = useState({
-    'Awesome Oscillator': '상향돌파',
-    'RSI': '상향돌파',
-    'Stochastic Oscillator': '상향돌파',
-    'Stochastic RSI': '상향돌파',
-    'True Strength Index (TSI)': '상향돌파',
+   
   });
 
   // API 응답 데이터 저장 상태
