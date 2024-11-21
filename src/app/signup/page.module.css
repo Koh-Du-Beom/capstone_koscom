@@ -1,0 +1,122 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 90vh; /* 높이를 조금 늘림 */
+  background-color: #f9f9f9;
+  font-weight: bold;
+}
+
+.logoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+  text-decoration: none; /* 밑줄 제거 */
+}
+
+.logoContainer:hover {
+  text-decoration: none; /* hover 상태에서도 밑줄 제거 */
+  cursor: pointer; /* 마우스를 올렸을 때 클릭 가능한 아이콘처럼 보이도록 */
+}
+
+.logoImage {
+  width: 100px; /* 로고의 너비 조정 */
+  height: auto; /* 비율 유지 */
+  margin-bottom: 0.5rem; /* 이미지와 텍스트 간의 간격 */
+}
+
+.logoText {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #03c75a;
+}
+
+.form {
+  width: 400px; /* 너비를 줄임 */
+  background-color: #ffffff;
+  padding: 2rem; /* 높이를 조금 늘림 */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tabMenu {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.5rem;
+  background-color: #f1f1f1;
+  border: none;
+  border-radius: 4px 4px 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.active {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  font-weight: bold;
+}
+
+.inputGroup {
+  margin-bottom: 1rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #03c75a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #028a43;
+}
+
+.links {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.links a {
+  color: black;
+  text-decoration: none;
+  margin: 0 0.5rem;
+}
+
+.links a:hover {
+  color: #03c75a;
+  text-decoration: underline;
+}
