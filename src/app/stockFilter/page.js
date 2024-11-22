@@ -5,33 +5,34 @@ import classes from './page.module.css';
 
 export default function StockFilterPage() {
   const [stockFilters, setStockFilters] = useState([]);
-  const [isFilterVisible, setIsFilterVisible] = useState(true); // 필터 보임/숨김 상태
+  const [isFilterVisible, setIsFilterVisible] = useState(false); // 필터 보임/숨김 상태
 
   const updateFilterData = (filters) => {
     setStockFilters(filters);
   };
 
-  const toggleFilterVisibility = () => {
-    setIsFilterVisible((prev) => !prev); // 상태 토글
-  };
-
   return (
     <div className={classes.container}>
-      <div
-        className={`${classes.leftSection} ${
-          isFilterVisible ? classes.visible : classes.hidden
-        }`}
-      >
-        <TechnicalFilter updateFilterData={updateFilterData} />
+      {/* 필터가 숨겨진 상태에서 나타나는 버튼 */}
+      {!isFilterVisible && (
         <button
-          className={`${classes.toggleButton} ${
-            !isFilterVisible ? classes.hiddenState : ''
-          }`}
-          onClick={toggleFilterVisibility}
+          className={classes.showButton}
+          onClick={() => setIsFilterVisible(true)}
         >
-          {isFilterVisible ? '필터 숨기기' : '필터 보이기'}
+          필터 열기
         </button>
-      </div>
+      )}
+
+      {/* 필터 섹션 */}
+      {isFilterVisible && (
+        <div className={classes.leftSection}>
+          <TechnicalFilter
+            updateFilterData={updateFilterData}
+            onClose={() => setIsFilterVisible(false)} // 필터 닫기 버튼
+          />
+        </div>
+      )}
+
       <div className={classes.rightSection}>
         {/* 추가 콘텐츠 */}
       </div>

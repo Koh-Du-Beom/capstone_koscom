@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { indicators } from './technical-filter-data';
 import classes from './technical-filter.module.css';
 
-export default function TechnicalFilter({ updateFilterData }) {
+export default function TechnicalFilter({ updateFilterData, onClose }) {
   const [error, setError] = useState('');
   const [selectedIndicators, setSelectedIndicators] = useState({});
 
@@ -73,6 +73,7 @@ export default function TechnicalFilter({ updateFilterData }) {
 
   return (
     <div className={classes.filterContainer}>
+			<button className={classes.closeButton} onClick={onClose}>필터 닫기</button>
       {Object.entries(indicators).map(([section, items]) => (
         <div key={section} className={classes.section}>
           <div className={classes.header}>
