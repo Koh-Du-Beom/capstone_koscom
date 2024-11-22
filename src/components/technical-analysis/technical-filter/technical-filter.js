@@ -1,11 +1,42 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { indicators } from './technical-filter-data';
 import classes from './technical-filter.module.css';
 
-export default function TechnicalFilter({ updateFilterData, onClose }) {
+export default function TechnicalFilter({ updateFilterData, filterData }) {
   const [error, setError] = useState('');
   const [selectedIndicators, setSelectedIndicators] = useState({});
+
+	useEffect(() => {
+    const mappedIndicators = {};
+    filterData.forEach((item) => {
+      mappedIndicators[item.indicator] = item;
+    });
+    setSelectedIndicators(mappedIndicators);
+  }, [filterData]);
+
+  // 전체 선택 핸들러
+  const handleSelectAll = () => {
+    const allSelected = {};
+    Object.values(indicators).flat().forEach((indicator) => {
+      allSelected[indicator] = { indicator, condition: '상향돌파', weight: 0 };
+    });
+    setSelectedIndicators(allSelected);
+    updateFilterData(Object.values(allSelected)); // 부모 컴포넌트 업데이트
+  };
+
+  // 전체 해제 핸들러
+  const handleDeselectAll = () => {
+    setSelectedIndicators({});
+    updateFilterData([]); // 부모 컴포넌트 업데이트
+  };
+
+  // API 요청 핸들러 (필터 적용)
+  const handleApplyFilter = () => {
+    // 선택된 필터 데이터를 API로 전달
+    console.log('Applying filters:', selectedIndicators);
+    alert('필터가 적용되었습니다.');
+  };
 
   // 가중치 합 계산
   const calculateTotalWeight = (updatedIndicators) => {
@@ -73,7 +104,15 @@ export default function TechnicalFilter({ updateFilterData, onClose }) {
 
   return (
     <div className={classes.filterContainer}>
-			<button className={classes.closeButton} onClick={onClose}>필터 닫기</button>
+
+      {/* 오른쪽 상단 버튼: 전체 선택 / 전체 해제 / 필터 적용 */}
+      <div className={classes.topButtons}>
+        <button onClick={handleSelectAll}>전체 선택</button>
+        <button onClick={handleDeselectAll}>전체 해제</button>
+        <button onClick={handleApplyFilter}>필터 적용</button>
+      </div>
+
+      {/* 필터 테이블 */}
       {Object.entries(indicators).map(([section, items]) => (
         <div key={section} className={classes.section}>
           <div className={classes.header}>
@@ -115,6 +154,8 @@ export default function TechnicalFilter({ updateFilterData, onClose }) {
           </div>
         </div>
       ))}
+
+      {/* 에러 메시지 */}
       {error && <div className={classes.error}>{error}</div>}
     </div>
   );
