@@ -1,39 +1,17 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
+import { indicators } from './technical-filter-data';
 import classes from './technical-filter.module.css';
 
-export default function TechnicalFilter({ selectedIndicators, setSelectedIndicators }) {
-  const indicators = {
-    Momentum: [
-      'Awesome Oscillator',
-      'RSI',
-      'Stochastic Oscillator',
-      'Stochastic RSI',
-      'True Strength Index (TSI)',
-      'Ultimate Oscillator',
-      'Williams %R',
-    ],
-    Trend: [
-      'Commodity Channel Index',
-      'EMA 20',
-      'EMA 60',
-      'EMA 120',
-      'EMA 250',
-      'MACD',
-      'PSAR',
-      'SMA 20',
-      'SMA 60',
-      'SMA 120',
-      'SMA 250',
-      'Triple Exponential Averages',
-    ],
-    Volume: [
-      'Accumulation/Distribution Index',
-      'Chaikin Money Flow',
-      'On-Balance Volume',
-      'Price Volume Trend',
-    ],
-    Volatility: ['Bollinger Band', 'Donchian Channel', 'Keltner Channel'],
+export default function TechnicalFilter({ updateFilterData }) {
+  const [error, setError] = useState('');
+  const [selectedIndicators, setSelectedIndicators] = useState({});
+
+  // 가중치 합 계산
+  const calculateTotalWeight = (updatedIndicators) => {
+    return Object.values(updatedIndicators)
+      .filter((val) => val && val.weight)
+      .reduce((sum, val) => sum + val.weight, 0);
   };
 
   // 체크박스 변경 핸들러
@@ -41,30 +19,60 @@ export default function TechnicalFilter({ selectedIndicators, setSelectedIndicat
     setSelectedIndicators((prev) => {
       const newSelected = { ...prev };
       if (newSelected[indicator]) {
-        // 이미 선택되어 있으면 제거
+        // 지표 해제 시 데이터 삭제
         delete newSelected[indicator];
+        updateFilterData(Object.values(newSelected));
       } else {
-        // 선택되지 않았으면 기본값으로 추가
-        newSelected[indicator] = '상향돌파';
+        // 선택된 지표 추가
+        newSelected[indicator] = { indicator, condition: '상향돌파', weight: 0 };
+        updateFilterData(Object.values(newSelected));
       }
+      setError('');
       return newSelected;
     });
   };
 
-  // 셀렉트 박스 변경 핸들러
+  // 조건 선택 변경 핸들러
   const handleSelectChange = (indicator, value) => {
-    setSelectedIndicators((prev) => ({
-      ...prev,
-      [indicator]: value,
-    }));
+    setSelectedIndicators((prev) => {
+      const updatedIndicators = {
+        ...prev,
+        [indicator]: { ...prev[indicator], condition: value },
+      };
+      updateFilterData(Object.values(updatedIndicators)); // 부모 컴포넌트에 업데이트 전달
+      return updatedIndicators;
+    });
+  };
+
+  // 가중치 변경 핸들러
+  const handleWeightChange = (indicator, value) => {
+    if (!/^\d+$/.test(value)) {
+      setError('가중치는 숫자만 입력 가능합니다.');
+      return;
+    }
+
+    const weight = Math.max(0, Math.min(100, Number(value))); // 0~100 범위 제한
+    setSelectedIndicators((prev) => {
+      const updatedIndicators = {
+        ...prev,
+        [indicator]: { ...prev[indicator], weight },
+      };
+
+      const totalWeight = calculateTotalWeight(updatedIndicators);
+
+      if (totalWeight > 100) {
+        setError('가중치 합은 100%를 초과할 수 없습니다.');
+        return prev;
+      } else {
+        setError('');
+        updateFilterData(Object.values(updatedIndicators)); // 부모 컴포넌트에 업데이트 전달
+        return updatedIndicators;
+      }
+    });
   };
 
   return (
     <div className={classes.filterContainer}>
-      <div className={classes.titleContainer}>
-        <h1 className={classes.mainTitle}>종목 필터</h1>
-      </div>
-
       {Object.entries(indicators).map(([section, items]) => (
         <div key={section} className={classes.section}>
           <div className={classes.header}>
@@ -86,18 +94,27 @@ export default function TechnicalFilter({ selectedIndicators, setSelectedIndicat
                   <select
                     className={classes.select}
                     disabled={!selectedIndicators.hasOwnProperty(indicator)}
-                    value={selectedIndicators[indicator] || '상향돌파'}
+                    value={selectedIndicators[indicator]?.condition || '상향돌파'}
                     onChange={(e) => handleSelectChange(indicator, e.target.value)}
                   >
                     <option value="상향돌파">상향돌파</option>
                     <option value="하향돌파">하향돌파</option>
                   </select>
+                  <input
+                    type="text"
+                    className={classes.weightInput}
+                    disabled={!selectedIndicators.hasOwnProperty(indicator)}
+                    value={selectedIndicators[indicator]?.weight || ''}
+                    onChange={(e) => handleWeightChange(indicator, e.target.value)}
+                    placeholder="가중치 (%)"
+                  />
                 </div>
               </div>
             ))}
           </div>
         </div>
       ))}
+      {error && <div className={classes.error}>{error}</div>}
     </div>
   );
 }

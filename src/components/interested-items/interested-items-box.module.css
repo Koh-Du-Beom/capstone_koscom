@@ -4,7 +4,7 @@
   border-radius: 8px;
   background-color: white;
   width: 100%;
-  min-height: 300px;
+	height: 80vh;
   position: relative; /* 로딩 컴포넌트 위치 조정을 위해 추가 */
 }
 
