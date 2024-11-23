@@ -4,82 +4,58 @@ import path from 'path';
 
 export async function POST(request) {
   try {
-    const { stocks, selectedIndicators } = await request.json();
+    const { selectedIndicators } = await request.json();
 
-    // 요청 데이터 유효성 검사
-    if (
-      !Array.isArray(stocks) ||
-      typeof selectedIndicators !== 'object' ||
-      selectedIndicators === null
-    ) {
-      return NextResponse.json(
-        {
-          error:
-            'Invalid request: stocks must be an array and selectedIndicators must be an object.',
-        },
-        { status: 400 }
-      );
+    if (!Array.isArray(selectedIndicators)) {
+      return NextResponse.json({ error: 'Invalid indicators.' }, { status: 400 });
     }
 
-    // 데이터 파일 경로
-    const filePath = path.join(
-      process.cwd(),
-      'src',
-      'app',
-      'data',
-      'data_processed.json'
-    );
+    const filePath = path.join(process.cwd(), 'src', 'app', 'data', 'data_processed.json');
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const allData = JSON.parse(fileContent);
 
-    // date 필드 추출 및 포맷팅
-    const rawDate = allData.data.date;
-    const formattedDate = rawDate.split('T')[0]; // 'YYYY-MM-DD' 형식으로 변환
+    const filteredItems = allData.data.items.map((item) => {
+      const result = {
+        ticker: item.ticker,
+        companyName: item.company_name,
+        exchange_code: item.exchange_code,
+      };
 
-    // 데이터 필터링 및 가공
-    const filteredItems = allData.data.items
-      .filter((item) => stocks.some((stock) => stock.code === item.ticker)) // 선택된 종목 필터링
-      .map((item) => {
-        const matchedStock = stocks.find((stock) => stock.code === item.ticker);
-				console.log(matchedStock);
-				
-        const result = {
-          ticker: item.ticker,
-          companyName: matchedStock?.name || '', // companyName 추가
-					exchange_code : matchedStock.exchange_code,
-        };
+      let rating = 0;
 
-        // 선택된 지표에 해당하는 score_ 값을 추출 및 방향에 따른 처리
-        Object.keys(selectedIndicators).forEach((indicator) => {
-          const scoreKey = `score_${indicator}`;
-          if (item[scoreKey] !== undefined) {
-            const direction = selectedIndicators[indicator]; // '상향돌파' 또는 '하향돌파'
-            let score = item[scoreKey];
+      selectedIndicators.forEach(({ indicator, condition, weight }) => {
+        const scoreKey = `score_${indicator}`;
 
-            if (direction === '하향돌파') {
-              score = 100 - score;
-            }
+        let score = item[scoreKey];
 
-            result[scoreKey] = score;
+        if (score !== undefined) {
+          // 조건에 따라 점수 조정
+          if (condition === '하향돌파') {
+            score = 100 - score;
           }
-        });
 
-        return result;
+          // 선택된 지표와 점수 추가
+          result[scoreKey] = score;
+
+          // 가중치를 적용한 Rating 계산
+          rating += score * (weight / 100);
+        }
       });
 
-    // 최종 데이터 형식 구성
-    const responseData = {
-      date: formattedDate,
-      items: filteredItems,
-    };
+      // Rating 추가
+      result['Rating'] = rating;
 
-    // 결과 반환
-    return NextResponse.json(responseData);
+      return result;
+    });
+
+    return NextResponse.json({
+      data: {
+        date: allData.data.date.split('T')[0],
+        items: filteredItems,
+      },
+    });
   } catch (error) {
-    console.error('Error processing stock filter data:', error);
-    return NextResponse.json(
-      { error: 'Failed to process stock filter data' },
-      { status: 500 }
-    );
+    console.error('Error processing filter:', error);
+    return NextResponse.json({ error: 'Failed to process filter data.' }, { status: 500 });
   }
 }
