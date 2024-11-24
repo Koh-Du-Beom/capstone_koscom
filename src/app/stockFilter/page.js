@@ -9,7 +9,6 @@ export default function StockFilterPage() {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [filterData, setFilterData] = useState([]); // 필터 상태
   const [tableData, setTableData] = useState(null); // 테이블 데이터
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
 
   const updateFilterData = useCallback((updatedFilters) => {
     setFilterData(updatedFilters);
@@ -33,7 +32,6 @@ export default function StockFilterPage() {
       };
     });
 
-    setIsLoading(true); // 로딩 시작
     try {
       const response = await fetch('/api/stockFilter', {
         method: 'POST',
@@ -50,8 +48,6 @@ export default function StockFilterPage() {
     } catch (error) {
       console.error('Error fetching filter data:', error);
       alert('필터 데이터를 불러오는데 실패했습니다.');
-    } finally {
-      setIsLoading(false); // 로딩 종료
     }
   };
 
@@ -82,9 +78,7 @@ export default function StockFilterPage() {
 
       {/* Right Section */}
       <div className={classes.rightSection}>
-        {isLoading ? (
-          <ComponentLoading /> // 로딩 컴포넌트 렌더링
-        ) : tableData ? (
+        {tableData ? (
           <TechnicalTable data={tableData} /> // 테이블 컴포넌트에 데이터 전달
         ) : (
           <p>데이터가 없습니다. 필터를 적용해주세요.</p>

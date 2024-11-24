@@ -1,6 +1,7 @@
 /* 필터 컨테이너 */
 .filterContainer {
   padding: 15px;
+	padding-left: 30px;
   border-radius: 8px;
   background-color: #f8f9fa;
   width: 100%;
