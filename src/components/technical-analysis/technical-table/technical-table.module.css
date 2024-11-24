@@ -3,6 +3,7 @@
 	height: 85vh;
   margin: 0 auto;
 	overflow-x: auto;
+	overflow-y:hidden
 }
 
 .tableScrollContainer {
