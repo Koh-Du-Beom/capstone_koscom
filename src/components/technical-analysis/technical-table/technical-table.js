@@ -63,10 +63,9 @@ export default function TechnicalTable({ data }) {
   }, [data.items, sortConfig]);
 
   // 테이블의 총 너비 계산
-  const columnWidth = 120; // 각 칼럼의 너비
-  const firstColumnWidth = 150; // 첫 번째 칼럼(종목명)의 너비
-  const totalColumns = headers.length + 1; // 헤더 수 + 첫 번째 칼럼
-  const totalWidth = firstColumnWidth + columnWidth * headers.length;
+  const columnWidth = '5vw';
+  const firstColumnWidth = '9vw'; 
+  const totalWidth = `${headers.length * 5 + 9}vw`;
 
   // 행 렌더링 함수
   const Row = ({ index, style }) => {
@@ -164,7 +163,7 @@ export default function TechnicalTable({ data }) {
           </div>
           <List
             className={classes.list}
-            height={600}
+						height={window.innerHeight * 0.8} 
             itemCount={sortedItems.length}
             itemSize={50}
             width={totalWidth}
