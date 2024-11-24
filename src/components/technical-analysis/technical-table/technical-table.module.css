@@ -3,7 +3,7 @@
 	height: 85vh;
   margin: 0 auto;
 	overflow-x: auto;
-	overflow-y:hidden
+	overflow-y: hidden;
 }
 
 .dateContainer{
@@ -113,4 +113,50 @@
 
 .sortedCell {
   background-color: #f1f8ff;
+}
+
+
+
+/* 검색기능 css */
+/* 검색 버튼 스타일 */
+.searchButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 4.5vw;
+  font-size: 16px;
+}
+
+/* 검색 입력창 컨테이너 스타일 */
+.searchContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  padding: 10px;
+  border: 1px solid #ddd;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+}
+
+/* 검색 입력 필드 스타일 */
+.searchInput {
+  width: 150px;
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+}
+
+/* 검색 버튼 스타일 */
+.searchSubmitButton {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.searchSubmitButton:hover {
+  background-color: #0056b3;
 }

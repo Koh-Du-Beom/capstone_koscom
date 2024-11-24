@@ -1,17 +1,22 @@
 // TechnicalTable.js
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import TechnicalTableIdentifier from './technical-table-identifier';
 import classes from './technical-table.module.css';
 import TableCircularProgressBar from './technical-table-circular-progress-bar';
 import Image from 'next/image';
 import { FixedSizeList as List } from 'react-window';
 import TableTooltip from './table-tooltip';
+import TechnicalTableSearch from './technical-table-search';
 
 export default function TechnicalTable({ data }) {
   const [sortConfig, setSortConfig] = useState(null);
   const [tooltipContent, setTooltipContent] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState(null);
+
+	const listRef = useRef(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchButtonPosition, setSearchButtonPosition] = useState(null);
 
   if (!data || !data.items) {
     return <div>데이터가 없습니다.</div>;
@@ -28,6 +33,7 @@ export default function TechnicalTable({ data }) {
 
   // 'Rating'을 첫 번째로 배치
   headers = ['Rating', ...headers];
+	const totalWidth = `${headers.length * 5 + 9}vw`;
 
   const handleSort = (header) => {
     let direction = 'descending';
@@ -62,10 +68,24 @@ export default function TechnicalTable({ data }) {
     return sortableItems;
   }, [data.items, sortConfig]);
 
-  // 테이블의 총 너비 계산
-  const columnWidth = '5vw';
-  const firstColumnWidth = '9vw'; 
-  const totalWidth = `${headers.length * 5 + 9}vw`;
+	const handleSearch = (searchQuery) => {
+    const query = searchQuery.toLowerCase();
+		console.log(query);
+		
+    const index = sortedItems.findIndex((item) =>
+      item.companyName.toLowerCase().includes(query)
+    );
+
+		console.log(index);
+		
+
+    if (index !== -1 && listRef.current) {
+      listRef.current.scrollToItem(index, 'center');
+      setIsSearchOpen(false);
+    } else {
+      alert('해당 종목을 찾을 수 없습니다.');
+    }
+  };
 
   // 행 렌더링 함수
   const Row = ({ index, style }) => {
@@ -120,7 +140,35 @@ export default function TechnicalTable({ data }) {
             className={classes.headerRow}
             style={{ width: totalWidth }} // 헤더의 너비 설정
           >
-            <div className={classes.headerCell}>종목명</div>
+            <div
+							className={classes.headerCell}
+							style={{ position: 'relative' }}
+							ref={(el) => {
+								if (el && !searchButtonPosition){
+									const rect = el.getBoundingClientRect();
+                  setSearchButtonPosition({
+                    top: rect.bottom + window.scrollY + 5,
+                    left: rect.left + window.scrollX + rect.width / 2,
+                  });
+								}
+							}}
+						>
+							종목명
+							<button
+                className={classes.searchButton}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsSearchOpen(true);
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  setSearchButtonPosition({
+                    top: rect.bottom + window.scrollY + 5,
+                    left: rect.left + window.scrollX + rect.width / 2,
+                  });
+                }}
+              >
+                🔍
+              </button>
+						</div>
             {headers.map((header, index) => {
               const isSortedColumn = sortConfig && sortConfig.key === header;
               const headerName =
@@ -176,6 +224,13 @@ export default function TechnicalTable({ data }) {
         </div>
         {/* 스크롤 컨테이너 끝 */}
       </div>
+			{isSearchOpen && searchButtonPosition && (
+        <TechnicalTableSearch
+          onSearch={handleSearch}
+          onClose={() => setIsSearchOpen(false)}
+          position={searchButtonPosition}
+        />
+      )}
       {/* 툴팁 렌더링 */}
       {tooltipContent && tooltipPosition && (
         <TableTooltip content={tooltipContent} position={tooltipPosition} />

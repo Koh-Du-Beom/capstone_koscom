@@ -1,0 +1,47 @@
+/* technical-table-search.module.css */
+
+.searchContainer {
+  background-color: #fff;
+  padding: 10px;
+  border: 1px solid #ddd;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.searchInput {
+  width: 150px;
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.searchSubmitButton {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.searchSubmitButton:hover {
+  background-color: #0056b3;
+}
+
+.closeButton {
+  padding: 5px 10px;
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-left: 5px;
+}
+
+.closeButton:hover {
+  background-color: #5a6268;
+}
