@@ -18,6 +18,8 @@ export default function TechnicalTable({ data }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchButtonPosition, setSearchButtonPosition] = useState(null);
 
+	const [searchResults, setSearchResults] = useState([]);
+
   if (!data || !data.items) {
     return <div>데이터가 없습니다.</div>;
   }
@@ -70,21 +72,17 @@ export default function TechnicalTable({ data }) {
 
 	const handleSearch = (searchQuery) => {
 		const query = searchQuery.toLowerCase();
-		const index = sortedItems.findIndex((item) =>
-			item.companyName.toLowerCase().includes(query)
-		);
-		
-		console.log(index);
-		
-
-		if (index !== -1) {
-			if (listRef.current && typeof listRef.current.scrollToItem === 'function') {
-				// scrollToItem 메서드 호출
-				listRef.current.scrollToItem(index, 'center');
-				setIsSearchOpen(false);
-			} else {
-				console.error('listRef가 초기화되지 않았거나 scrollToItem 메서드를 찾을 수 없습니다.');
-			}
+		const matchingIndexes = sortedItems
+			.map((item, index) => (item.companyName.toLowerCase().includes(query) ? index : -1))
+			.filter((index) => index !== -1);
+	
+		if (matchingIndexes.length === 1) {
+			listRef.current.scrollToItem(matchingIndexes[0], 'center');
+			setIsSearchOpen(false);
+		} else if (matchingIndexes.length > 1) {
+			const matchingItems = matchingIndexes.map((index) => sortedItems[index]);
+			setSearchResults(matchingItems);
+			setIsSearchOpen(true);
 		} else {
 			alert('해당 종목을 찾을 수 없습니다.');
 		}
@@ -145,34 +143,29 @@ export default function TechnicalTable({ data }) {
             className={classes.headerRow}
             style={{ width: totalWidth }} // 헤더의 너비 설정
           >
-            <div
+						<div
 							className={classes.headerCell}
 							style={{ position: 'relative' }}
 							ref={(el) => {
-								if (el && !searchButtonPosition){
+								if (el && !searchButtonPosition) {
 									const rect = el.getBoundingClientRect();
-                  setSearchButtonPosition({
-                    top: rect.bottom + window.scrollY + 5,
-                    left: rect.left + window.scrollX + rect.width / 2,
-                  });
+									setSearchButtonPosition({
+										top: rect.bottom + window.scrollY + 5,
+										left: rect.left + window.scrollX + rect.width / 2,
+									});
 								}
 							}}
 						>
 							종목명
 							<button
-                className={classes.searchButton}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsSearchOpen(true);
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  setSearchButtonPosition({
-                    top: rect.bottom + window.scrollY + 5,
-                    left: rect.left + window.scrollX + rect.width / 2,
-                  });
-                }}
-              >
-                🔍
-              </button>
+								className={classes.searchButton}
+								onClick={(e) => {
+									e.stopPropagation(); // 이벤트 버블링 방지
+									setIsSearchOpen(true); // 검색창 열기
+								}}
+							>
+								🔍
+							</button>
 						</div>
             {headers.map((header, index) => {
               const isSortedColumn = sortConfig && sortConfig.key === header;
@@ -230,13 +223,20 @@ export default function TechnicalTable({ data }) {
         </div>
         {/* 스크롤 컨테이너 끝 */}
       </div>
-			{isSearchOpen && searchButtonPosition && (
-        <TechnicalTableSearch
-          onSearch={handleSearch}
-          onClose={() => setIsSearchOpen(false)}
-          position={searchButtonPosition}
-        />
-      )}
+			{isSearchOpen && (
+				<TechnicalTableSearch
+					onSearch={handleSearch} // 검색 함수 연결
+					onClose={() => setIsSearchOpen(false)} // 검색창 닫기
+					position={searchButtonPosition}
+					searchResults={searchResults} // 검색 결과 전달
+					onResultSelect={(result) => {
+						const index = sortedItems.findIndex((i) => i.companyName === result.companyName);
+						listRef.current.scrollToItem(index, 'center'); // 리스트 스크롤
+						setIsSearchOpen(false); // 검색창 닫기
+						setSearchResults([]); // 검색 결과 초기화
+					}}
+				/>
+			)}
       {/* 툴팁 렌더링 */}
       {tooltipContent && tooltipPosition && (
         <TableTooltip content={tooltipContent} position={tooltipPosition} />

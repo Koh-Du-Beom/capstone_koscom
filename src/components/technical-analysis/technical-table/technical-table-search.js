@@ -1,9 +1,8 @@
-// technical-table-search.js
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import classes from './technical-table-search.module.css';
 
-function TechnicalTableSearch({ onSearch, onClose, position }) {
+function TechnicalTableSearch({ onSearch, onClose, position, searchResults, onResultSelect }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   return ReactDOM.createPortal(
@@ -13,7 +12,7 @@ function TechnicalTableSearch({ onSearch, onClose, position }) {
         position: 'absolute',
         top: position.top,
         left: position.left,
-        transform: 'translate(-50%, 0)',
+        transform: 'translate(-90%, 10px)', // 오른쪽 아래로 이동
       }}
     >
       <input
@@ -24,7 +23,7 @@ function TechnicalTableSearch({ onSearch, onClose, position }) {
         className={classes.searchInput}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            onSearch(searchQuery);
+            onSearch(searchQuery); // 검색어 전달
           }
         }}
       />
@@ -37,6 +36,23 @@ function TechnicalTableSearch({ onSearch, onClose, position }) {
       <button onClick={onClose} className={classes.closeButton}>
         닫기
       </button>
+
+      {/* 검색 결과 표시 */}
+      {searchResults && searchResults.length > 0 && (
+        <ul className={classes.searchResultsList}>
+          {searchResults.map((result) => (
+            <li
+              key={result.ticker}
+              onClick={() => {
+                onResultSelect(result); // 결과 선택
+              }}
+              className={classes.searchResultItem}
+            >
+              {result.companyName} ({result.ticker})
+            </li>
+          ))}
+        </ul>
+      )}
     </div>,
     document.body
   );
