@@ -1,44 +1,36 @@
 .tableContainer {
   width: 95vw;
-  overflow-x: auto; /* 수평 스크롤 */
   margin: 0 auto;
+	overflow-x: auto;
 }
 
-.dateContainer {
-  text-align: right; /* 오른쪽 정렬 */
-  margin-bottom: 10px;
-  font-size: 14px;
-  color: #333;
-  padding: 5px 10px;
-  border-radius: 4px;
-  background-color: #f8f9fa; /* 테이블 헤더 배경색과 일치 */
+.tableScrollContainer {
+	
 }
 
 .headerRow {
   display: flex;
-  width: max-content; /* 콘텐츠 크기에 따라 너비가 결정됨 */
-  align-items: flex-start; /* 내용 위쪽 정렬 */
 }
 
-.headerRow,
 .row {
   display: flex;
-  width: max-content; /* 콘텐츠 크기에 따라 너비가 결정됨 */
 }
 
 .headerCell,
 .cell {
   flex-shrink: 0;
   padding: 10px;
-  text-align: center; /* 텍스트 중앙 정렬 */
   vertical-align: middle;
   border-bottom: 1px solid #ddd;
-  border-right: 1px solid #ddd; /* 오른쪽 경계선 추가 */
+  border-right: 1px solid #ddd;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+	width: 5vw;
 }
 
 .headerCell {
+  text-align: left; /* 헤더 셀은 왼쪽 정렬 */
   font-size: 14px;
   font-weight: bold;
   color: #555;
@@ -46,23 +38,41 @@
   position: sticky; /* 헤더 고정 */
   top: 0;
   z-index: 1;
-  white-space: normal; /* 텍스트 줄바꿈 허용 */
-  word-wrap: break-word; /* 단어 단위로 줄바꿈 */
-  height: auto; /* 높이 자동 조정 */
-	white-space: nowrap;          /* 텍스트 줄바꿈 방지 */
-  overflow: hidden;             /* 넘치는 텍스트 숨김 */
-  text-overflow: ellipsis;      /* 말줄임표 표시 */
-  width: 120px;                 /* 칼럼 너비 증가 (필요에 따라 조정) */
-  position: relative;
+	width: 5vw;
 }
 
 .cell {
+	display: flex;
+	justify-content: center;
+	align-items: center;
   font-size: 14px;
   color: #333;
-  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-  text-overflow: ellipsis; /* 너무 긴 텍스트는 말줄임 표시 */
 }
 
+/* 첫 번째 칼럼(종목명)은 왼쪽 정렬 및 너비 조정 */
+.headerCell:first-child,
+.cell:first-child {
+  justify-content: flex-start;
+  width: 9vw; /* 필요에 따라 너비 조정 */
+}
+
+/* 첫 번째 칼럼을 제외한 데이터 셀은 가운데 정렬 */
+.cell:not(:first-child) {
+  text-align: center;
+	width: 5vw;
+}
+
+
+
+
+/* 마지막 열의 경계선 제거 */
+.headerCell:last-child,
+.cell:last-child {
+  border-right: none;
+}
+
+
+/* 기타 스타일 유지 */
 .row:nth-child(even) {
   background-color: #f9f9f9;
 }
@@ -99,21 +109,4 @@
 
 .sortedCell {
   background-color: #f1f8ff;
-}
-
-/* 첫 번째 칼럼의 너비 늘리기 */
-.headerCell:first-child,
-.cell:first-child {
-  width: 150px; /* 원하는 너비로 조정 */
-}
-
-.headerCell:nth-child(n+2),
-.cell:nth-child(n+2) {
-  width: 120px; /* 칼럼 너비 증가 */
-}
-
-/* 마지막 열의 경계선 제거 */
-.headerCell:last-child,
-.cell:last-child {
-  border-right: none;
 }

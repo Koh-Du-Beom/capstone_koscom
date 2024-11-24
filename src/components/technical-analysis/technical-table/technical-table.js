@@ -1,4 +1,6 @@
-import React, { useState, useRef } from 'react';
+// TechnicalTable.js
+
+import React, { useState } from 'react';
 import TechnicalTableIdentifier from './technical-table-identifier';
 import classes from './technical-table.module.css';
 import TableCircularProgressBar from './technical-table-circular-progress-bar';
@@ -60,11 +62,20 @@ export default function TechnicalTable({ data }) {
     return sortableItems;
   }, [data.items, sortConfig]);
 
+  // 테이블의 총 너비 계산
+  const columnWidth = 120; // 각 칼럼의 너비
+  const firstColumnWidth = 150; // 첫 번째 칼럼(종목명)의 너비
+  const totalColumns = headers.length + 1; // 헤더 수 + 첫 번째 칼럼
+  const totalWidth = firstColumnWidth + columnWidth * headers.length;
+
   // 행 렌더링 함수
   const Row = ({ index, style }) => {
     const item = sortedItems[index];
     return (
-      <div className={classes.row} style={style}>
+      <div
+        className={classes.row}
+        style={{ ...style, width: totalWidth }} // 행의 너비 설정
+      >
         <div className={classes.cell}>
           <TechnicalTableIdentifier
             index={index + 1}
@@ -77,7 +88,7 @@ export default function TechnicalTable({ data }) {
           const isSortedColumn = sortConfig && sortConfig.key === header;
           return (
             <div
-              key={`data-${header}`}
+              key={`data-${header}-${index}`}
               className={`${classes.cell} ${
                 isSortedColumn ? classes.sortedCell : ''
               }`}
@@ -104,63 +115,67 @@ export default function TechnicalTable({ data }) {
         </div>
       )}
       <div className={classes.tableContainer}>
-        <div className={classes.headerRow}>
-          <div className={classes.headerCell}>종목명</div>
-          {headers.map((header, index) => {
-            const isSortedColumn = sortConfig && sortConfig.key === header;
-            const headerName =
-              header === 'Rating' ? 'Rating' : header.replace('score_', '');
+        {/* 스크롤 컨테이너 시작 */}
+        <div className={classes.tableScrollContainer}>
+          <div
+            className={classes.headerRow}
+            style={{ width: totalWidth }} // 헤더의 너비 설정
+          >
+            <div className={classes.headerCell}>종목명</div>
+            {headers.map((header, index) => {
+              const isSortedColumn = sortConfig && sortConfig.key === header;
+              const headerName =
+                header === 'Rating' ? 'Rating' : header.replace('score_', '');
 
-            // 헤더 셀의 ref 생성
-            const headerRef = useRef(null);
-
-            return (
-              <div
-                key={`header-${index}`}
-                className={`${classes.headerCell} ${classes.sortableHeader} ${
-                  isSortedColumn ? classes.sortedHeader : ''
-                }`}
-                ref={headerRef}
-                onMouseEnter={() => {
-                  if (headerRef.current) {
-                    const rect = headerRef.current.getBoundingClientRect();
+              return (
+                <div
+                  key={`header-${index}`}
+                  className={`${classes.headerCell} ${classes.sortableHeader} ${
+                    isSortedColumn ? classes.sortedHeader : ''
+                  }`}
+                  onMouseEnter={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
                     setTooltipPosition({
                       top: rect.top + window.scrollY,
                       left: rect.left + window.scrollX + rect.width / 2,
                     });
                     setTooltipContent(headerName);
-                  }
-                }}
-                onMouseLeave={() => {
-                  setTooltipContent('');
-                  setTooltipPosition(null);
-                }}
-              >
-                {headerName}
-                <span
-                  className={classes.sortIcon}
-                  onClick={() => handleSort(header)}
+                  }}
+                  onMouseLeave={() => {
+                    setTooltipContent('');
+                    setTooltipPosition(null);
+                  }}
                 >
-                  <Image
-                    src="/svgs/sort.svg"
-                    alt="sortIcon"
-                    width={16}
-                    height={16}
-                  />
-                </span>
-              </div>
-            );
-          })}
+                  {headerName}
+                  <span
+                    className={classes.sortIcon}
+                    onClick={() => handleSort(header)}
+                  >
+                    <Image
+                      src="/svgs/sort.svg"
+                      alt="sortIcon"
+                      width={16}
+                      height={16}
+                    />
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <List
+            className={classes.list}
+            height={600}
+            itemCount={sortedItems.length}
+            itemSize={50}
+            width={totalWidth}
+            style={{ overflowX: 'hidden', overflowY: 'auto' }} // 가로 스크롤 숨김
+          >
+            {({ index, style }) => (
+              <Row index={index} style={{ ...style, width: totalWidth }} />
+            )}
+          </List>
         </div>
-        <List
-          className={classes.list}
-          height={600}
-          itemCount={sortedItems.length}
-          itemSize={50}
-          width="100%"
-        >
-          {Row}
-        </List>
+        {/* 스크롤 컨테이너 끝 */}
       </div>
       {/* 툴팁 렌더링 */}
       {tooltipContent && tooltipPosition && (
