@@ -4,17 +4,18 @@
   height: 100vh;
 }
 
-/* Left Section */
 .leftSection {
   display: flex;
   flex-direction: row;
   height: 100%;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, opacity 0.3s ease; /* 애니메이션 추가 */
   width: 550px; /* 기본 필터와 버튼 영역의 총 너비 */
+  opacity: 1; /* 기본 상태는 완전히 보이는 상태 */
 }
 
 .leftSection.hidden {
   width: 0; /* 닫힌 상태에서 너비를 0으로 설정 */
+  overflow: hidden; /* 내용이 튀어나오지 않도록 숨김 */
 }
 
 /* 필터 내용 영역 */
@@ -58,9 +59,11 @@
 }
 
 
-/* Right Section (나머지 콘텐츠) */
 .rightSection {
   flex: 1;
   background-color: #f8f9fa;
   padding: 0 20px;
+	height: 95vw;
+	width: 95vh;
+
 }
