@@ -27,12 +27,27 @@ export default function TechnicalFilter({ updateFilterData, onApplyFilter }) {
 
   // 필터 적용 핸들러
   const handleApplyFilter = () => {
-    if (Object.keys(selectedIndicators).length === 0) {
-      alert('선택된 필터가 없습니다.');
-      return;
-    }
-    onApplyFilter(); // 부모 컴포넌트로 필터 적용 요청
-  };
+		// 모든 weight 값에 대한 유효성 검사
+		const invalidWeight = Object.values(selectedIndicators).some(
+			(indicator) =>
+				indicator.weight === '' ||
+				!/^\d+$/.test(indicator.weight) ||
+				Number(indicator.weight) < 0 ||
+				Number(indicator.weight) > 100
+		);
+	
+		if (invalidWeight) {
+			alert('가중치에는 0에서 100 사이의 숫자만 입력 가능합니다.');
+			return;
+		}
+	
+		if (Object.keys(selectedIndicators).length === 0) {
+			alert('선택된 필터가 없습니다.');
+			return;
+		}
+	
+		onApplyFilter(); // 부모 컴포넌트로 필터 적용 요청
+	};
 
   // 체크박스 변경 핸들러
   const handleCheckboxChange = (indicator) => {
@@ -57,17 +72,36 @@ export default function TechnicalFilter({ updateFilterData, onApplyFilter }) {
 
   // 가중치 변경 핸들러
   const handleWeightChange = (indicator, value) => {
-    if (!/^\d+$/.test(value)) {
-      setError('가중치는 숫자만 입력 가능합니다.');
-      return;
-    }
-
-    const weight = Math.max(0, Math.min(100, Number(value)));
-    setSelectedIndicators((prev) => ({
-      ...prev,
-      [indicator]: { ...prev[indicator], weight },
-    }));
-  };
+		// 상태 업데이트
+		setSelectedIndicators((prev) => ({
+			...prev,
+			[indicator]: { ...prev[indicator], weight: value },
+		}));
+	
+		// 에러 메시지 초기화
+		setError('');
+	
+		// 유효성 검사
+		if (value === '') {
+			// 빈 문자열은 허용
+			return;
+		}
+	
+		if (!/^\d+$/.test(value)) {
+			setError('가중치는 숫자만 입력 가능합니다.');
+			return;
+		}
+	
+		const weight = Number(value);
+	
+		if (weight < 0 || weight > 100) {
+			setError('가중치는 0에서 100 사이여야 합니다.');
+			return;
+		}
+	
+		// 에러가 없으므로 에러 메시지를 지웁니다.
+		setError('');
+	};
 
   return (
     <div className={classes.filterContainer}>

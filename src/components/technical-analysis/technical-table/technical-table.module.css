@@ -1,12 +1,7 @@
 .tableContainer {
-  width: 100%;
+  width: 95vw;
   overflow-x: auto; /* 수평 스크롤 */
-  margin: 0;
-  display: flex;
-  flex-direction: column; /* 세로 배치 */
-  justify-content: flex-start; /* 테이블을 왼쪽 정렬 */
-  align-items: flex-start;
-  padding: 30px 20px;
+  margin: 0 auto;
 }
 
 .dateContainer {
@@ -19,123 +14,67 @@
   background-color: #f8f9fa; /* 테이블 헤더 배경색과 일치 */
 }
 
-
-.table {
+.headerRow {
+  display: flex;
   width: max-content; /* 콘텐츠 크기에 따라 너비가 결정됨 */
-  border-collapse: collapse;
+  align-items: flex-start; /* 내용 위쪽 정렬 */
 }
 
-.table th,
-.table td {
+.headerRow,
+.row {
+  display: flex;
+  width: max-content; /* 콘텐츠 크기에 따라 너비가 결정됨 */
+}
+
+.headerCell,
+.cell {
+  flex-shrink: 0;
   padding: 10px;
-  text-align: left;
+  text-align: center; /* 텍스트 중앙 정렬 */
   vertical-align: middle;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 1px solid #ddd;
   border-right: 1px solid #ddd; /* 오른쪽 경계선 추가 */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.table th {
+.headerCell {
   font-size: 14px;
   font-weight: bold;
   color: #555;
-  position: sticky; /* 헤더 고정 */
-  top: 0; /* 화면 상단에 고정 */
   background-color: #f8f9fa;
+  position: sticky; /* 헤더 고정 */
+  top: 0;
   z-index: 1;
+  white-space: normal; /* 텍스트 줄바꿈 허용 */
+  word-wrap: break-word; /* 단어 단위로 줄바꿈 */
+  height: auto; /* 높이 자동 조정 */
+	white-space: nowrap;          /* 텍스트 줄바꿈 방지 */
+  overflow: hidden;             /* 넘치는 텍스트 숨김 */
+  text-overflow: ellipsis;      /* 말줄임표 표시 */
+  width: 120px;                 /* 칼럼 너비 증가 (필요에 따라 조정) */
+  position: relative;
 }
 
-.table td {
+.cell {
   font-size: 14px;
   color: #333;
   white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-  overflow: hidden;
   text-overflow: ellipsis; /* 너무 긴 텍스트는 말줄임 표시 */
 }
 
-/* 첫 번째 칼럼의 너비 늘리기 */
-.table tr th:first-child,
-.table tr td:first-child {
-  width: 200px;
-}
-
-
-
-/* 기본 칼럼과 추가 칼럼의 너비 */
-.table tr th:nth-child(n+2),
-.table tr td:nth-child(n+2) {
-  width: 250px;
-}
-
-/* 마지막 열의 경계선 제거 */
-.table tr th:last-child,
-.table tr td:last-child {
-  border-right: none;
-}
-
-/* 짝수 행 배경색 */
-.table tbody tr:nth-child(even) {
+.row:nth-child(even) {
   background-color: #f9f9f9;
 }
 
-/* 호버 스타일 */
-.table tbody tr:hover {
+.row:hover {
   background-color: #e9ecef;
   transition: background-color 0.3s;
 }
 
-/* 세로 가운데 정렬 */
-.table td,
-.table th {
-  vertical-align: middle;
-}
-
-.hoverableHeader {
-  position: relative;
-  cursor: pointer; /* 마우스 포인터 변경 */
-}
-
-.ratingHeader {
-  display: flex;
-  align-items: center;
-  gap: 5px; /* Rating 텍스트와 아이콘 사이 간격 */
-}
-
-.infoIcon {
-  cursor: pointer;
-  color: #555;
-  position: relative;
-}
-
-.infoIcon:hover::after {
-  content: '가중치 변경 버튼을 눌러 종합점수를 확인하세요'; /* 툴팁 텍스트 */
-  position: absolute;
-  top: -30px; /* 아이콘 위쪽에 표시 */
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333; /* 어두운 배경 */
-  color: #fff; /* 흰색 텍스트 */
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.infoIcon::after {
-  content: '';
-  position: absolute;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* technical-table.module.css */
 .sortableHeader {
   position: relative;
+  cursor: pointer;
 }
 
 .sortIcon {
@@ -143,23 +82,38 @@
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  padding: 4px;           /* 호버 영역을 넓히기 위해 패딩 추가 */
-  border-radius: 4px;     /* 선택 사항: 모서리를 둥글게 처리 */
-  transition: background-color 0.1s ease; /* 부드러운 전환 효과 추가 */
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.1s ease;
   cursor: pointer;
 }
 
 .sortIcon:hover {
-  background-color: #f0f0f0; /* 원하는 호버 배경색으로 변경 */
+  background-color: #f0f0f0;
 }
 
-/* 정렬된 헤더 스타일 */
 .sortedHeader {
   border-bottom: 2px solid #007bff;
   background-color: #f1f8ff;
 }
 
-/* 정렬된 데이터 셀 스타일 */
 .sortedCell {
   background-color: #f1f8ff;
+}
+
+/* 첫 번째 칼럼의 너비 늘리기 */
+.headerCell:first-child,
+.cell:first-child {
+  width: 150px; /* 원하는 너비로 조정 */
+}
+
+.headerCell:nth-child(n+2),
+.cell:nth-child(n+2) {
+  width: 120px; /* 칼럼 너비 증가 */
+}
+
+/* 마지막 열의 경계선 제거 */
+.headerCell:last-child,
+.cell:last-child {
+  border-right: none;
 }

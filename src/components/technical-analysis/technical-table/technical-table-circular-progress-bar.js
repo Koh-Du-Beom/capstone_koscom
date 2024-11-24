@@ -19,7 +19,7 @@ export default function TableCircularProgressBar({ point }) {
   }
 
   return (
-    <div style={{ width: 50, height: 50 }}>
+    <div style={{ width: 40, height: 40 }}>
       <CircularProgressbar
         value={point}
         text={`${Number(point).toFixed(0)}점`}

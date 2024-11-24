@@ -66,6 +66,6 @@
 .rightSection {
   flex: 1;
   background-color: #f8f9fa;
-  padding: 20px;
+  padding: 0 20px;
   transition: margin-left 0.3s ease;
 }

@@ -1,0 +1,23 @@
+/* tooltip.module.css */
+.tooltip {
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 5px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 10000;
+  font-size: 12px;
+  pointer-events: none;
+  position: absolute;
+}
+
+.tooltipArrow {
+  content: '';
+  position: absolute;
+  bottom: -5px; /* 화살표를 툴팁 아래에 위치 */
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+}

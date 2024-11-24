@@ -19,27 +19,41 @@ export default function StockFilterPage() {
 
   // 필터 적용 (API 호출 또는 데이터 처리)
   const handleApplyFilter = async () => {
-    try {
-      const response = await fetch('/api/stockFilter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ selectedIndicators: filterData }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch filtered data.');
-      }
-
-      const data = await response.json();
-      setTableData(data.data); // 테이블에 데이터 전달
-
-      console.log('tableData : ', data.data);
-      
-    } catch (error) {
-      console.error('Error fetching filter data:', error);
-      alert('필터 데이터를 불러오는데 실패했습니다.');
-    }
-  };
+		// 가중치 값 숫자 변환 및 유효성 검사
+		const processedFilterData = filterData.map((indicator) => {
+			const weight = Number(indicator.weight);
+			if (isNaN(weight)) {
+				alert(`가중치 값이 유효하지 않습니다: ${indicator.indicator}`);
+				throw new Error('Invalid weight value');
+			}
+			return {
+				...indicator,
+				weight,
+			};
+		});
+	
+		try {
+			const response = await fetch('/api/stockFilter', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ selectedIndicators: processedFilterData }),
+			});
+	
+			if (!response.ok) {
+				throw new Error('Failed to fetch filtered data.');
+			}
+	
+			const data = await response.json();
+			setTableData(data.data); // 테이블에 데이터 전달
+	
+			console.log('tableData : ', data.data);
+			
+		} catch (error) {
+			console.error('Error fetching filter data:', error);
+			alert('필터 데이터를 불러오는데 실패했습니다.');
+		}
+	};
+	
 
   return (
     <div className={classes.container}>
