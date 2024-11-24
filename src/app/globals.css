@@ -43,6 +43,10 @@ p {
 	font-weight: 300;
 }
 
+.no-scroll {
+  overflow-y: hidden;
+}
+
 /* 스크롤바 커스터마이징 */
 ::-webkit-scrollbar {
   width: 15px;

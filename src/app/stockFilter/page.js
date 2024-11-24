@@ -2,13 +2,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import TechnicalFilter from '@/components/technical-analysis/technical-filter/technical-filter';
 import TechnicalTable from '@/components/technical-analysis/technical-table/technical-table';
-import ComponentLoading from '@/components/loading/component-loading'; // 로딩 컴포넌트 import
+import ComponentLoading from '@/components/loading/component-loading';
 import classes from './page.module.css';
 
 export default function StockFilterPage() {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [filterData, setFilterData] = useState([]); // 필터 상태
   const [tableData, setTableData] = useState(null); // 테이블 데이터
+
+  useEffect(() => {
+    // Y축 스크롤 비활성화
+    document.body.style.overflowY = 'hidden';
+
+    return () => {
+      // 컴포넌트 언마운트 시 스크롤 복원
+      document.body.style.overflowY = 'auto';
+    };
+  }, []);
 
   const updateFilterData = useCallback((updatedFilters) => {
     setFilterData(updatedFilters);
@@ -19,17 +29,13 @@ export default function StockFilterPage() {
   };
 
   const handleApplyFilter = async () => {
-    // 가중치 값 숫자 변환 및 유효성 검사
     const processedFilterData = filterData.map((indicator) => {
       const weight = Number(indicator.weight);
       if (isNaN(weight)) {
         alert(`가중치 값이 유효하지 않습니다: ${indicator.indicator}`);
         throw new Error('Invalid weight value');
       }
-      return {
-        ...indicator,
-        weight,
-      };
+      return { ...indicator, weight };
     });
 
     try {
@@ -44,7 +50,7 @@ export default function StockFilterPage() {
       }
 
       const data = await response.json();
-      setTableData(data.data); // 테이블에 데이터 전달
+      setTableData(data.data);
     } catch (error) {
       console.error('Error fetching filter data:', error);
       alert('필터 데이터를 불러오는데 실패했습니다.');
@@ -54,14 +60,12 @@ export default function StockFilterPage() {
   return (
     <div className={classes.container}>
       {/* Left Section */}
-      <div
-        className={`${classes.leftSection} ${isFilterVisible ? classes.visible : classes.hidden}`}
-      >
+      <div className={`${classes.leftSection} ${isFilterVisible ? classes.visible : classes.hidden}`}>
         <div className={classes.filterContent}>
           {isFilterVisible && (
             <TechnicalFilter
               updateFilterData={updateFilterData}
-              onApplyFilter={handleApplyFilter} // 필터 적용 버튼과 연결
+              onApplyFilter={handleApplyFilter}
             />
           )}
         </div>
@@ -79,7 +83,7 @@ export default function StockFilterPage() {
       {/* Right Section */}
       <div className={classes.rightSection}>
         {tableData ? (
-          <TechnicalTable data={tableData} /> // 테이블 컴포넌트에 데이터 전달
+          <TechnicalTable data={tableData} />
         ) : (
           <p>데이터가 없습니다. 필터를 적용해주세요.</p>
         )}
