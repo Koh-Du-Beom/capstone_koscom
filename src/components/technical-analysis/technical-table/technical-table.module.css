@@ -123,8 +123,10 @@
   background: none;
   border: none;
   cursor: pointer;
-  margin-left: 4.5vw;
+  margin-left: 3vw;
   font-size: 16px;
+	position: absolute;
+	right: 5px;
 }
 
 /* 검색 입력창 컨테이너 스타일 */

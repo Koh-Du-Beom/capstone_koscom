@@ -69,23 +69,28 @@ export default function TechnicalTable({ data }) {
   }, [data.items, sortConfig]);
 
 	const handleSearch = (searchQuery) => {
-    const query = searchQuery.toLowerCase();
-		console.log(query);
+		const query = searchQuery.toLowerCase();
+		const index = sortedItems.findIndex((item) =>
+			item.companyName.toLowerCase().includes(query)
+		);
 		
-    const index = sortedItems.findIndex((item) =>
-      item.companyName.toLowerCase().includes(query)
-    );
-
 		console.log(index);
 		
 
-    if (index !== -1 && listRef.current) {
-      listRef.current.scrollToItem(index, 'center');
-      setIsSearchOpen(false);
-    } else {
-      alert('해당 종목을 찾을 수 없습니다.');
-    }
-  };
+		if (index !== -1) {
+			if (listRef.current && typeof listRef.current.scrollToItem === 'function') {
+				// scrollToItem 메서드 호출
+				listRef.current.scrollToItem(index, 'center');
+				setIsSearchOpen(false);
+			} else {
+				console.error('listRef가 초기화되지 않았거나 scrollToItem 메서드를 찾을 수 없습니다.');
+			}
+		} else {
+			alert('해당 종목을 찾을 수 없습니다.');
+		}
+	};
+	
+	
 
   // 행 렌더링 함수
   const Row = ({ index, style }) => {
@@ -216,7 +221,8 @@ export default function TechnicalTable({ data }) {
             itemSize={50}
             width={totalWidth}
             style={{ overflowX: 'hidden', overflowY: 'auto' }} // 가로 스크롤 숨김
-          >
+						ref={listRef}
+					>
             {({ index, style }) => (
               <Row index={index} style={{ ...style, width: totalWidth }} />
             )}
