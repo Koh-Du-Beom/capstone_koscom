@@ -12,30 +12,33 @@ function TechnicalTableSearch({ onSearch, onClose, position, searchResults, onRe
         position: 'absolute',
         top: position.top,
         left: position.left,
-        transform: 'translate(-90%, 10px)', // 오른쪽 아래로 이동
+        transform: 'translate(-50%, 10px)', // 오른쪽 아래로 이동
       }}
     >
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="종목명 검색"
-        className={classes.searchInput}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            onSearch(searchQuery); // 검색어 전달
-          }
-        }}
-      />
-      <button
-        onClick={() => onSearch(searchQuery)}
-        className={classes.searchSubmitButton}
-      >
-        검색
-      </button>
-      <button onClick={onClose} className={classes.closeButton}>
-        닫기
-      </button>
+			<div className={classes.searchInput}>
+				<input
+					type="text"
+					value={searchQuery}
+					onChange={(e) => setSearchQuery(e.target.value)}
+					placeholder="종목명 검색"
+					className={classes.searchInput}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') {
+							onSearch(searchQuery); // 검색어 전달
+						}
+					}}
+				/>
+				<button
+					onClick={() => onSearch(searchQuery)}
+					className={classes.searchSubmitButton}
+				>
+					검색
+				</button>
+				<button onClick={onClose} className={classes.closeButton}>
+					닫기
+				</button>
+			</div>
+      
 
       {/* 검색 결과 표시 */}
       {searchResults && searchResults.length > 0 && (
