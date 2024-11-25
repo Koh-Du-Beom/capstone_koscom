@@ -14,7 +14,11 @@ export default function FinancialDropdownBox({ updateGraphData }) {
 
   // 데이터 필터링 및 재구성
   useEffect(() => {
-    if (stockData.length === 0 || selectedIndicators.length === 0) return;
+    if (stockData.length === 0 || selectedIndicators.length === 0) {
+      updateGraphData([])
+      return;
+    }
+      
 
     const restructuredData = selectedIndicators.reduce((acc, indicator) => {
       const indicatorData = stockData.reduce((stocksAcc, { stockName, data }) => {
@@ -38,9 +42,8 @@ export default function FinancialDropdownBox({ updateGraphData }) {
       return acc;
     }, []);
     
-    console.log("parsed_data : ", restructuredData);
     updateGraphData(restructuredData);
-  }, [selectedIndicators]);
+  }, [selectedIndicators, stockData]);
 
   return (
     <>

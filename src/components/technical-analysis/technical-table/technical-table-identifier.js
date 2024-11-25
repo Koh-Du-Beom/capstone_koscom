@@ -18,13 +18,6 @@ export default function TechnicalTableIdentifier({ index, company_name, exchange
   return (
     <div className={classes.identifierContainer}>
       <span className={classes.index}>{index}</span>
-      <Image
-        src={getExchangeLogo(exchange_code)}
-        alt={`${exchange_code} logo`}
-        width={36}
-        height={36}
-        className={classes.exchangeLogo}
-      />
       <div className={classes.infoContainer}>
         <span className={classes.companyName}>{company_name}</span>
       </div>

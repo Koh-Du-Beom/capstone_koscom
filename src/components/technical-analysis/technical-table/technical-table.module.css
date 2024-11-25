@@ -1,141 +1,94 @@
 .tableContainer {
-  width: 100%;
-  overflow-x: auto; /* 수평 스크롤 */
-  margin: 0;
+  width: 95vw;
+	height: 85vh;
+  margin: 0 auto;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+.dateContainer{
+	margin-left: 20px;
+}
+
+.headerRow {
   display: flex;
-  flex-direction: column; /* 세로 배치 */
-  justify-content: flex-start; /* 테이블을 왼쪽 정렬 */
-  align-items: flex-start;
-  padding: 30px 20px;
 }
 
-.dateContainer {
-  text-align: right; /* 오른쪽 정렬 */
-  margin-bottom: 10px;
-  font-size: 14px;
-  color: #333;
-  padding: 5px 10px;
-  border-radius: 4px;
-  background-color: #f8f9fa; /* 테이블 헤더 배경색과 일치 */
+.row {
+  display: flex;
+	width: 100%;
 }
 
-
-.table {
-  width: max-content; /* 콘텐츠 크기에 따라 너비가 결정됨 */
-  border-collapse: collapse;
-}
-
-.table th,
-.table td {
+.headerCell,
+.cell {
+  flex-shrink: 0;
   padding: 10px;
-  text-align: left;
   vertical-align: middle;
-  border-bottom: 2px solid #ddd;
-  border-right: 1px solid #ddd; /* 오른쪽 경계선 추가 */
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+	width: 5vw;
+	box-sizing: border-box;
 }
 
-.table th {
+.headerCell {
+  text-align: left; /* 헤더 셀은 왼쪽 정렬 */
   font-size: 14px;
   font-weight: bold;
   color: #555;
-  position: sticky; /* 헤더 고정 */
-  top: 0; /* 화면 상단에 고정 */
   background-color: #f8f9fa;
+  position: sticky; /* 헤더 고정 */
+  top: 0;
   z-index: 1;
+	width: 5vw;
 }
 
-.table td {
+.cell {
+	display: flex;
+	justify-content: center;
+	align-items: center;
   font-size: 14px;
   color: #333;
-  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-  overflow: hidden;
-  text-overflow: ellipsis; /* 너무 긴 텍스트는 말줄임 표시 */
 }
 
-/* 첫 번째 칼럼의 너비 늘리기 */
-.table tr th:first-child,
-.table tr td:first-child {
-  width: 200px;
+/* 첫 번째 칼럼(종목명)은 왼쪽 정렬 및 너비 조정 */
+.headerCell:first-child,
+.cell:first-child {
+  justify-content: flex-start;
+  width: 9vw; /* 필요에 따라 너비 조정 */
+}
+
+/* 첫 번째 칼럼을 제외한 데이터 셀은 가운데 정렬 */
+.cell:not(:first-child) {
+  text-align: center;
+	width: 5vw;
 }
 
 
 
-/* 기본 칼럼과 추가 칼럼의 너비 */
-.table tr th:nth-child(n+2),
-.table tr td:nth-child(n+2) {
-  width: 250px;
-}
 
 /* 마지막 열의 경계선 제거 */
-.table tr th:last-child,
-.table tr td:last-child {
+.headerCell:last-child,
+.cell:last-child {
   border-right: none;
 }
 
-/* 짝수 행 배경색 */
-.table tbody tr:nth-child(even) {
+
+/* 기타 스타일 유지 */
+.row:nth-child(even) {
   background-color: #f9f9f9;
 }
 
-/* 호버 스타일 */
-.table tbody tr:hover {
+.row:hover {
   background-color: #e9ecef;
   transition: background-color 0.3s;
 }
 
-/* 세로 가운데 정렬 */
-.table td,
-.table th {
-  vertical-align: middle;
-}
-
-.hoverableHeader {
-  position: relative;
-  cursor: pointer; /* 마우스 포인터 변경 */
-}
-
-.ratingHeader {
-  display: flex;
-  align-items: center;
-  gap: 5px; /* Rating 텍스트와 아이콘 사이 간격 */
-}
-
-.infoIcon {
-  cursor: pointer;
-  color: #555;
-  position: relative;
-}
-
-.infoIcon:hover::after {
-  content: '가중치 변경 버튼을 눌러 종합점수를 확인하세요'; /* 툴팁 텍스트 */
-  position: absolute;
-  top: -30px; /* 아이콘 위쪽에 표시 */
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333; /* 어두운 배경 */
-  color: #fff; /* 흰색 텍스트 */
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.infoIcon::after {
-  content: '';
-  position: absolute;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* technical-table.module.css */
 .sortableHeader {
   position: relative;
+  cursor: pointer;
 }
 
 .sortIcon {
@@ -143,23 +96,99 @@
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  padding: 4px;           /* 호버 영역을 넓히기 위해 패딩 추가 */
-  border-radius: 4px;     /* 선택 사항: 모서리를 둥글게 처리 */
-  transition: background-color 0.1s ease; /* 부드러운 전환 효과 추가 */
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.1s ease;
   cursor: pointer;
 }
 
 .sortIcon:hover {
-  background-color: #f0f0f0; /* 원하는 호버 배경색으로 변경 */
+  background-color: #f0f0f0;
 }
 
-/* 정렬된 헤더 스타일 */
 .sortedHeader {
   border-bottom: 2px solid #007bff;
   background-color: #f1f8ff;
 }
 
-/* 정렬된 데이터 셀 스타일 */
 .sortedCell {
   background-color: #f1f8ff;
+}
+
+
+
+/* 검색기능 css */
+/* 검색 버튼 스타일 */
+.searchButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 3vw;
+  font-size: 16px;
+	position: absolute;
+	right: 5px;
+}
+
+/* 검색 입력창 컨테이너 스타일 */
+.searchContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  padding: 10px;
+  border: 1px solid #ddd;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+}
+
+/* 검색 입력 필드 스타일 */
+.searchInput {
+  width: 150px;
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+}
+
+/* 검색 버튼 스타일 */
+.searchSubmitButton {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.searchSubmitButton:hover {
+  background-color: #0056b3;
+}
+
+
+.searchResultsContainer {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.searchResultsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.searchResultItem {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.searchResultItem:hover {
+  background-color: #f0f0f0;
 }

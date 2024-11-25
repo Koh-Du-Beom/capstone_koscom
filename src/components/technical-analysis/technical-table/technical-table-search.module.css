@@ -1,0 +1,78 @@
+.searchContainer {
+  background-color: #fff;
+  padding: 15px;
+  border: 1px solid #ddd;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column; /* 세로 배치 */
+  align-items: center;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  width: 500px; /* 너비 확장 */
+}
+
+.searchInput {
+  display: flex;
+  width: 100%; /* 부모 너비에 맞춤 */
+  align-items: center; /* 입력창과 버튼의 수직 정렬 */
+  gap: 10px; /* 버튼 간격 추가 */
+}
+
+.searchInput input {
+  flex: 1; /* 입력창이 버튼과 균형을 맞춤 */
+  padding: 10px;
+  height: 40px; /* 버튼과 동일한 높이로 설정 */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.searchSubmitButton,
+.closeButton {
+  height: 40px; /* 입력창과 동일한 높이 */
+  padding: 0 15px; /* 버튼 내부 여백 조정 */
+  background-color: #B2DFDB;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.searchSubmitButton {
+  background-color: #B2DFDB;
+	color: #191919;
+	font-weight: bold;
+}
+
+.searchSubmitButton:hover {
+  background-color: #e1e2e3;
+}
+
+.closeButton {
+  background-color: #6c757d;
+}
+
+.closeButton:hover {
+  background-color: #5a6268;
+}
+
+.searchResultsList {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+  max-height: 200px; /* 최대 높이 조정 */
+  overflow-y: auto;
+  width: 100%; /* 부모 너비에 맞춤 */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.searchResultItem {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.searchResultItem:hover {
+  background-color: #f0f0f0;
+}
