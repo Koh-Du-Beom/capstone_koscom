@@ -4,15 +4,18 @@ import TechnicalFilter from '@/components/technical-analysis/technical-filter/te
 import TechnicalTable from '@/components/technical-analysis/technical-table/technical-table';
 import ComponentLoading from '@/components/loading/component-loading';
 import classes from './page.module.css';
+import defaultFilterData from '@/components/technical-analysis/technical-filter/default-filter-data';
 
 export default function StockFilterPage() {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
-  const [filterData, setFilterData] = useState([]); // 필터 상태
+  const [filterData, setFilterData] = useState(defaultFilterData); // 필터 상태
   const [tableData, setTableData] = useState(null); // 테이블 데이터
 
   useEffect(() => {
     // Y축 스크롤 비활성화
     document.body.style.overflowY = 'hidden';
+
+    handleApplyFilter();
 
     return () => {
       // 컴포넌트 언마운트 시 스크롤 복원
