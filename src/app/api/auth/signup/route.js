@@ -1,13 +1,9 @@
-import db from "../../../../../db";
+import db from "@/db";
 import bcrypt from 'bcrypt';
 
 export async function POST(request){
   const { email, password } = await request.json();
-
   const hashedPassword = await bcrypt.hash(password, 10);
-
-
-  console.log(hashedPassword);
   
   try {
     const stmt = db.prepare('INSERT INTO users (email, password) VALUES (?, ?)');

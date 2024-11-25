@@ -19,6 +19,7 @@ export default function Login() {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // 쿠키를 포함하여 요청
       body: JSON.stringify({ email, password }),
     });
   
@@ -29,7 +30,7 @@ export default function Login() {
       const data = await res.json();
       alert(data.message);
     }
-  };
+  };  
 
   return (
     <div className={classes.container}>
