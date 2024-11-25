@@ -10,9 +10,8 @@ function TechnicalTableSearch({ onSearch, onClose, position, searchResults, onRe
       className={classes.searchContainer}
       style={{
         position: 'absolute',
-        top: position.top,
-        left: position.left,
-        transform: 'translate(-50%, 10px)', // 오른쪽 아래로 이동
+        top: `${position.top + 10}px`, // 10px 아래로 이동
+        left: `${position.left}px`, // 정확한 좌표 지정
       }}
     >
 			<div className={classes.searchInput}>
