@@ -24,9 +24,10 @@ export async function POST(request) {
     }
 
     return new Promise((resolve, reject) => {
-      const pythonPath = '/home/ubuntu-server/superfantastic/bin/python';
-      const scriptPath = path.resolve('/home/ubuntu-server/gptapicall.py');
+      const pythonPath = '/home/ubuntu-server/superfantastic/bin/python'; // Python 실행 경로
+      const scriptPath = path.resolve('/home/ubuntu-server/gptapicall.py'); // Python 스크립트 경로
 
+      // Python 프로세스 실행
       const pythonProcess = spawn(pythonPath, [scriptPath, '--sentence', message]);
       let output = '';
       let error = '';
@@ -50,23 +51,21 @@ export async function POST(request) {
           );
         }
 
-        console.log('output:', output);
+        console.log('output : ', output);
 
         const jsonData = parseJSON(output.trim());
         if (jsonData) {
-          // JSON 데이터 처리
-          if (!isValidGraphData(jsonData)) {
+          // 그래프 데이터인지 확인
+          if (isValidGraphData(jsonData)) {
             return resolve(
-              NextResponse.json(
-                { error: 'Invalid data format returned from Python script.' },
-                { status: 400 }
-              )
+              NextResponse.json(Array.isArray(jsonData) ? jsonData : [jsonData])
             );
           }
-          return resolve(NextResponse.json(Array.isArray(jsonData) ? jsonData : [jsonData]));
+          // 그래프 데이터가 아니면 무시 (불필요한 JSON 제거)
+          return resolve(NextResponse.json({ message: output.trim() }));
         }
 
-        // 단순 문자열 응답 처리
+        // JSON이 아닌 단순 문자열 데이터 처리
         resolve(NextResponse.json({ message: output.trim() }));
       });
     });

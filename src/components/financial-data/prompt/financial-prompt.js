@@ -12,12 +12,13 @@ export default function FinancialPrompt({ updateGraphData }) {
     event.preventDefault();
 
     if (inputValue.trim()) {
+      // 사용자 메시지 추가
       setMessages((prevMessages) => [
         ...prevMessages,
         { type: 'user', content: inputValue.trim() },
       ]);
-      setInputValue('');
-      setIsLoading(true);
+      setInputValue(''); // 입력 필드 초기화
+      setIsLoading(true); // 로딩 시작
 
       try {
         // API 요청
@@ -29,20 +30,20 @@ export default function FinancialPrompt({ updateGraphData }) {
 
         // 응답 데이터 유형에 따라 처리
         if (Array.isArray(responseData)) {
-          // 그래프 데이터 응답
-          updateGraphData((prev) => [...prev, ...responseData]);
+          // 그래프 데이터
+          updateGraphData((prev) => [...prev, ...responseData]); // 기존 그래프 데이터에 추가
           setMessages((prevMessages) => [
             ...prevMessages,
             { type: 'system', content: '요청사항을 바탕으로 그래프를 생성했습니다.' },
           ]);
-        } else if (typeof responseData === 'object' && responseData.message) {
-          // 단순 메시지 응답
+        } else if (responseData.message) {
+          // 메시지 데이터
           setMessages((prevMessages) => [
             ...prevMessages,
             { type: 'system', content: responseData.message },
           ]);
         } else {
-          // 예상치 못한 데이터 형식
+          // 알 수 없는 형식
           setMessages((prevMessages) => [
             ...prevMessages,
             { type: 'system', content: '알 수 없는 데이터 형식이 반환되었습니다.' },
@@ -55,13 +56,14 @@ export default function FinancialPrompt({ updateGraphData }) {
           { type: 'system', content: '오류가 발생했습니다. 다시 시도해주세요.' },
         ]);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // 로딩 종료
       }
     }
   };
 
   return (
     <div className={classes.container}>
+      {/* 채팅 박스 */}
       <div className={classes.chatBox}>
         {messages.map((message, index) => (
           <div
@@ -74,6 +76,7 @@ export default function FinancialPrompt({ updateGraphData }) {
           </div>
         ))}
 
+        {/* 로딩 상태 */}
         {isLoading && (
           <div className={`${classes.message} ${classes.loadingMessage}`}>
             <ComponentLoading />
@@ -81,6 +84,7 @@ export default function FinancialPrompt({ updateGraphData }) {
         )}
       </div>
 
+      {/* 입력 섹션 */}
       <form className={classes.inputSection} onSubmit={handleSubmit}>
         <input
           type="text"
