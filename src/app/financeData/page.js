@@ -26,7 +26,7 @@ export default function FinancialDataShowPage() {
     <div className={classes.container}>
       <div className={classes.leftSection}>
         <div className={classes.selectionSection}>
-          <h2 className={classes.title}>주식 분석</h2>
+          {/* <h2 className={classes.title}>주식 분석</h2> */}
           <div className={classes.option_container}>
             <button
               className={`${classes.button} ${selectedOption === 'dropdown' ? classes.activeButton : ''} ${selectedOption === 'dropdown' ? classes.disabledButton : ''}`}

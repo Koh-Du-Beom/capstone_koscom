@@ -3,13 +3,26 @@ import React, { useState, useEffect } from 'react';
 import { indicators } from './technical-filter-data';
 import classes from './technical-filter.module.css';
 
-export default function TechnicalFilter({ updateFilterData, onApplyFilter }) {
+export default function TechnicalFilter({ filterData, updateFilterData, onApplyFilter }) {
   const [error, setError] = useState('');
   const [selectedIndicators, setSelectedIndicators] = useState({});
 	
   useEffect(() => {
     updateFilterData(Object.values(selectedIndicators));
   }, [selectedIndicators]);
+
+  useEffect(() => {
+    // filterData를 selectedIndicators의 형식으로 변환
+    const syncSelectedIndicators = {};
+    filterData.forEach((data) => {
+      const { indicator, condition, weight } = data; // filterData의 구조에서 필요한 키 추출
+      syncSelectedIndicators[indicator] = { indicator, condition, weight };
+    });
+  
+    // 변환된 데이터를 상태로 설정
+    setSelectedIndicators(syncSelectedIndicators);
+  }, []);
+  
 
   // 전체 선택 핸들러
   const handleSelectAll = () => {

@@ -64,6 +64,7 @@ export default function StockFilterPage() {
         <div className={classes.filterContent}>
           {isFilterVisible && (
             <TechnicalFilter
+              filterData={filterData}
               updateFilterData={updateFilterData}
               onApplyFilter={handleApplyFilter}
             />
