@@ -10,6 +10,7 @@ export default function StockFilterPage() {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [filterData, setFilterData] = useState(defaultFilterData); // 필터 상태
   const [tableData, setTableData] = useState(null); // 테이블 데이터
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Y축 스크롤 비활성화
@@ -32,6 +33,7 @@ export default function StockFilterPage() {
   };
 
   const handleApplyFilter = async () => {
+    setIsLoading(true);
     const processedFilterData = filterData.map((indicator) => {
       const weight = Number(indicator.weight);
       if (isNaN(weight)) {
@@ -57,6 +59,8 @@ export default function StockFilterPage() {
     } catch (error) {
       console.error('Error fetching filter data:', error);
       alert('필터 데이터를 불러오는데 실패했습니다.');
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -86,11 +90,19 @@ export default function StockFilterPage() {
 
       {/* Right Section */}
       <div className={classes.rightSection}>
-        {tableData ? (
-          <TechnicalTable data={tableData} />
-        ) : (
-          <p>데이터가 없습니다. 필터를 적용해주세요.</p>
-        )}
+        {
+          isLoading ? (
+            <div className={classes.noData}>
+              <ComponentLoading /> 
+            </div>
+          ) : (
+            tableData ? (
+              <TechnicalTable data={tableData} />
+            ) : (
+              <p className={classes.noData}>데이터가 없습니다. 필터를 적용해주세요.</p>
+            )
+          )
+        }      
       </div>
     </div>
   );

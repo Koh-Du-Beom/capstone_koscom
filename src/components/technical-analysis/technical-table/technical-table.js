@@ -35,7 +35,7 @@ export default function TechnicalTable({ data }) {
 
   // 'Rating'을 첫 번째로 배치
   headers = ['Rating', ...headers];
-	const totalWidth = `${headers.length * 5 + 9}vw`;
+	const totalWidth = `${headers.length * 5 + 11}vw`;
 
   const handleSort = (header) => {
     let direction = 'descending';
