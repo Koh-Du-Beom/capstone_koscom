@@ -72,6 +72,8 @@ const InterestedItemsBox = () => {
   useEffect(() => {
     if (isLoggedIn) {
       fetchInterestedItems();
+    }else{
+      setStockDataList([]);
     }
   }, [isLoggedIn, fetchInterestedItems]);
 

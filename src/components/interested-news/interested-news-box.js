@@ -1,63 +1,59 @@
 'use client';
 import InterestedNews from "./interested-news";
 import classes from './interested-news-box.module.css';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from 'axios';
-import { useInterestedItems } from '@/contexts/InterestedItemsContext';
+import useAuthStore from '@/store/authStore';
 import ComponentLoading from "../loading/component-loading";
 
 export default function InterestedNewsBox() {
+  const { interestedItems } = useAuthStore(); // zustand에서 관심종목 가져오기
   const itemsPerPage = 5; // 한 페이지에 보여줄 뉴스 아이템 수
   const [currentPage, setCurrentPage] = useState(1);
   const [pageGroup, setPageGroup] = useState(1); // 페이지 그룹 상태 추가
-  const [newsItems, setNewsItems] = useState([]);
+  const [newsItems, setNewsItems] = useState([]); // 뉴스 데이터 상태
   const [isLoading, setIsLoading] = useState(false);
-  const { interestedItems } = useInterestedItems();
-  const [clientItems, setClientItems] = useState([]); // 클라이언트 전용 상태
 
-  // 관심 종목이 변경될 때마다 clientItems를 업데이트
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setClientItems(interestedItems);
+  // 관심종목 기반으로 뉴스 데이터를 가져오는 함수
+  const fetchNews = useCallback(async () => {
+    if (interestedItems.length === 0) {
+      setNewsItems([]);
+      setCurrentPage(1);
+      setPageGroup(1);
+      return;
     }
-  }, [interestedItems]);
-
-  // 종목에 해당하는 뉴스 가져오기
-  const fetchNews = async (items) => {
-    const stockCodes = items.map(item => item.code);
-    const stockNames = items.map(item => item.name);
 
     try {
       setIsLoading(true);
-      const newsPromises = stockCodes.map(code => 
-        axios.get(`/api/news?code=${code}`)
-      );
-      const newsResponses = await Promise.all(newsPromises);
-
-      const fetchedNewsItems = newsResponses.flatMap((response, index) => 
-        response.data.map(newsItem => ({
-          ...newsItem,
-          stockName: stockNames[index],
+      const newsPromises = interestedItems.map(async (item) =>
+        axios.get(`/api/news?code=${item.code}`).then((res) => ({
+          stockName: item.name,
+          news: res.data,
         }))
       );
+
+      const newsResponses = await Promise.all(newsPromises);
+
+      // 뉴스 데이터 병합 및 상태 업데이트
+      const fetchedNewsItems = newsResponses.flatMap((response) =>
+        response.news.map((newsItem) => ({
+          ...newsItem,
+          stockName: response.stockName,
+        }))
+      );
+
       setNewsItems(fetchedNewsItems);
     } catch (error) {
       console.error("뉴스 데이터를 가져오는 중 오류 발생:", error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [interestedItems]);
 
-  // clientItems가 업데이트될 때마다 fetchNews 호출
+  // 관심종목 데이터가 변경될 때 뉴스 데이터 다시 가져오기
   useEffect(() => {
-    if (clientItems.length > 0) {
-      fetchNews(clientItems);
-    } else {
-      setNewsItems([]);
-      setCurrentPage(1);
-      setPageGroup(1);
-    }
-  }, [clientItems]);
+    fetchNews();
+  }, [fetchNews]);
 
   // 페이지네이션에 맞는 기사들을 계산하는 함수
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -65,7 +61,7 @@ export default function InterestedNewsBox() {
   const currentItems = newsItems.slice(indexOfFirstItem, indexOfLastItem);
 
   const totalPages = Math.ceil(newsItems.length / itemsPerPage);
-  
+
   const pagesPerGroup = 5;
   const totalPageGroups = Math.ceil(totalPages / pagesPerGroup);
   const startPage = (pageGroup - 1) * pagesPerGroup + 1;
@@ -92,7 +88,7 @@ export default function InterestedNewsBox() {
           <div className={classes.loading_container}>
             <ComponentLoading />
           </div>
-        ) : clientItems.length === 0 ? (
+        ) : interestedItems.length === 0 ? (
           <h1 className={classes.no_items_message}>관심 종목을 등록하세요!</h1>
         ) : (
           currentItems.map((news, index) => (
