@@ -2,6 +2,7 @@ import Database from "better-sqlite3";
 import { join } from 'path';
 
 const db = new Database(join(process.cwd(), 'database.sqlite'));
+db.prepare('PRAGMA foreign_keys = ON').run();
 
 db.prepare(`
   CREATE TABLE IF NOT EXISTS users(
@@ -19,7 +20,7 @@ db.prepare(`
     name TEXT,
     code TEXT,
     marketCategory TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(email)
+    FOREIGN KEY (user_id) REFERENCES users(email) ON DELETE CASCADE
   )
 `).run();
 
