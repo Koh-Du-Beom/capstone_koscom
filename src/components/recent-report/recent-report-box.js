@@ -1,38 +1,30 @@
-'use client'
-import { useState, useEffect } from 'react';
-import { useInterestedItems } from '@/contexts/InterestedItemsContext';
+'use client';
+import { useState, useEffect, useCallback } from 'react';
+import useAuthStore from '@/store/authStore'; // zustand 상태 사용
 import RecentReportItem from '@/components/recent-report/recent-report-item';
 import classes from './recent-report-box.module.css';
 import ComponentLoading from '../loading/component-loading';
 
 export default function RecentReportItemBox() {
-  const itemsPerPage = 3;
-  const { interestedItems } = useInterestedItems();
-  const [selectedStock, setSelectedStock] = useState(null);
-  const [clientItems, setClientItems] = useState([]);
-  const [reports, setReports] = useState([]);
+  const { interestedItems } = useAuthStore(); // zustand에서 관심 종목 가져오기
+  const itemsPerPage = 3; // 한 페이지에 표시할 아이템 수
+  const [selectedStock, setSelectedStock] = useState(null); // 선택된 종목
+  const [reports, setReports] = useState([]); // 리포트 데이터
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageGroup, setPageGroup] = useState(1);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  useEffect(() => {
-    setClientItems(interestedItems);
+  // 리포트 데이터를 가져오는 함수
+  const fetchReports = useCallback(async (stockcode) => {
+    if (!stockcode) return;
 
-    if (interestedItems.length > 0) {
-      const initialStock = interestedItems[0];
-      setSelectedStock(initialStock);
-      fetchReports(initialStock.code);
-    }
-  }, [interestedItems]);
-
-  const fetchReports = async (stockcode) => {
     try {
       setIsLoading(true);
       const response = await fetch('/api/get-recent-reports', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stockcode })
+        body: JSON.stringify({ stockcode }),
       });
 
       if (!response.ok) {
@@ -49,7 +41,19 @@ export default function RecentReportItemBox() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  // 관심 종목 변경 시 초기 선택 및 리포트 데이터 가져오기
+  useEffect(() => {
+    if (interestedItems.length > 0) {
+      const initialStock = interestedItems[0];
+      setSelectedStock(initialStock);
+      fetchReports(initialStock.code);
+    } else {
+      setSelectedStock(null);
+      setReports([]);
+    }
+  }, [interestedItems, fetchReports]);
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen((prev) => !prev);
@@ -61,6 +65,7 @@ export default function RecentReportItemBox() {
     setIsDropdownOpen(false);
   };
 
+  // 페이지네이션 계산
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = reports.slice(indexOfFirstItem, indexOfLastItem);
@@ -76,9 +81,9 @@ export default function RecentReportItemBox() {
   };
 
   const handleGroupChange = (direction) => {
-    if (direction === "prev" && pageGroup > 1) {
+    if (direction === 'prev' && pageGroup > 1) {
       setPageGroup(pageGroup - 1);
-    } else if (direction === "next" && pageGroup < totalPageGroups) {
+    } else if (direction === 'next' && pageGroup < totalPageGroups) {
       setPageGroup(pageGroup + 1);
     }
   };
@@ -87,7 +92,7 @@ export default function RecentReportItemBox() {
     <div className={classes.container}>
       <h2 className={classes.title}>최근 리포트</h2>
 
-      {clientItems.length > 0 ? (
+      {interestedItems.length > 0 ? (
         <>
           <div className={classes.dropdownContainer}>
             <div className={classes.dropdownHeader} onClick={handleDropdownToggle}>
@@ -96,7 +101,7 @@ export default function RecentReportItemBox() {
             </div>
             {isDropdownOpen && (
               <div className={classes.dropdownMenu}>
-                {clientItems.map((item) => (
+                {interestedItems.map((item) => (
                   <div
                     key={item.code}
                     className={classes.dropdownItem}
@@ -124,10 +129,10 @@ export default function RecentReportItemBox() {
           {reports.length > 0 && (
             <div className={classes.pagination}>
               <button
-                onClick={() => handleGroupChange("prev")}
+                onClick={() => handleGroupChange('prev')}
                 disabled={pageGroup === 1}
               >
-                {"<"}
+                {'<'}
               </button>
               {[...Array(endPage - startPage + 1)].map((_, index) => {
                 const pageNumber = startPage + index;
@@ -142,10 +147,10 @@ export default function RecentReportItemBox() {
                 );
               })}
               <button
-                onClick={() => handleGroupChange("next")}
+                onClick={() => handleGroupChange('next')}
                 disabled={pageGroup === totalPageGroups}
               >
-                {">"}
+                {'>'}
               </button>
             </div>
           )}

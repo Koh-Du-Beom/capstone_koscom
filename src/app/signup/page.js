@@ -4,31 +4,32 @@ import classes from './page.module.css';
 import logo from '../../../public/images/SuperFantastic.png';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const router = useRouter()
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      alert('비밀번호가 일치하지 않습니다.');
+    if (password !== confirmPassword){
+      alert('비밀번호 확인이 일치하지 않습니다.');
       return;
     }
 
     const res = await fetch('/api/auth/signup', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
     if (res.ok) {
-      alert('회원가입이 완료되었습니다!');
-      window.location.href = '/login';
+      alert('회원가입이 완료되었습니다.');
+      router.push('/login');
     } else {
       const data = await res.json();
       alert(data.message);
@@ -81,7 +82,7 @@ export default function SignUp() {
         </div>
         <button type="submit" className={classes.button}>회원가입</button>
         <div className={classes.links}>
-          <Link href="/login">이미 계정이 있으신가요? 로그인</Link>
+          <Link href="/login">이미 계정이 있으신가요?</Link>
         </div>
       </form>
     </div>

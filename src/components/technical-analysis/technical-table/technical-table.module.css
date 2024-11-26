@@ -57,7 +57,7 @@
 .headerCell:first-child,
 .cell:first-child {
   justify-content: flex-start;
-  width: 9vw; /* 필요에 따라 너비 조정 */
+  width: 11vw; /* 필요에 따라 너비 조정 */
 }
 
 /* 첫 번째 칼럼을 제외한 데이터 셀은 가운데 정렬 */

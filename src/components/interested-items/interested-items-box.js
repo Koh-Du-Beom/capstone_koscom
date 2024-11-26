@@ -1,35 +1,52 @@
 'use client';
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import InterestedItems from './interested-items';
-import SimpleStockListModal from '../modal/stock-list-modal/stock-list-modal';
+import StockListModal from '../modal/stock-list-modal/stock-list-modal';
 import classes from './interested-items-box.module.css';
-import { useInterestedItems } from '@/contexts/InterestedItemsContext';
 import axios from 'axios';
 import ComponentLoading from '../loading/component-loading';
+import useAuthStore from '@/store/authStore';
 
 const InterestedItemsBox = () => {
-  const { interestedItems, addInterestedItem, removeInterestedItem } = useInterestedItems();
+  const {
+    email: userEmail,
+    isLoggedIn,
+    interestedItems,
+    setInterestedItems,
+    addInterestedItem,
+    removeInterestedItem,
+  } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [stockDataList, setStockDataList] = useState([]);
-  const hasFetchedData = useRef(false); // API 호출 여부 상태
-  const fetchInProgress = useRef(false); // 중복 호출 방지
-  const [hasMounted, setHasMounted] = useState(false); // 클라이언트 렌더링 상태
 
-  // 클라이언트에서만 렌더링
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
+  const toggleModal = () => setIsModalOpen(!isModalOpen);
+  const toggleEditMode = () => setIsEditMode(!isEditMode);
 
-  // 관심 종목 데이터를 서버에서 가져오는 함수
-  const fetchStockData = useCallback(async () => {
-    if (fetchInProgress.current || hasFetchedData.current || interestedItems.length === 0) {
-      return; // 이미 호출 중이거나 호출된 경우
+  // 데이터베이스에서 관심 종목 가져오기
+  const fetchInterestedItems = useCallback(async () => {
+    if (!userEmail) return;
+
+    try {
+      const response = await axios.get('/api/interestedItems', {
+        params: { email: userEmail },
+      });
+
+      if (response.status === 200) {
+        setInterestedItems(response.data.items); // Zustand 상태 업데이트
+      }
+    } catch (error) {
+      console.error('Failed to fetch interested items:', error.message);
     }
+  }, [userEmail, setInterestedItems]);
 
-    fetchInProgress.current = true; // 호출 상태 설정
+  // 관심 종목의 주가 데이터 가져오기
+  const fetchStockData = useCallback(async () => {
+    if (interestedItems.length === 0) return;
+
     setLoading(true);
+
     try {
       const promises = interestedItems.map(async (stock) => {
         const response = await axios.get('/api/stockList', {
@@ -44,73 +61,60 @@ const InterestedItemsBox = () => {
 
       const results = await Promise.all(promises);
       setStockDataList(results);
-      hasFetchedData.current = true; // 호출 완료
     } catch (error) {
       console.error('Failed to fetch stock data:', error.message);
     } finally {
-      fetchInProgress.current = false; // 호출 상태 해제
       setLoading(false);
     }
   }, [interestedItems]);
 
-  // 초기 렌더링 및 주기적 데이터 갱신
+  // 초기 렌더링 시 데이터 로드
   useEffect(() => {
-    if (!hasFetchedData.current) {
-      fetchStockData(); // 초기 렌더링 시 한 번 호출
+    if (isLoggedIn) {
+      fetchInterestedItems();
+    }else{
+      setStockDataList([]);
     }
+  }, [isLoggedIn, fetchInterestedItems]);
 
-    const interval = setInterval(() => {
-      hasFetchedData.current = false; // 데이터 갱신 플래그 초기화
-      fetchStockData(); // 주기적으로 호출
-    }, 60 * 1000 * 60); // 1시간마다 호출
+  useEffect(() => {
+    fetchStockData();
+  }, [interestedItems, fetchStockData]);
 
-    return () => clearInterval(interval);
-  }, [fetchStockData]);
+  const addStockItem = async (stock) => {
+    try {
+      const res = await axios.post('/api/interestedItems', {
+        email: userEmail,
+        name: stock.name,
+        code: stock.code,
+        marketCategory: stock.marketCategory,
+      });
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
-  const toggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-  };
-
-  const addStockItem = (stock) => {
-    if (interestedItems.find((item) => item.code === stock.code)) {
-      return;
+      if (res.status === 200) {
+        addInterestedItem(stock);
+        setIsModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Failed to add stock item:', error.message);
     }
-  
-    addInterestedItem({
-      name: stock.name,
-      code: stock.code,
-      marketCategory: stock.marketCategory,
-    });
-  
-    // 데이터 fetch 플래그 초기화 및 강제 fetch 호출
-    hasFetchedData.current = false;
-    setTimeout(fetchStockData, 0); // 상태 업데이트 직후 fetch 보장
-    setIsModalOpen(false);
   };
-  
 
-  const removeStockItem = (stockCode) => {
-		removeInterestedItem(stockCode);
-	
-		// 상태 업데이트: 삭제된 아이템 제외한 데이터로 갱신
-		const updatedStockDataList = stockDataList.filter((item) => item.code !== stockCode);
-		setStockDataList(updatedStockDataList);
-	
-		// 데이터가 없으면 fetch 플래그 초기화 (추후 추가 시 갱신 가능)
-		if (updatedStockDataList.length === 0) {
-			hasFetchedData.current = false;
-		}
-	};
-	
+  const removeStockItem = async (stockCode) => {
+    try {
+      const res = await axios.delete('/api/interestedItems', {
+        data: { email: userEmail, code: stockCode },
+      });
 
-  if (!hasMounted) {
-    // 클라이언트가 마운트되기 전에는 렌더링하지 않음
-    return null;
-  }
+      if (res.status === 200) {
+        removeInterestedItem(stockCode);
+        setStockDataList((prev) =>
+          prev.filter((item) => item.code !== stockCode)
+        );
+      }
+    } catch (error) {
+      console.error('Failed to remove stock item:', error.message);
+    }
+  };
 
   return (
     <section className={classes.container}>
@@ -132,9 +136,7 @@ const InterestedItemsBox = () => {
           <ComponentLoading />
         </div>
       ) : stockDataList.length === 0 ? (
-        <h1 className={classes.noItemsMessage}>
-          관심종목을 등록하세요!
-        </h1>
+        <h1 className={classes.noItemsMessage}>관심종목을 등록하세요!</h1>
       ) : (
         <div className={classes.scrollContainer}>
           <div className={classes.itemsList}>
@@ -148,7 +150,7 @@ const InterestedItemsBox = () => {
       )}
 
       {isModalOpen && (
-        <SimpleStockListModal onClose={toggleModal} onAddItem={addStockItem} />
+        <StockListModal onClose={toggleModal} onAddItem={addStockItem} />
       )}
     </section>
   );

@@ -13,6 +13,24 @@
   text-decoration: underline; /* 마우스 호버 시 밑줄 */
 }
 
+.navbarDropdownLink {
+  display: inline-block; /* 클릭 영역을 텍스트와 일치 */
+  padding: 10px 15px; /* 내부 여백 설정 */
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: black;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.3s ease;
+  text-decoration: none; 
+}
+
+.navbarDropdownLink:hover {
+  text-decoration: underline;
+  background-color: none;
+}
+
+
 .circularImage {
   border-radius: 20%; /* 원형으로 만듦 */
   object-fit: cover; /* 이미지 크기를 비율에 맞게 조정 */
