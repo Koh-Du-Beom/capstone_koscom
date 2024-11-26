@@ -1,9 +1,10 @@
 'use client';
 import Link from "next/link";
-import Image from "next/image"; // Image 모듈 가져오기
+import Image from "next/image";
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 import classes from './top-navbar.module.css';
 
 import { useEffect } from "react";
@@ -20,7 +21,7 @@ export default function TopNavBar() {
       });
       if (res.ok) {
         const data = await res.json();
-        login(data.user); // 유저 데이터를 저장
+        login(data.user); 
       } else {
         logout();
       }
@@ -46,10 +47,10 @@ export default function TopNavBar() {
       <Container>
         <Navbar.Brand as={Link} href="/" className="d-flex align-items-center text-white me-4" style={{ textDecoration: "none" }}>
           <Image
-            src="/images/SuperFantastic.png" 
+            src="/images/SuperFantastic.png"
             alt="SuperFantastic Logo"
-            width={40} 
-            height={40} 
+            width={40}
+            height={40}
             className={classes.circularImage}
             priority 
           />
@@ -64,10 +65,13 @@ export default function TopNavBar() {
           </Nav>
           <Nav className="ms-auto">
             {isLoggedIn ? (
-              <>
-                <Nav.Link className={`text ${classes.navbarLink}`} href="/mypage">마이페이지</Nav.Link>
-                <Nav.Link className={`text ${classes.navbarLink}`} onClick={handleLogout}>로그아웃</Nav.Link>
-              </>
+              <NavDropdown title="내 정보" id="basic-nav-dropdown" className={`text ${classes.navbarLink}`}>
+                <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} href="/mypage">마이페이지</NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} onClick={handleLogout}>
+                  로그아웃
+                </NavDropdown.Item>
+              </NavDropdown>
             ) : (
               <Nav.Link href="/login" className={`text ${classes.navbarLink}`}>로그인</Nav.Link>
             )}
