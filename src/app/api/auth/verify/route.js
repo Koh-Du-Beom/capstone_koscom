@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 // 환경 변수 가져오기
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
-const COOKIE_NAME = process.env.COOKIE_NAME || 'auth_token'; // 기본값 설정
+const COOKIE_NAME = process.env.COOKIE_NAME;
 
 export async function GET(request) {
   // 쿠키에서 토큰 가져오기

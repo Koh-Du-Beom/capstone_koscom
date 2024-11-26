@@ -5,11 +5,13 @@ import logo from '../../../public/images/SuperFantastic.png';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import useAuthStore from '@/store/authStore';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
+  const { login } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +26,10 @@ export default function Login() {
     });
   
     if (res.ok) {
-      alert('로그인에 성공하셨습니다');
+      const data = await res.json();
+
+      await login(data.user);
+
       router.push('/');
     } else {
       const data = await res.json();

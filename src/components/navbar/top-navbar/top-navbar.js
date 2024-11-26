@@ -2,13 +2,44 @@
 'use client';
 import Link from "next/link";
 import Image from "next/image"; // Image 모듈 가져오기
-
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import classes from './top-navbar.module.css';
 
+import { useEffect } from "react";
+import useAuthStore from "@/store/authStore";
+
 export default function TopNavBar() {
+  const { isLoggedIn, login, logout } = useAuthStore();
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const res = await fetch('/api/auth/verify', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        login(data.user); // 유저 데이터를 저장
+      } else {
+        logout();
+      }
+    };
+
+    checkLoginStatus();
+  }, [login, logout]);
+
+  const handleLogout = async () => {
+    const res = await fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    if (res.ok) {
+      logout();
+    }
+  };
+
   return (
     <Navbar style={{ backgroundColor: '#9DF1B3' }} sticky="top" expand="lg">
       <Container>
@@ -31,7 +62,14 @@ export default function TopNavBar() {
             <Nav.Link as={Link} href="/portfolio" className={`text ${classes.navbarLink}`}>포트폴리오 추천</Nav.Link>
           </Nav>
           <Nav className="ms-auto">
-            <Nav.Link as={Link} href="/login" className={`text ${classes.navbarLink}`}>로그인</Nav.Link>
+            {isLoggedIn ? (
+              <>
+                <Nav.Link className={`text ${classes.navbarLink}`} href="/mypage">마이페이지</Nav.Link>
+                <Nav.Link className={`text ${classes.navbarLink}`} onClick={handleLogout}>로그아웃</Nav.Link>
+              </>
+            ) : (
+              <Nav.Link href="/login" className={`text ${classes.navbarLink}`}>로그인</Nav.Link>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

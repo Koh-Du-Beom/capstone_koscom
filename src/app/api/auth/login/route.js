@@ -38,6 +38,6 @@ export async function POST(request) {
     maxAge: 60 * 60 * 3, // JWT_EXPIRES_IN에 따라 동적으로 변경 가능
     path: '/',
   });
-
+  
   return response;
 }
