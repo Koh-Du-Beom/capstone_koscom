@@ -7,8 +7,8 @@ export async function POST() {
   response.cookies.set(COOKIE_NAME, '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 0, // 즉시 삭제
-    path: '/', // 생성 시와 동일한 경로 사용
+    maxAge: 0, 
+    path: '/', 
   });
 
   return response;

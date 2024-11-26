@@ -36,7 +36,6 @@ export default function TopNavBar() {
     });
     if (res.ok) {
       logout();
-      window.location.reload(); // 페이지 새로고침
     } else {
       alert('로그아웃에 실패했습니다.');
     }
