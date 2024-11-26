@@ -13,13 +13,13 @@ db.prepare(`
 
 /* InterestedItems 테이블 생성 */
 db.prepare(`
-  CREATE TABLE IF NOT EXISTS InterestedItems (
+  CREATE TABLE IF NOT EXISTS interestedItems (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
+    user_id TEXT,
     name TEXT,
     code TEXT,
     marketCategory TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(email)
   )
 `).run();
 

@@ -25,19 +25,22 @@ export async function POST(request) {
 
   // JWT 생성
   const token = jwt.sign(
-    { id: user.id, email: user.email },
+    { email: user.email }, // email만 JWT payload에 포함
     JWT_SECRET,
     { expiresIn: JWT_EXPIRES_IN }
   );
 
   // 쿠키 설정
-  const response = NextResponse.json({ message: '로그인 성공' });
+  const response = NextResponse.json({
+    message: '로그인 성공',
+    user: { email: user.email }, // email을 명시적으로 반환
+  });
   response.cookies.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     maxAge: 60 * 60 * 3, // JWT_EXPIRES_IN에 따라 동적으로 변경 가능
     path: '/',
   });
-  
+
   return response;
 }
