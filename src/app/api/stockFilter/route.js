@@ -49,30 +49,17 @@ export async function POST(request) {
       return result;
     });
 
-    // Step 2: 백분위 기반의 Rating 점수 정규화
     const ratings = filteredItems.map((item) => item.Rating);
-    const sortedRatings = ratings.slice().sort((a, b) => a - b);
-
-    const p5Index = Math.floor(0.05 * (sortedRatings.length - 1));
-    const p95Index = Math.ceil(0.95 * (sortedRatings.length - 1));
-
-    const p5Rating = sortedRatings[p5Index];
-    const p95Rating = sortedRatings[p95Index];
+    const sortedRatings = [...new Set(ratings)].sort((a, b) => a - b);
+    const totalItems = sortedRatings.length;
 
     const normalizedItems = filteredItems.map((item) => {
-      let normalizedRating;
-
-      if (item.Rating <= p5Rating) {
-        normalizedRating = 0;
-      } else if (item.Rating >= p95Rating) {
-        normalizedRating = 100;
-      } else {
-        normalizedRating = ((item.Rating - p5Rating) / (p95Rating - p5Rating)) * 100;
-      }
+      const count = sortedRatings.filter((r) => r <= item.Rating).length;
+      const percentileRank = ((count - 1) / (totalItems - 1)) * 100;
 
       return {
         ...item,
-        Rating: normalizedRating,
+        Rating: percentileRank,
       };
     });
 

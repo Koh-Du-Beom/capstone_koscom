@@ -19,6 +19,14 @@
 	width: 100%;
 }
 
+.highlightedRow {
+  display: flex;
+  width: 100%;
+  background-color: #e6ffe6; /* 연한 초록색 */
+  transition: background-color 0.3s ease;
+  border: 1px solid #191919;
+}
+
 .headerCell,
 .cell {
   flex-shrink: 0;

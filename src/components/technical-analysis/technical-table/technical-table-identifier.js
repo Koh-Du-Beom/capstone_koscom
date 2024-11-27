@@ -13,6 +13,9 @@ export default function TechnicalTableIdentifier({ index, ticker, company_name, 
   const handleToggleInterestedItem = async () => {
     setIsLoading(true);
 
+    // marketCategory 설정 로직 추가
+    const marketCategory = exchange_code === 'KDQ' ? 'KOSDAQ' : 'KOSPI';
+
     if (isAdded) {
       // 관심 종목에서 제거
       try {
@@ -43,12 +46,12 @@ export default function TechnicalTableIdentifier({ index, ticker, company_name, 
             email,
             name: company_name,
             code: ticker,
-            marketCategory: exchange_code,
+            marketCategory, // 수정된 부분: exchange_code 대신 marketCategory 사용
           }),
         });
 
         if (response.ok) {
-          addInterestedItem({ name: company_name, code: ticker, marketCategory: exchange_code }); // zustand 상태 업데이트
+          addInterestedItem({ name: company_name, code: ticker, marketCategory }); // zustand 상태 업데이트
           alert('관심 종목에 추가되었습니다.');
         } else {
           const errorData = await response.json();

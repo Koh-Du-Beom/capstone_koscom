@@ -1,0 +1,35 @@
+.graphManager {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.deleteButton {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #f44336;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+}
+
+.deleteButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.deleteButton:hover:enabled {
+  background-color: #d32f2f;
+}
