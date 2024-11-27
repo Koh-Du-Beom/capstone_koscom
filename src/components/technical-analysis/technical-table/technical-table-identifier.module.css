@@ -3,7 +3,6 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px;
-  border-bottom: 1px solid #ccc;
 }
 
 .index {
@@ -24,16 +23,16 @@
   background: none;
   border: none;
   font-size: 20px;
-  color: #ccc;
+  color: #ccc; /* 기본 색상 */
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .addButton:hover {
-  color: #9df1b3;
+  color: #555; /* 호버 시 약간 진한 회색 */
 }
 
 .addButton.added {
-  color: #9df1b3;
-  cursor: default;
+  color: #ffc107; /* 어두운 노란색 */
+  
 }
