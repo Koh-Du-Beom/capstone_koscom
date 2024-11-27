@@ -99,30 +99,34 @@ export default function TechnicalTable({ data }) {
         <div className={classes.cell}>
           <TechnicalTableIdentifier
             index={index + 1}
+						ticker={item.ticker}
             company_name={item.companyName}
             exchange_code={item.exchange_code || '-'}
           />
         </div>
         {headers.map((header) => {
-          const value = item[header];
-          const isSortedColumn = sortConfig && sortConfig.key === header;
-          return (
-            <div
-              key={`data-${header}-${index}`}
-              className={`${classes.cell} ${
-                isSortedColumn ? classes.sortedCell : ''
-              }`}
-            >
-              {typeof value === 'number' ? (
-                <TableCircularProgressBar point={value} />
-              ) : value !== undefined ? (
-                value
-              ) : (
-                '-'
-              )}
-            </div>
-          );
-        })}
+					const value = item[header];
+					const isSortedColumn = sortConfig && sortConfig.key === header;
+					const isRatingColumn = header === 'Rating';
+
+					return (
+						<div
+							key={`data-${header}-${index}`}
+							className={`${classes.cell} ${
+								isSortedColumn ? classes.sortedCell : ''
+							} ${isRatingColumn ? classes.highlightedColumn : ''}`}
+						>
+							{typeof value === 'number' ? (
+								<TableCircularProgressBar point={value} />
+							) : value !== undefined ? (
+								value
+							) : (
+								'-'
+							)}
+						</div>
+					);
+				})}
+
       </div>
     );
   };
@@ -166,44 +170,45 @@ export default function TechnicalTable({ data }) {
 							</button>
 						</div>
             {headers.map((header, index) => {
-              const isSortedColumn = sortConfig && sortConfig.key === header;
-              const headerName =
-                header === 'Rating' ? 'Rating' : header.replace('score_', '');
+							const isSortedColumn = sortConfig && sortConfig.key === header;
+							const headerName =
+								header === 'Rating' ? 'Rating' : header.replace('score_', '');
 
-              return (
-                <div
-                  key={`header-${index}`}
-                  className={`${classes.headerCell} ${classes.sortableHeader} ${
-                    isSortedColumn ? classes.sortedHeader : ''
-                  }`}
-                  onMouseEnter={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    setTooltipPosition({
-                      top: rect.top + window.scrollY,
-                      left: rect.left + window.scrollX + rect.width / 2,
-                    });
-                    setTooltipContent(headerName);
-                  }}
-                  onMouseLeave={() => {
-                    setTooltipContent('');
-                    setTooltipPosition(null);
-                  }}
-                >
-                  {headerName}
-                  <span
-                    className={classes.sortIcon}
-                    onClick={() => handleSort(header)}
-                  >
-                    <Image
-                      src="/svgs/sort.svg"
-                      alt="sortIcon"
-                      width={16}
-                      height={16}
-                    />
-                  </span>
-                </div>
-              );
-            })}
+							return (
+								<div
+									key={`header-${index}`}
+									className={`${classes.headerCell} ${classes.sortableHeader} ${
+										isSortedColumn ? classes.sortedHeader : ''
+									} ${header === 'Rating' ? classes.highlightedColumn : ''}`}
+									onMouseEnter={(e) => {
+										const rect = e.currentTarget.getBoundingClientRect();
+										setTooltipPosition({
+											top: rect.top + window.scrollY,
+											left: rect.left + window.scrollX + rect.width / 2,
+										});
+										setTooltipContent(headerName);
+									}}
+									onMouseLeave={() => {
+										setTooltipContent('');
+										setTooltipPosition(null);
+									}}
+								>
+									{headerName}
+									<span
+										className={classes.sortIcon}
+										onClick={() => handleSort(header)}
+									>
+										<Image
+											src="/svgs/sort.svg"
+											alt="sortIcon"
+											width={16}
+											height={16}
+										/>
+									</span>
+								</div>
+							);
+						})}
+
           </div>
           <List
             className={classes.list}
