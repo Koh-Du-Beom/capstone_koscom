@@ -14,6 +14,7 @@ export async function POST(request) {
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const allData = JSON.parse(fileContent);
 
+    // Step 1: 각 아이템에 대해 가중치를 적용한 Rating 계산
     const filteredItems = allData.data.items.map((item) => {
       const result = {
         ticker: item.ticker,
@@ -48,10 +49,38 @@ export async function POST(request) {
       return result;
     });
 
+    // Step 2: 백분위 기반의 Rating 점수 정규화
+    const ratings = filteredItems.map((item) => item.Rating);
+    const sortedRatings = ratings.slice().sort((a, b) => a - b);
+
+    const p5Index = Math.floor(0.05 * (sortedRatings.length - 1));
+    const p95Index = Math.ceil(0.95 * (sortedRatings.length - 1));
+
+    const p5Rating = sortedRatings[p5Index];
+    const p95Rating = sortedRatings[p95Index];
+
+    const normalizedItems = filteredItems.map((item) => {
+      let normalizedRating;
+
+      if (item.Rating <= p5Rating) {
+        normalizedRating = 0;
+      } else if (item.Rating >= p95Rating) {
+        normalizedRating = 100;
+      } else {
+        normalizedRating = ((item.Rating - p5Rating) / (p95Rating - p5Rating)) * 100;
+      }
+
+      return {
+        ...item,
+        Rating: normalizedRating,
+      };
+    });
+
+
     return NextResponse.json({
       data: {
         date: allData.data.date.split('T')[0],
-        items: filteredItems,
+        items: normalizedItems,
       },
     });
   } catch (error) {
