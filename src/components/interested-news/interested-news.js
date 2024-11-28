@@ -9,7 +9,6 @@ export default function InterestedNews({ news }) {
   return (
     <div className={classes.container} onClick={handleLinkClick}>
       <div className={classes.wrapper}>
-        <h1 className={classes.stock_name}>[{news.stockName}]</h1>
         <h2 className={classes.title}>{news.title}</h2>
         <h3 className={classes.infos}>{news.date}</h3>
 

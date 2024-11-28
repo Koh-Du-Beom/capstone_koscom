@@ -12,7 +12,8 @@
 }
 
 .news_wrapper{
-	min-height: 540px;
+	height: 60vh;
+  overflow-y: auto;
 }
 
 .loading_container {
@@ -24,30 +25,6 @@
   min-height: 200px;
 }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.pagination button {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  padding: 8px 12px;
-  margin: 0 5px;
-  cursor: pointer;
-}
-
-.pagination button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.pagination .activePage {
-  background-color: #9DF1B3;
-  color: #191919;
-}
-
 .no_items_message {
   display: flex;
   justify-content: center; 
@@ -56,4 +33,13 @@
   font-size: 16px;
   color: #6c757d;
   text-align: center;
+}
+
+.dropdown {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
 }

@@ -117,12 +117,17 @@ export default function FinancialGraph({ graphData, updateGraphData, option }) {
           >
             {chartTypes[index] === "Bar" ? "Line" : "Bar"}
           </button>
-          <button
-            onClick={() => handleRemoveGraph(index)}
-            className={classes.chartRemoveButton}
-          >
-            제거
-          </button>
+          {
+            option === 'prompt' && (
+              <button
+                onClick={() => handleRemoveGraph(index)}
+                className={classes.chartRemoveButton}
+              >
+                제거
+              </button>
+            )
+          }
+          
         </div>
         <ChartComponent
           data={data}

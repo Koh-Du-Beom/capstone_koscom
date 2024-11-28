@@ -6,6 +6,7 @@ const cheerio = require('cheerio');
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code'); // 주식 코드 파라미터 받기
+  const stockName = searchParams.get('stockName'); // 주식 이름 파라미터 받기
 
   // 네이버 금융 URL 설정
   const url = `https://finance.naver.com/item/main.naver?code=${code}`;
@@ -28,13 +29,20 @@ export async function GET(request) {
       const title = $(element).find('a').text().trim();
       const link = 'https://finance.naver.com' + $(element).find('a').attr('href');
       const date = $(element).children('em').text().trim();
-			
+
       newsItems.push({ title, link, date });
     });
 
-    return NextResponse.json(newsItems); // 뉴스 데이터를 JSON으로 반환
+    // 결과 데이터에 stockName 추가
+    const result = {
+      stockName,
+      stockCode: code,
+      newsItems,
+    };
+    
+    return NextResponse.json(result); // 헤더와 함께 JSON 데이터 반환
   } catch (error) {
-    console.error("뉴스 데이터를 가져오는 중 오류 발생:", error.message);
+    console.error('뉴스 데이터를 가져오는 중 오류 발생:', error.message);
     return NextResponse.json({ error: 'Failed to fetch data from external source' }, { status: 500 });
   }
 }
