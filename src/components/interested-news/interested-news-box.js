@@ -11,6 +11,7 @@ export default function InterestedNewsBox() {
   const [newsItems, setNewsItems] = useState([]); // 뉴스 데이터 상태
   const [isLoading, setIsLoading] = useState(false);
   const [selectedStock, setSelectedStock] = useState(""); // 선택된 종목 초기값을 빈 문자열로 설정
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // 드롭다운 열림/닫힘 상태 관리
 
   // 관심종목 기반으로 뉴스 데이터를 가져오는 함수
   const fetchNews = useCallback(async () => {
@@ -29,8 +30,6 @@ export default function InterestedNewsBox() {
       );
 
       const newsResponses = await Promise.all(newsPromises);
-
-      console.log('newsResponses : ', newsResponses);
       
       setNewsItems(newsResponses);
     } catch (error) {
@@ -54,25 +53,44 @@ export default function InterestedNewsBox() {
 
   // 선택된 종목의 뉴스 필터링
   const filteredNewsItems = newsItems.flatMap((item) =>
-    item.stockName === selectedStock ? item.news.newsItems : []
+    item.stockName === selectedStock
+      ? item.news.newsItems.map((newsItem) => ({
+          ...newsItem,
+          stockName: item.stockName, // 뉴스 항목에 stockName 추가
+        }))
+      : []
   );
 
   return (
     <div className={classes.container}>
       <h2 className={classes.title}>나만의 뉴스</h2>
 
-      {/* 드롭다운 추가 */}
-      <select
-        className={classes.dropdown}
-        value={selectedStock}
-        onChange={(e) => setSelectedStock(e.target.value)}
-      >
-        {interestedItems.map((item) => (
-          <option key={item.code} value={item.name}>
-            {item.name}
-          </option>
-        ))}
-      </select>
+      {/* 드롭다운 컨테이너 */}
+      <div className={classes.dropdownContainer}>
+        <div
+          className={classes.dropdownHeader}
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        >
+          {selectedStock || "종목을 선택하세요"}
+          <span className={isDropdownOpen ? classes.arrowUp : classes.arrowDown}>▼</span>
+        </div>
+        {isDropdownOpen && (
+          <div className={classes.dropdownMenu}>
+            {interestedItems.map((item) => (
+              <div
+                key={item.code}
+                className={classes.dropdownItem}
+                onClick={() => {
+                  setSelectedStock(item.name);
+                  setIsDropdownOpen(false); // 드롭다운 닫기
+                }}
+              >
+                {item.name}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className={classes.news_wrapper}>
         {isLoading ? (
@@ -85,7 +103,7 @@ export default function InterestedNewsBox() {
           <h1 className={classes.no_news_message}>선택한 종목에 뉴스가 없습니다.</h1>
         ) : (
           filteredNewsItems.map((news, index) => (
-            <InterestedNews key={index} news={news} />
+            <InterestedNews key={index} news={news} stockName={news.stockName} />
           ))
         )}
       </div>
