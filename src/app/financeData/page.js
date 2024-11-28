@@ -5,7 +5,6 @@ import FinancialGraph from '@/components/graphs/financial-graph';
 import FinancialDropdownBox from '@/components/financial-data/dropdown/financial-dropdown-box'; // 새로 생성된 FinancialDropdownBox 컴포넌트 import
 import FinancialPrompt from '@/components/financial-data/prompt/financial-prompt';
 import graph_Mock_data from '@/components/graphs/graph-data';
-import GraphManager from '@/components/graphs/graph-manager';
 
 export default function FinancialDataShowPage() {
   const [selectedOption, setSelectedOption] = useState('dropdown');
