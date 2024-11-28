@@ -1,19 +1,24 @@
-import classes from './interested-news.module.css';
+import React from "react";
+import classes from "./interested-news.module.css";
 
-export default function InterestedNews({ news }) {
-  // 클릭 시, 실제 기사로 이동
-  const handleLinkClick = () => {
-    window.open(news.link, '_blank');
-  };
-
+export default function InterestedNews({ news, stockName }) {
   return (
-    <div className={classes.container} onClick={handleLinkClick}>
+    <a
+      href={news.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={classes.container}
+    >
       <div className={classes.wrapper}>
-        <h1 className={classes.stock_name}>[{news.stockName}]</h1>
-        <h2 className={classes.title}>{news.title}</h2>
-        <h3 className={classes.infos}>{news.date}</h3>
+        {/* 종목 이름 */}
+        <h3 className={classes.stock_name}>[{stockName}]</h3>
 
+        {/* 뉴스 제목 */}
+        <p className={classes.title}>{news.title}</p>
+
+        {/* 뉴스 날짜 */}
+        <p className={classes.infos}>{news.date}</p>
       </div>
-    </div>
+    </a>
   );
 }

@@ -1,32 +1,15 @@
+/* 뉴스 항목 컨테이너 */
 .container {
-  padding: 15px;
+  display: block;
+  padding: 10px; /* 줄어든 패딩 */
   border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  border-radius: 6px; /* 둥근 모서리 감소 */
+  margin-bottom: 8px; /* 간격 줄이기 */
+	margin-right: 15px;
   background-color: white;
-  transition: background-color 0.3s ease;
-  position: relative; /* 툴팁을 절대 위치로 설정하기 위한 상대 위치 */
-}
-
-.wrapper {
-  position: relative; 
-}
-
-.stock_name {
-  font-size: 18px;
-  margin-bottom: 5px;
-  color: #333;
-}
-
-.title {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.infos {
-  font-size: 14px;
-  color: #666;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-decoration: none !important; /* 링크 스타일 제거 */
+  color: inherit; /* 텍스트 기본 색상 유지 */
 }
 
 .container:hover {
@@ -34,3 +17,33 @@
   cursor: pointer;
 }
 
+/* 뉴스 항목 내부 스타일 */
+.wrapper {
+  position: relative;
+}
+
+/* 종목 이름 스타일 */
+.stock_name {
+  font-size: 16px; /* 크기 줄임 */
+  margin-bottom: 4px;
+  color: #333;
+}
+
+/* 뉴스 제목 스타일 */
+.title {
+  font-size: 16px; /* 크기 키움 */
+  font-weight: bold;
+  margin-bottom: 2px; /* 아래 간격 줄임 */
+  color: #007bff;
+  transition: color 0.3s ease;
+}
+
+.title:hover {
+  color: #0056b3;
+}
+
+/* 뉴스 정보 (날짜) 스타일 */
+.infos {
+  font-size: 12px; /* 크기 줄임 */
+  color: #666;
+}
