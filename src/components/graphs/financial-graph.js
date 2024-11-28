@@ -27,7 +27,7 @@ ChartJS.register(
   Legend
 );
 
-export default function FinancialGraph({ graphData }) {
+export default function FinancialGraph({ graphData, updateGraphData, option }) {
   const [chartTypes, setChartTypes] = useState([]);
   const [filterRanges, setFilterRanges] = useState({}); // 그래프별 filterRanges를 객체로 저장
 
@@ -68,11 +68,10 @@ export default function FinancialGraph({ graphData }) {
 
   const createDatasetForMetric = (metricName, metricData, years) => {
     const companies = Object.keys(metricData);
-    
+
     const datasets = companies.map((company, index) => {
       const colorIndex = index % graphColors.length;
 
-      // 연도를 정렬하고 포맷 변환
       const sortedYears = [...years].sort((a, b) => new Date(a) - new Date(b));
       const formattedYears = sortedYears.map(formatYearToQuarter);
 
@@ -88,7 +87,13 @@ export default function FinancialGraph({ graphData }) {
     const sortedYears = [...years].sort((a, b) => new Date(a) - new Date(b));
     const formattedYears = sortedYears.map(formatYearToQuarter);
 
-    return { labels: formattedYears, datasets }; // 포맷된 연도를 labels로 사용
+    return { labels: formattedYears, datasets };
+  };
+
+  const handleRemoveGraph = (index) => {
+    // 그래프 데이터를 graphData에서 제거합니다.
+    const updatedGraphData = graphData.filter((_, i) => i !== index);
+    updateGraphData(updatedGraphData);
   };
 
   const graphs = graphData.map((metricObj, index) => {
@@ -97,21 +102,28 @@ export default function FinancialGraph({ graphData }) {
 
     if (!filterRanges[index] || !chartTypes[index]) return null;
 
-    // 각 그래프별로 x축에 사용할 연도를 설정합니다.
     const metricYears = Object.keys(metricData[Object.keys(metricData)[0]]);
-    const sortedYears = [...metricYears].sort((a, b) => new Date(a) - new Date(b)); // 날짜 기준 정렬
+    const sortedYears = [...metricYears].sort((a, b) => new Date(a) - new Date(b));
     const filteredYears = sortedYears.slice(filterRanges[index][0], filterRanges[index][1] + 1);
     const data = createDatasetForMetric(metricName, metricData, filteredYears);
     const ChartComponent = chartTypes[index] === "Bar" ? Bar : Line;
 
     return (
       <div key={index} className={classes.chartContainer}>
-        <button
-          onClick={() => toggleChartType(index)}
-          className={classes.chartToggleButton}
-        >
-          {chartTypes[index] === "Bar" ? "Line" : "Bar"}
-        </button>
+        <div className={classes.chartControls}>
+          <button
+            onClick={() => toggleChartType(index)}
+            className={classes.chartToggleButton}
+          >
+            {chartTypes[index] === "Bar" ? "Line" : "Bar"}
+          </button>
+          <button
+            onClick={() => handleRemoveGraph(index)}
+            className={classes.chartRemoveButton}
+          >
+            제거
+          </button>
+        </div>
         <ChartComponent
           data={data}
           options={{
