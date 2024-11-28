@@ -5,9 +5,10 @@
   border: 1px solid #ddd;
   border-radius: 6px; /* 둥근 모서리 감소 */
   margin-bottom: 8px; /* 간격 줄이기 */
+	margin-right: 15px;
   background-color: white;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  text-decoration: none; /* 링크 스타일 제거 */
+  text-decoration: none !important; /* 링크 스타일 제거 */
   color: inherit; /* 텍스트 기본 색상 유지 */
 }
 
@@ -30,9 +31,9 @@
 
 /* 뉴스 제목 스타일 */
 .title {
-  font-size: 14px; /* 크기 줄임 */
+  font-size: 16px; /* 크기 키움 */
   font-weight: bold;
-  margin-bottom: 4px;
+  margin-bottom: 2px; /* 아래 간격 줄임 */
   color: #007bff;
   transition: color 0.3s ease;
 }
