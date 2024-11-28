@@ -3,11 +3,10 @@ import React, { useState, useEffect } from 'react';
 import SelectedStockItems from './selected-stock-items';
 import SimpleStockListModal from '../../../modal/stock-list-modal/stock-list-modal';
 import classes from './selected-stock.module.css';
-import { getLocalStorageItems } from '@/utils/localStorage';
-
-const LOCAL_STORAGE_KEY = 'interestedItems';
+import useAuthStore from '@/store/authStore'; // zustand에서 email 가져오기
 
 const SelectedStock = ({ onSelectStock }) => {
+  const { email } = useAuthStore(); // 로그인된 사용자의 email
   const [items, setItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -20,9 +19,20 @@ const SelectedStock = ({ onSelectStock }) => {
     setIsEditMode(!isEditMode);
   };
 
-  const fetchInterestedItems = () => {
-    const savedItems = getLocalStorageItems(LOCAL_STORAGE_KEY);
-    setItems(savedItems || []);
+  // 관심종목 불러오기 (API 호출)
+  const fetchInterestedItems = async () => {
+    if (!email) return;
+
+    try {
+      const response = await fetch(`/api/interestedItems?email=${email}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch interested items');
+      }
+      const { items: fetchedItems } = await response.json();
+      setItems(fetchedItems || []);
+    } catch (error) {
+      console.error('Error fetching interested items:', error);
+    }
   };
 
   // 선택된 주식 데이터 요청
@@ -50,24 +60,6 @@ const SelectedStock = ({ onSelectStock }) => {
     }
   };
 
-  const fetchMockGraphData = async () => {
-    try {
-      const response = await fetch('/api/encode-json');
-      if (!response.ok) {
-        throw new Error('Failed to fetch fixed data');
-      }
-      const data = await response.json();
-      console.log('Mock Graph Data:', data); // 복원된 데이터를 콘솔에 출력
-      onSelectStock(data); // 복원된 데이터를 상위 컴포넌트로 전달
-    } catch (error) {
-      console.error('Error fetching fixed data:', error);
-    }
-  };
-
-  const removeStockItem = (stockCode) => {
-    setItems((prevItems) => prevItems.filter((item) => item.code !== stockCode));
-  };
-
   const addStockItem = (newItem) => {
     setItems((prevItems) => {
       if (!prevItems.some((item) => item.code === newItem.code)) {
@@ -78,11 +70,20 @@ const SelectedStock = ({ onSelectStock }) => {
     toggleModal();
   };
 
-	useEffect(() => {
+  const removeStockItem = (stockCode) => {
+    setItems((prevItems) => prevItems.filter((item) => item.code !== stockCode));
+  };
+
+  useEffect(() => {
+    // 초기 렌더링 시 관심종목 불러오기
+    fetchInterestedItems();
+  }, [email]);
+
+  useEffect(() => {
     if (items.length > 0) {
       fetchGraphData();
     }
-  }, [items]); // items를 의존성 배열에 추가
+  }, [items]);
 
   return (
     <section className={classes.container}>
@@ -95,7 +96,6 @@ const SelectedStock = ({ onSelectStock }) => {
             {isEditMode ? '완료' : '편집'}
           </span>
           <span className={classes.action} onClick={toggleModal}>추가</span>
-          <span className={classes.action} onClick={fetchInterestedItems}>관심종목 불러오기</span>
         </div>
       </div>
 

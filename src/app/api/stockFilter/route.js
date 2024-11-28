@@ -14,6 +14,7 @@ export async function POST(request) {
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const allData = JSON.parse(fileContent);
 
+    // Step 1: 각 아이템에 대해 가중치를 적용한 Rating 계산
     const filteredItems = allData.data.items.map((item) => {
       const result = {
         ticker: item.ticker,
@@ -48,10 +49,25 @@ export async function POST(request) {
       return result;
     });
 
+    const ratings = filteredItems.map((item) => item.Rating);
+    const sortedRatings = [...new Set(ratings)].sort((a, b) => a - b);
+    const totalItems = sortedRatings.length;
+
+    const normalizedItems = filteredItems.map((item) => {
+      const count = sortedRatings.filter((r) => r <= item.Rating).length;
+      const percentileRank = ((count - 1) / (totalItems - 1)) * 100;
+
+      return {
+        ...item,
+        Rating: percentileRank,
+      };
+    });
+
+
     return NextResponse.json({
       data: {
         date: allData.data.date.split('T')[0],
-        items: filteredItems,
+        items: normalizedItems,
       },
     });
   } catch (error) {

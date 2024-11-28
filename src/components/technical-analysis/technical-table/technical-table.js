@@ -1,6 +1,6 @@
 // TechnicalTable.js
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import TechnicalTableIdentifier from './technical-table-identifier';
 import classes from './technical-table.module.css';
 import TableCircularProgressBar from './technical-table-circular-progress-bar';
@@ -17,8 +17,8 @@ export default function TechnicalTable({ data }) {
 	const listRef = useRef(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchButtonPosition, setSearchButtonPosition] = useState(null);
-
 	const [searchResults, setSearchResults] = useState([]);
+	const [selectedRow, setSelectedRow] = useState(null);
 
   if (!data || !data.items) {
     return <div>데이터가 없습니다.</div>;
@@ -78,6 +78,9 @@ export default function TechnicalTable({ data }) {
 	
 		if (matchingIndexes.length === 1) {
 			listRef.current.scrollToItem(matchingIndexes[0], 'center');
+			console.log(matchingIndexes[0]);
+			
+			setSelectedRow(matchingIndexes[0])
 			setIsSearchOpen(false);
 		} else if (matchingIndexes.length > 1) {
 			const matchingItems = matchingIndexes.map((index) => sortedItems[index]);
@@ -93,36 +96,40 @@ export default function TechnicalTable({ data }) {
     const item = sortedItems[index];
     return (
       <div
-        className={classes.row}
+        className={index === selectedRow? classes.highlightedRow : classes.row}
         style={{ ...style, width: totalWidth }} // 행의 너비 설정
       >
         <div className={classes.cell}>
           <TechnicalTableIdentifier
             index={index + 1}
+						ticker={item.ticker}
             company_name={item.companyName}
             exchange_code={item.exchange_code || '-'}
           />
         </div>
         {headers.map((header) => {
-          const value = item[header];
-          const isSortedColumn = sortConfig && sortConfig.key === header;
-          return (
-            <div
-              key={`data-${header}-${index}`}
-              className={`${classes.cell} ${
-                isSortedColumn ? classes.sortedCell : ''
-              }`}
-            >
-              {typeof value === 'number' ? (
-                <TableCircularProgressBar point={value} />
-              ) : value !== undefined ? (
-                value
-              ) : (
-                '-'
-              )}
-            </div>
-          );
-        })}
+					const value = item[header];
+					const isSortedColumn = sortConfig && sortConfig.key === header;
+					const isRatingColumn = header === 'Rating';
+
+					return (
+						<div
+							key={`data-${header}-${index}`}
+							className={`${classes.cell} ${
+								isSortedColumn ? classes.sortedCell : ''
+							} ${isRatingColumn ? classes.highlightedColumn : ''}`}
+						>
+							{typeof value === 'number' ? (
+								<TableCircularProgressBar point={value} />
+							) : value !== undefined ? (
+								value
+							) : (
+								'-'
+							)}
+						</div>
+					);
+				})}
+
       </div>
     );
   };
@@ -166,44 +173,45 @@ export default function TechnicalTable({ data }) {
 							</button>
 						</div>
             {headers.map((header, index) => {
-              const isSortedColumn = sortConfig && sortConfig.key === header;
-              const headerName =
-                header === 'Rating' ? 'Rating' : header.replace('score_', '');
+							const isSortedColumn = sortConfig && sortConfig.key === header;
+							const headerName =
+								header === 'Rating' ? 'Rating' : header.replace('score_', '');
 
-              return (
-                <div
-                  key={`header-${index}`}
-                  className={`${classes.headerCell} ${classes.sortableHeader} ${
-                    isSortedColumn ? classes.sortedHeader : ''
-                  }`}
-                  onMouseEnter={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    setTooltipPosition({
-                      top: rect.top + window.scrollY,
-                      left: rect.left + window.scrollX + rect.width / 2,
-                    });
-                    setTooltipContent(headerName);
-                  }}
-                  onMouseLeave={() => {
-                    setTooltipContent('');
-                    setTooltipPosition(null);
-                  }}
-                >
-                  {headerName}
-                  <span
-                    className={classes.sortIcon}
-                    onClick={() => handleSort(header)}
-                  >
-                    <Image
-                      src="/svgs/sort.svg"
-                      alt="sortIcon"
-                      width={16}
-                      height={16}
-                    />
-                  </span>
-                </div>
-              );
-            })}
+							return (
+								<div
+									key={`header-${index}`}
+									className={`${classes.headerCell} ${classes.sortableHeader} ${
+										isSortedColumn ? classes.sortedHeader : ''
+									} ${header === 'Rating' ? classes.highlightedColumn : ''}`}
+									onMouseEnter={(e) => {
+										const rect = e.currentTarget.getBoundingClientRect();
+										setTooltipPosition({
+											top: rect.top + window.scrollY,
+											left: rect.left + window.scrollX + rect.width / 2,
+										});
+										setTooltipContent(headerName);
+									}}
+									onMouseLeave={() => {
+										setTooltipContent('');
+										setTooltipPosition(null);
+									}}
+								>
+									{headerName}
+									<span
+										className={classes.sortIcon}
+										onClick={() => handleSort(header)}
+									>
+										<Image
+											src="/svgs/sort.svg"
+											alt="sortIcon"
+											width={16}
+											height={16}
+										/>
+									</span>
+								</div>
+							);
+						})}
+
           </div>
           <List
             className={classes.list}
@@ -230,6 +238,7 @@ export default function TechnicalTable({ data }) {
 					onResultSelect={(result) => {
 						const index = sortedItems.findIndex((i) => i.companyName === result.companyName);
 						listRef.current.scrollToItem(index, 'center'); // 리스트 스크롤
+						setSelectedRow(index);
 						setIsSearchOpen(false); // 검색창 닫기
 						setSearchResults([]); // 검색 결과 초기화
 					}}

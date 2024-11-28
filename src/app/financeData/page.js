@@ -57,8 +57,8 @@ export default function FinancialDataShowPage() {
       <div className={classes.rightSection}>      
         <div className={classes.graphSection}>
         {graphData.length > 0 ? (
-          <div className={classes.graphSection}>
-            <FinancialGraph graphData={graphData} />
+          <div className={classes.graphSection}>      
+            <FinancialGraph graphData={graphData} updateGraphData={updateGraphData} option={selectedOption}/>
           </div>
         ) : (
           <div className={classes.emptyState}>보고싶은 지표를 선택해주세요!</div>

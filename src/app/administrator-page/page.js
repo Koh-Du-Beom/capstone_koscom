@@ -32,7 +32,7 @@ const AdministratorPage = () => {
   // 유저 삭제 함수
   const deleteUser = async (id) => {
     try {
-      const response = await fetch('/api/admin', {
+      const response = await fetch('/api/auth/admin', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),

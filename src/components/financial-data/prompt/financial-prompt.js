@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import ComponentLoading from '@/components/loading/component-loading';
 import classes from './financial-prompt.module.css';
 import axios from 'axios';
+import sendButton from '../../../../public/svgs/send.svg';
+import Image from 'next/image';
 
 export default function FinancialPrompt({ updateGraphData }) {
   const [messages, setMessages] = useState([]);
@@ -94,7 +96,13 @@ export default function FinancialPrompt({ updateGraphData }) {
           className={classes.inputField}
         />
         <button type="submit" className={classes.sendButton}>
-          Send
+          <Image
+            src="/svgs/send.svg"
+            alt="sendbutton icon"
+            width={16}
+            height={16}
+            priority 
+          />
         </button>
       </form>
     </div>

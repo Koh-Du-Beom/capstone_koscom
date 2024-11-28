@@ -14,7 +14,7 @@ function TableTooltip({ content, position }) {
         transform: 'translate(-50%, -100%)', // 화살표가 아래쪽에 위치하도록
       }}
     >
-      {content}
+      {content == 'Rating' ? 'Rating은 가중치를 고려한 종목들의 환산점수입니다' : content}
       <div className={classes.tooltipArrow} />
     </div>,
     document.body

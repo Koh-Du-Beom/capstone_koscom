@@ -1,30 +1,39 @@
-/* technical-table-identifier.module.css */
-
 .identifierContainer {
   display: flex;
   align-items: center;
-  padding: 8px;
+  justify-content: space-between;
+  padding: 10px;
+  font-weight: bold;
 }
 
 .index {
-  font-size: 16px;
   font-weight: bold;
-  margin-right: 8px;
-}
-
-.exchangeLogo {
-  border-radius: 50%; /* 원형으로 만들기 */
-  margin-right: 8px;
+  margin-right: 10px;
 }
 
 .infoContainer {
-  display: flex;
-  flex-direction: column;
+  flex: 1;
 }
 
-
 .companyName {
-  font-size: 15px;
-	font-weight: bold;
-  color: #191919;
+  font-size: 14px;
+  color: #333;
+}
+
+.addButton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #ccc; /* 기본 색상 */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.addButton:hover {
+  color: #555; /* 호버 시 약간 진한 회색 */
+}
+
+.addButton.added {
+  color: #ffc107; /* 어두운 노란색 */
+  
 }

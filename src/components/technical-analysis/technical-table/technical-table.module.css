@@ -19,6 +19,14 @@
 	width: 100%;
 }
 
+.highlightedRow {
+  display: flex;
+  width: 100%;
+  background-color: #e6ffe6; /* 연한 초록색 */
+  transition: background-color 0.3s ease;
+  border: 1px solid #191919;
+}
+
 .headerCell,
 .cell {
   flex-shrink: 0;
@@ -191,4 +199,12 @@
 
 .searchResultItem:hover {
   background-color: #f0f0f0;
+}
+
+.highlightedColumn {
+  background-color: rgba(157, 241, 179, 0.3); /* 부드러운 녹색 (투명도 적용) */
+  font-weight: bold; /* 텍스트 강조 */
+  color: black; /* 텍스트 색상 */
+	border: 1px solid black;
+	border-bottom: none;
 }
