@@ -1,5 +1,3 @@
-// TechnicalTable.js
-
 import React, { useState, useRef, useEffect } from 'react';
 import TechnicalTableIdentifier from './technical-table-identifier';
 import classes from './technical-table.module.css';
@@ -11,7 +9,7 @@ import TechnicalTableSearch from './technical-table-search';
 import useAuthStore from '@/store/authStore';
 
 export default function TechnicalTable({ data }) {
-	const [sortConfig, setSortConfig] = useState(null);
+  const [sortConfig, setSortConfig] = useState(null);
   const [tooltipContent, setTooltipContent] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState(null);
 
@@ -50,7 +48,7 @@ export default function TechnicalTable({ data }) {
   );
 
   headers = ['Rating', ...headers];
-  const totalWidth = `${headers.length * 5 + 11}vw`;
+  const totalWidth = `${headers.length * 5 + 13}vw`;
 
   const [showInterestedOnly, setShowInterestedOnly] = useState(false);
 
@@ -66,10 +64,9 @@ export default function TechnicalTable({ data }) {
     setSortConfig({ key: header, direction });
   };
 
-  const sortedItems = React.useMemo(() => {
+  // 1. 정렬된 리스트 생성
+  const sortedList = React.useMemo(() => {
     let sortableItems = [...originalDataWithIndex];
-
-    const interestedTickers = interestedItems.map((item) => item.code);
 
     // 정렬 적용
     if (sortConfig !== null) {
@@ -87,69 +84,40 @@ export default function TechnicalTable({ data }) {
         return 0;
       };
 
-      // 관심 종목과 일반 종목 분리
-      let interestedData = sortableItems.filter((item) =>
-        interestedTickers.includes(item.ticker)
-      );
-      let otherData = sortableItems.filter(
-        (item) => !interestedTickers.includes(item.ticker)
-      );
-
-      // 각각 정렬
-      interestedData.sort(compare);
-      otherData.sort(compare);
-
-      // 합치기
-      sortableItems = [...interestedData, ...otherData];
-    } else {
-      // 관심 종목을 최상단에 배치
-      const interestedData = sortableItems.filter((item) =>
-        interestedTickers.includes(item.ticker)
-      );
-      const otherData = sortableItems.filter(
-        (item) => !interestedTickers.includes(item.ticker)
-      );
-      sortableItems = [...interestedData, ...otherData];
+      sortableItems.sort(compare);
     }
+
+    // sortedIndex 부여
+    sortableItems = sortableItems.map((item, index) => ({
+      ...item,
+      sortedIndex: index + 1, // 1부터 시작
+    }));
+
+    return sortableItems;
+  }, [originalDataWithIndex, sortConfig]);
+
+  // 2. 관심 종목을 최상단에 배치
+  const sortedItems = React.useMemo(() => {
+    const interestedTickers = interestedItems.map((item) => item.code);
+
+    // 관심 종목과 일반 종목 분리
+    let interestedData = sortedList.filter((item) =>
+      interestedTickers.includes(item.ticker)
+    );
+    let otherData = sortedList.filter(
+      (item) => !interestedTickers.includes(item.ticker)
+    );
+
+    // 관심 종목을 최상단에 배치
+    let combinedItems = [...interestedData, ...otherData];
 
     // 관심 종목만 보기 설정
     if (showInterestedOnly) {
-      sortableItems = sortableItems.filter((item) =>
-        interestedTickers.includes(item.ticker)
-      );
+      combinedItems = interestedData;
     }
 
-    return sortableItems;
-  }, [originalDataWithIndex, sortConfig, interestedItems, showInterestedOnly]);
-
-	const handleSearch = (searchQuery) => {
-		const query = searchQuery.toLowerCase();
-		const matchingIndexes = sortedItems
-			.map((item, index) => (item.companyName.toLowerCase().includes(query) ? index : -1))
-			.filter((index) => index !== -1);
-	
-		if (matchingIndexes.length === 1) {
-			listRef.current.scrollToItem(matchingIndexes[0], 'center');
-			console.log(matchingIndexes[0]);
-			
-			setSelectedRow(matchingIndexes[0])
-			setIsSearchOpen(false);
-		} else if (matchingIndexes.length > 1) {
-			const matchingItems = matchingIndexes.map((index) => sortedItems[index]);
-			setSearchResults(matchingItems);
-			setIsSearchOpen(true);
-		} else {
-			alert('해당 종목을 찾을 수 없습니다.');
-		}
-	};
-
-	const selectSearchResult = (result) => {
-		const index = sortedItems.findIndex((i) => i.companyName === result.companyName);
-		listRef.current.scrollToItem(index, 'center'); // 리스트 스크롤
-		setSelectedRow(index);
-		setIsSearchOpen(false); // 검색창 닫기
-		setSearchResults([]); // 검색 결과 초기화
-	}
+    return combinedItems;
+  }, [sortedList, interestedItems, showInterestedOnly]);
 
   // 행 렌더링 함수
   const Row = ({ index, style }) => {
@@ -168,7 +136,7 @@ export default function TechnicalTable({ data }) {
       >
         <div className={classes.cell}>
           <TechnicalTableIdentifier
-            index={item.originalIndex}
+            index={item.sortedIndex}
             ticker={item.ticker}
             company_name={item.companyName}
             exchange_code={item.exchange_code || '-'}
@@ -200,17 +168,45 @@ export default function TechnicalTable({ data }) {
     );
   };
 
+	const handleSearch = (searchQuery) => {
+    const query = searchQuery.toLowerCase();
+    const matchingIndexes = sortedItems
+      .map((item, index) =>
+        item.companyName.toLowerCase().includes(query) ? index : -1
+      )
+      .filter((index) => index !== -1);
+
+    if (matchingIndexes.length === 1) {
+      listRef.current.scrollToItem(matchingIndexes[0], 'center');
+      console.log(matchingIndexes[0]);
+
+      setSelectedRow(matchingIndexes[0]);
+      setIsSearchOpen(false);
+    } else if (matchingIndexes.length > 1) {
+      const matchingItems = matchingIndexes.map((index) => sortedItems[index]);
+      setSearchResults(matchingItems);
+      setIsSearchOpen(true);
+    } else {
+      alert('해당 종목을 찾을 수 없습니다.');
+    }
+  };
+
+  // 검색 결과 선택 핸들러
+  const selectSearchResult = (result) => {
+    const index = sortedItems.findIndex(
+      (i) => i.companyName === result.companyName
+    );
+    listRef.current.scrollToItem(index, 'center'); // 리스트 스크롤
+    setSelectedRow(index);
+    setIsSearchOpen(false); // 검색창 닫기
+    setSearchResults([]); // 검색 결과 초기화
+  };
+
+
   return (
     <>
       {data.date && (
         <div className={classes.dateContainer}>
-          {/* 관심 종목 보기 토글 버튼 */}
-          <button
-            className={classes.toggleInterestedButton}
-            onClick={() => setShowInterestedOnly(!showInterestedOnly)}
-          >
-            관심 종목만 보기
-          </button>
           <strong>데이터 기준일 : </strong> {data.date}
         </div>
       )}
@@ -221,96 +217,93 @@ export default function TechnicalTable({ data }) {
             className={classes.headerRow}
             style={{ width: totalWidth }} // 헤더의 너비 설정
           >
-						<div
-							className={classes.headerCell}
-							style={{ position: 'relative' }}
-							ref={(el) => {
-								if (el && !searchButtonPosition) {
-									const rect = el.getBoundingClientRect();
-									setSearchButtonPosition({
-										top: rect.bottom + window.scrollY + 5,
-										left: rect.left + window.scrollX + rect.width / 2,
-									});
-								}
-							}}
-						>
-							<span>종목명</span>
-							<button
-								className={classes.searchButton}
-								onClick={(e) => {
-									e.stopPropagation(); // 이벤트 버블링 방지
-									setIsSearchOpen(true); // 검색창 열기
-								}}
-							>
-								🔍
-							</button>
-						</div>
+            <div
+              className={classes.headerCell}
+              style={{ position: 'relative' }}
+              ref={(el) => {
+                if (el && !searchButtonPosition) {
+                  const rect = el.getBoundingClientRect();
+                  setSearchButtonPosition({
+                    top: rect.bottom + window.scrollY + 5,
+                    left: rect.left + window.scrollX + rect.width / 2,
+                  });
+                }
+              }}
+            >
+              <span>종목명</span>
+              <button
+                className={classes.searchButton}
+                onClick={(e) => {
+                  e.stopPropagation(); // 이벤트 버블링 방지
+                  setIsSearchOpen(true); // 검색창 열기
+                }}
+              >
+                🔍
+              </button>
+            </div>
             {headers.map((header, index) => {
-							const isSortedColumn = sortConfig && sortConfig.key === header;
-							const headerName =
-								header === 'Rating' ? 'Rating' : header.replace('score_', '');
+              const isSortedColumn = sortConfig && sortConfig.key === header;
+              const headerName =
+                header === 'Rating' ? 'Rating' : header.replace('score_', '');
 
-							return (
-								<div
-									key={`header-${index}`}
-									className={`${classes.headerCell} ${classes.sortableHeader} ${
-										isSortedColumn ? classes.sortedHeader : ''
-									} ${header === 'Rating' ? classes.highlightedColumn : ''}`}
-									onMouseEnter={(e) => {
-										const rect = e.currentTarget.getBoundingClientRect();
-										setTooltipPosition({
-											top: rect.top + window.scrollY,
-											left: rect.left + window.scrollX + rect.width / 2,
-										});
-										setTooltipContent(headerName);
-									}}
-									onMouseLeave={() => {
-										setTooltipContent('');
-										setTooltipPosition(null);
-									}}
-								>
-									{headerName}
-									<span
-										className={classes.sortIcon}
-										onClick={() => handleSort(header)}
-									>
-										<Image
-											src="/svgs/sort.svg"
-											alt="sortIcon"
-											width={16}
-											height={16}
-										/>
-									</span>
-								</div>
-							);
-						})}
-
+              return (
+                <div
+                  key={`header-${index}`}
+                  className={`${classes.headerCell} ${classes.sortableHeader} ${
+                    isSortedColumn ? classes.sortedHeader : ''
+                  } ${header === 'Rating' ? classes.highlightedColumn : ''}`}
+                  onMouseEnter={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setTooltipPosition({
+                      top: rect.top + window.scrollY,
+                      left: rect.left + window.scrollX + rect.width / 2,
+                    });
+                    setTooltipContent(headerName);
+                  }}
+                  onMouseLeave={() => {
+                    setTooltipContent('');
+                    setTooltipPosition(null);
+                  }}
+                >
+                  {headerName}
+                  <span
+                    className={classes.sortIcon}
+                    onClick={() => handleSort(header)}
+                  >
+                    <Image
+                      src="/svgs/sort.svg"
+                      alt="sortIcon"
+                      width={16}
+                      height={16}
+                    />
+                  </span>
+                </div>
+              );
+            })}
           </div>
           <List
             className={classes.list}
-						height={window.innerHeight * 0.8} 
+            height={window.innerHeight * 0.8}
             itemCount={sortedItems.length}
             itemSize={50}
             width={totalWidth}
             style={{ overflowX: 'hidden', overflowY: 'auto' }} // 가로 스크롤 숨김
-						ref={listRef}
-					>
-            {({ index, style }) => (
-              <Row index={index} style={{ ...style, width: totalWidth }} />
-            )}
+            ref={listRef}
+          >
+            {({ index, style }) => <Row index={index} style={style} />}
           </List>
         </div>
         {/* 스크롤 컨테이너 끝 */}
       </div>
-			{isSearchOpen && (
-				<TechnicalTableSearch
-					onSearch={handleSearch} // 검색 함수 연결
-					onClose={() => setIsSearchOpen(false)} // 검색창 닫기
-					position={searchButtonPosition}
-					searchResults={searchResults} // 검색 결과 전달
-					onResultSelect={selectSearchResult}
-				/>
-			)}
+      {isSearchOpen && (
+        <TechnicalTableSearch
+          onSearch={(query) => handleSearch(query)}
+          onClose={() => setIsSearchOpen(false)}
+          position={searchButtonPosition}
+          searchResults={searchResults}
+          onResultSelect={(result) => selectSearchResult(result)}
+        />
+      )}
       {/* 툴팁 렌더링 */}
       {tooltipContent && tooltipPosition && (
         <TableTooltip content={tooltipContent} position={tooltipPosition} />
