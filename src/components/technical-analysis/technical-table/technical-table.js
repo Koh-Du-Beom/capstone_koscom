@@ -12,6 +12,7 @@ export default function TechnicalTable({ data }) {
   const [sortConfig, setSortConfig] = useState(null);
   const [tooltipContent, setTooltipContent] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState(null);
+  const [applyInterestedSort, setApplyInterestedSort] = useState(false); // 관심 종목 정렬 활성화 여부
 
   const listRef = useRef(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -96,8 +97,12 @@ export default function TechnicalTable({ data }) {
     return sortableItems;
   }, [originalDataWithIndex, sortConfig]);
 
-  // 2. 관심 종목을 최상단에 배치
+  // 2. 관심 종목을 최상단에 배치 (버튼 클릭 시 활성화)
   const sortedItems = React.useMemo(() => {
+    if (!applyInterestedSort) {
+      return sortedList; // 관심 종목 기준 정렬 비활성화
+    }
+
     const interestedTickers = interestedItems.map((item) => item.code);
 
     // 관심 종목과 일반 종목 분리
@@ -117,7 +122,7 @@ export default function TechnicalTable({ data }) {
     }
 
     return combinedItems;
-  }, [sortedList, interestedItems, showInterestedOnly]);
+  }, [sortedList, interestedItems, showInterestedOnly, applyInterestedSort]);
 
   // 행 렌더링 함수
   const Row = ({ index, style }) => {
@@ -168,7 +173,7 @@ export default function TechnicalTable({ data }) {
     );
   };
 
-	const handleSearch = (searchQuery) => {
+  const handleSearch = (searchQuery) => {
     const query = searchQuery.toLowerCase();
     const matchingIndexes = sortedItems
       .map((item, index) =>
@@ -202,11 +207,17 @@ export default function TechnicalTable({ data }) {
     setSearchResults([]); // 검색 결과 초기화
   };
 
-
   return (
     <>
       {data.date && (
         <div className={classes.dateContainer}>
+          {/* 관심 종목 정렬 버튼 */}
+          <button
+            className={classes.toggleInterestedButton}
+            onClick={() => setApplyInterestedSort((prev) => !prev)}
+          >
+            {applyInterestedSort ? '일반 정렬' : '관심종목 우선 정렬'}
+          </button>
           <strong>데이터 기준일 : </strong> {data.date}
         </div>
       )}
