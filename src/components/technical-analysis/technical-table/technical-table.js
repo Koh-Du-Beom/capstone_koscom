@@ -8,23 +8,39 @@ import Image from 'next/image';
 import { FixedSizeList as List } from 'react-window';
 import TableTooltip from './table-tooltip';
 import TechnicalTableSearch from './technical-table-search';
+import useAuthStore from '@/store/authStore';
 
 export default function TechnicalTable({ data }) {
-  const [sortConfig, setSortConfig] = useState(null);
+	const [sortConfig, setSortConfig] = useState(null);
   const [tooltipContent, setTooltipContent] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState(null);
 
-	const listRef = useRef(null);
+  const listRef = useRef(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchButtonPosition, setSearchButtonPosition] = useState(null);
-	const [searchResults, setSearchResults] = useState([]);
-	const [selectedRow, setSelectedRow] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const { interestedItems, fetchInterestedItems } = useAuthStore();
+
+  // 관심 종목이 없으면 가져오기
+  useEffect(() => {
+    if (interestedItems.length === 0) {
+      fetchInterestedItems();
+    }
+  }, [interestedItems.length, fetchInterestedItems]);
 
   if (!data || !data.items) {
     return <div>데이터가 없습니다.</div>;
   }
 
-  // 헤더 데이터 생성 (ticker와 companyName 제외)
+  // 원본 데이터의 인덱스 추가
+  const originalDataWithIndex = data.items.map((item, index) => ({
+    ...item,
+    originalIndex: index + 1, // 1부터 시작
+  }));
+
+  // 헤더 데이터 생성
   let headers = Object.keys(data.items[0]).filter(
     (key) =>
       key !== 'ticker' &&
@@ -33,9 +49,10 @@ export default function TechnicalTable({ data }) {
       key !== 'Rating'
   );
 
-  // 'Rating'을 첫 번째로 배치
   headers = ['Rating', ...headers];
-	const totalWidth = `${headers.length * 5 + 11}vw`;
+  const totalWidth = `${headers.length * 5 + 11}vw`;
+
+  const [showInterestedOnly, setShowInterestedOnly] = useState(false);
 
   const handleSort = (header) => {
     let direction = 'descending';
@@ -50,10 +67,13 @@ export default function TechnicalTable({ data }) {
   };
 
   const sortedItems = React.useMemo(() => {
-    let sortableItems = [...data.items];
+    let sortableItems = [...originalDataWithIndex];
 
+    const interestedTickers = interestedItems.map((item) => item.code);
+
+    // 정렬 적용
     if (sortConfig !== null) {
-      sortableItems.sort((a, b) => {
+      const compare = (a, b) => {
         const aValue = a[sortConfig.key];
         const bValue = b[sortConfig.key];
 
@@ -65,10 +85,42 @@ export default function TechnicalTable({ data }) {
           return sortConfig.direction === 'ascending' ? 1 : -1;
         }
         return 0;
-      });
+      };
+
+      // 관심 종목과 일반 종목 분리
+      let interestedData = sortableItems.filter((item) =>
+        interestedTickers.includes(item.ticker)
+      );
+      let otherData = sortableItems.filter(
+        (item) => !interestedTickers.includes(item.ticker)
+      );
+
+      // 각각 정렬
+      interestedData.sort(compare);
+      otherData.sort(compare);
+
+      // 합치기
+      sortableItems = [...interestedData, ...otherData];
+    } else {
+      // 관심 종목을 최상단에 배치
+      const interestedData = sortableItems.filter((item) =>
+        interestedTickers.includes(item.ticker)
+      );
+      const otherData = sortableItems.filter(
+        (item) => !interestedTickers.includes(item.ticker)
+      );
+      sortableItems = [...interestedData, ...otherData];
     }
+
+    // 관심 종목만 보기 설정
+    if (showInterestedOnly) {
+      sortableItems = sortableItems.filter((item) =>
+        interestedTickers.includes(item.ticker)
+      );
+    }
+
     return sortableItems;
-  }, [data.items, sortConfig]);
+  }, [originalDataWithIndex, sortConfig, interestedItems, showInterestedOnly]);
 
 	const handleSearch = (searchQuery) => {
 		const query = searchQuery.toLowerCase();
@@ -102,42 +154,48 @@ export default function TechnicalTable({ data }) {
   // 행 렌더링 함수
   const Row = ({ index, style }) => {
     const item = sortedItems[index];
+
+    const isInterested = interestedItems.some(
+      (interestedItem) => interestedItem.code === item.ticker
+    );
+
     return (
       <div
-        className={index === selectedRow? classes.highlightedRow : classes.row}
-        style={{ ...style, width: totalWidth }} // 행의 너비 설정
+        className={`${isInterested ? classes.interestedRow : classes.row} ${
+          index === selectedRow ? classes.highlightedRow : ''
+        }`}
+        style={{ ...style, width: totalWidth }}
       >
         <div className={classes.cell}>
           <TechnicalTableIdentifier
-            index={index + 1}
-						ticker={item.ticker}
+            index={item.originalIndex}
+            ticker={item.ticker}
             company_name={item.companyName}
             exchange_code={item.exchange_code || '-'}
           />
         </div>
         {headers.map((header) => {
-					const value = item[header];
-					const isSortedColumn = sortConfig && sortConfig.key === header;
-					const isRatingColumn = header === 'Rating';
+          const value = item[header];
+          const isSortedColumn = sortConfig && sortConfig.key === header;
+          const isRatingColumn = header === 'Rating';
 
-					return (
-						<div
-							key={`data-${header}-${index}`}
-							className={`${classes.cell} ${
-								isSortedColumn ? classes.sortedCell : ''
-							} ${isRatingColumn ? classes.highlightedColumn : ''}`}
-						>
-							{typeof value === 'number' ? (
-								<TableCircularProgressBar point={value} />
-							) : value !== undefined ? (
-								value
-							) : (
-								'-'
-							)}
-						</div>
-					);
-				})}
-
+          return (
+            <div
+              key={`data-${header}-${index}`}
+              className={`${classes.cell} ${
+                isSortedColumn ? classes.sortedCell : ''
+              } ${isRatingColumn ? classes.highlightedColumn : ''}`}
+            >
+              {typeof value === 'number' ? (
+                <TableCircularProgressBar point={value} />
+              ) : value !== undefined ? (
+                value
+              ) : (
+                '-'
+              )}
+            </div>
+          );
+        })}
       </div>
     );
   };
@@ -146,6 +204,13 @@ export default function TechnicalTable({ data }) {
     <>
       {data.date && (
         <div className={classes.dateContainer}>
+          {/* 관심 종목 보기 토글 버튼 */}
+          <button
+            className={classes.toggleInterestedButton}
+            onClick={() => setShowInterestedOnly(!showInterestedOnly)}
+          >
+            관심 종목만 보기
+          </button>
           <strong>데이터 기준일 : </strong> {data.date}
         </div>
       )}
