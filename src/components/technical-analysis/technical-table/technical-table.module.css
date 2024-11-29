@@ -7,7 +7,8 @@
 }
 
 .dateContainer{
-	margin-left: 20px;
+	margin-right: 20px;
+  text-align: right;
 }
 
 .headerRow {
@@ -52,6 +53,21 @@
   z-index: 1;
 	width: 5vw;
 }
+
+/* 첫 번째 칼럼(종목명)의 헤더를 가운데 정렬 */
+.headerCell:first-child {
+  justify-content: center; /* flexbox 정렬 */
+  text-align: center;
+  width: 11vw; /* 기존 너비 유지 */
+  display: flex;
+  align-items: center; /* 수직 정렬 */
+  position: relative; /* 검색 버튼 위치 조정 */
+  font-size: 14px; /* 글꼴 크기 */
+  font-weight: bold;
+  color: #555;
+  background-color: #f8f9fa;
+}
+
 
 .cell {
 	display: flex;

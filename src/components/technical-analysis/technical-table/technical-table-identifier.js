@@ -27,10 +27,8 @@ export default function TechnicalTableIdentifier({ index, ticker, company_name, 
 
         if (response.ok) {
           removeInterestedItem(ticker); // zustand 상태 업데이트
-          alert('관심 종목에서 제거되었습니다.');
         } else {
           const errorData = await response.json();
-          alert(errorData.message || '관심 종목 제거에 실패했습니다.');
         }
       } catch (error) {
         console.error('Failed to delete interested item:', error);
@@ -52,7 +50,6 @@ export default function TechnicalTableIdentifier({ index, ticker, company_name, 
 
         if (response.ok) {
           addInterestedItem({ name: company_name, code: ticker, marketCategory }); // zustand 상태 업데이트
-          alert('관심 종목에 추가되었습니다.');
         } else {
           const errorData = await response.json();
           alert(errorData.message || '관심 종목 추가에 실패했습니다.');

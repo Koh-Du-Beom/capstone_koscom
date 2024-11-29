@@ -65,32 +65,34 @@ export default function InterestedNewsBox() {
     <div className={classes.container}>
       <h2 className={classes.title}>나만의 뉴스</h2>
 
-      {/* 드롭다운 컨테이너 */}
-      <div className={classes.dropdownContainer}>
-        <div
-          className={classes.dropdownHeader}
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        >
-          {selectedStock || "종목을 선택하세요"}
-          <span className={isDropdownOpen ? classes.arrowUp : classes.arrowDown}>▼</span>
-        </div>
-        {isDropdownOpen && (
-          <div className={classes.dropdownMenu}>
-            {interestedItems.map((item) => (
-              <div
-                key={item.code}
-                className={classes.dropdownItem}
-                onClick={() => {
-                  setSelectedStock(item.name);
-                  setIsDropdownOpen(false); // 드롭다운 닫기
-                }}
-              >
-                {item.name}
-              </div>
-            ))}
+      {interestedItems.length > 0 && (
+        <div className={classes.dropdownContainer}>
+          <div
+            className={classes.dropdownHeader}
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            {selectedStock || "종목을 선택하세요"}
+            <span className={isDropdownOpen ? classes.arrowUp : classes.arrowDown}>▼</span>
           </div>
-        )}
-      </div>
+          {isDropdownOpen && (
+            <div className={classes.dropdownMenu}>
+              {interestedItems.map((item) => (
+                <div
+                  key={item.code}
+                  className={classes.dropdownItem}
+                  onClick={() => {
+                    setSelectedStock(item.name);
+                    setIsDropdownOpen(false); // 드롭다운 닫기
+                  }}
+                >
+                  {item.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      
 
       <div className={classes.news_wrapper}>
         {isLoading ? (

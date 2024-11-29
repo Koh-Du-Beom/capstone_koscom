@@ -91,6 +91,14 @@ export default function TechnicalTable({ data }) {
 		}
 	};
 
+	const selectSearchResult = (result) => {
+		const index = sortedItems.findIndex((i) => i.companyName === result.companyName);
+		listRef.current.scrollToItem(index, 'center'); // 리스트 스크롤
+		setSelectedRow(index);
+		setIsSearchOpen(false); // 검색창 닫기
+		setSearchResults([]); // 검색 결과 초기화
+	}
+
   // 행 렌더링 함수
   const Row = ({ index, style }) => {
     const item = sortedItems[index];
@@ -138,7 +146,7 @@ export default function TechnicalTable({ data }) {
     <>
       {data.date && (
         <div className={classes.dateContainer}>
-          <strong>데이터 기준 날짜:</strong> {data.date}
+          <strong>데이터 기준일 : </strong> {data.date}
         </div>
       )}
       <div className={classes.tableContainer}>
@@ -161,7 +169,7 @@ export default function TechnicalTable({ data }) {
 								}
 							}}
 						>
-							종목명
+							<span>종목명</span>
 							<button
 								className={classes.searchButton}
 								onClick={(e) => {
@@ -235,13 +243,7 @@ export default function TechnicalTable({ data }) {
 					onClose={() => setIsSearchOpen(false)} // 검색창 닫기
 					position={searchButtonPosition}
 					searchResults={searchResults} // 검색 결과 전달
-					onResultSelect={(result) => {
-						const index = sortedItems.findIndex((i) => i.companyName === result.companyName);
-						listRef.current.scrollToItem(index, 'center'); // 리스트 스크롤
-						setSelectedRow(index);
-						setIsSearchOpen(false); // 검색창 닫기
-						setSearchResults([]); // 검색 결과 초기화
-					}}
+					onResultSelect={selectSearchResult}
 				/>
 			)}
       {/* 툴팁 렌더링 */}
