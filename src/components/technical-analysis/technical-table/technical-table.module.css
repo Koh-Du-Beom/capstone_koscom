@@ -131,12 +131,14 @@
 }
 
 .sortedHeader {
-  border-bottom: 2px solid #007bff;
-  background-color: #f1f8ff;
+  border-bottom: 2px solid #9DF1B3; /* 초록색 */
+  background-color: rgba(157, 241, 179, 0.3); /* 연한 초록색 */
+  color: black; /* 검은 글씨 */
 }
 
 .sortedCell {
-  background-color: #f1f8ff;
+  background-color: rgba(157, 241, 179, 0.3); /* 연한 초록색 */
+  color: black; /* 검은 글씨 */
 }
 
 
@@ -225,11 +227,9 @@
 	border-bottom: none;
 }
 
-
-
 .toggleInterestedButton {
-  background-color: #007bff;
-  color: white;
+  background-color: #9DF1B3; /* 초록색 */
+  color: black; /* 검은 글씨 */
   border: none;
   padding: 6px 12px;
   margin-right: 10px;
@@ -237,8 +237,10 @@
 }
 
 .toggleInterestedButton:hover {
-  background-color: #0056b3;
+  background-color: #87d89a; /* 살짝 어두운 초록색 */
+  color: black;
 }
+
 
 .interestedRow {
   background-color: #f0f8ff;

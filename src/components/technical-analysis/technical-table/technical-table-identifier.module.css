@@ -2,8 +2,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
   padding: 10px;
   font-weight: bold;
+  width: 13vw;
 }
 
 .index {
@@ -21,6 +23,8 @@
 }
 
 .addButton {
+  position: absolute;
+  right: 0;
   background: none;
   border: none;
   font-size: 20px;
