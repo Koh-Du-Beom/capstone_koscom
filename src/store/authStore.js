@@ -1,17 +1,22 @@
+// store/authStore.js
 import { create } from 'zustand';
+import axios from 'axios';
 
-const useAuthStore = create((set) => ({
-  isLoggedIn: false, // 로그인 상태 초기값
-  email: null, // 유저 이메일
-  interestedItems: [], // 유저 관심 종목 리스트
+const useAuthStore = create((set, get) => ({
+  isLoggedIn: false,
+  email: null,
+  interestedItems: [],
 
   // 로그인
-  login: (userData) =>
+  login: async (userData) => {
     set({
       isLoggedIn: true,
       email: userData.email,
       interestedItems: [], // 초기화
-    }),
+    });
+    // 로그인 후 관심 종목 가져오기
+    await get().fetchInterestedItems();
+  },
 
   // 로그아웃
   logout: () =>
@@ -40,6 +45,24 @@ const useAuthStore = create((set) => ({
         (item) => item.code !== code
       ),
     })),
+
+  // 관심 종목 가져오기
+  fetchInterestedItems: async () => {
+    const { email } = get();
+    if (!email) return;
+
+    try {
+      const response = await axios.get('/api/interestedItems', {
+        params: { email },
+      });
+
+      if (response.status === 200) {
+        set({ interestedItems: response.data.items });
+      }
+    } catch (error) {
+      console.error('Failed to fetch interested items:', error.message);
+    }
+  },
 }));
 
 export default useAuthStore;

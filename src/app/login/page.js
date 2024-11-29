@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useState } from 'react';
 import classes from './page.module.css';
 import logo from '../../../public/images/SuperFantastic.png';
@@ -15,7 +15,7 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: {
@@ -24,27 +24,25 @@ export default function Login() {
       credentials: 'include', // 쿠키를 포함하여 요청
       body: JSON.stringify({ email, password }),
     });
-  
+
     if (res.ok) {
       const data = await res.json();
-
-      await login(data.user);
-
+      await login(data.user); // 로그인 및 관심 종목 가져오기
       router.push('/');
     } else {
       const data = await res.json();
       alert(data.message);
     }
-  };  
+  };
 
   return (
     <div className={classes.container}>
       {/* 상단 로고와 텍스트 */}
       <Link className={classes.logoContainer} href={'/'}>
         <Image
-          src={logo} 
-          alt="SuperFantastic Logo" 
-          className={classes.logoImage} 
+          src={logo}
+          alt="SuperFantastic Logo"
+          className={classes.logoImage}
           priority
         />
         <h1 className={classes.logoText}>SuperFantastic</h1>
@@ -77,9 +75,12 @@ export default function Login() {
             로그인 상태 유지
           </label>
         </div>
-        <button type="submit" className={classes.button}>로그인</button>
+        <button type="submit" className={classes.button}>
+          로그인
+        </button>
         <div className={classes.links}>
-          <a href="#">비밀번호 찾기</a> | <a href="#">아이디 찾기</a> | <Link href="/signup">회원가입</Link>
+          <a href="#">비밀번호 찾기</a> | <a href="#">아이디 찾기</a> |{' '}
+          <Link href="/signup">회원가입</Link>
         </div>
       </form>
     </div>

@@ -1,5 +1,6 @@
+// InterestedItemsBox 컴포넌트
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import InterestedItems from './interested-items';
 import StockListModal from '../modal/stock-list-modal/stock-list-modal';
 import classes from './interested-items-box.module.css';
@@ -12,9 +13,9 @@ const InterestedItemsBox = () => {
     email: userEmail,
     isLoggedIn,
     interestedItems,
-    setInterestedItems,
     addInterestedItem,
     removeInterestedItem,
+    fetchInterestedItems,
   } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -24,26 +25,12 @@ const InterestedItemsBox = () => {
   const toggleModal = () => setIsModalOpen(!isModalOpen);
   const toggleEditMode = () => setIsEditMode(!isEditMode);
 
-  // 데이터베이스에서 관심 종목 가져오기
-  const fetchInterestedItems = useCallback(async () => {
-    if (!userEmail) return;
-
-    try {
-      const response = await axios.get('/api/interestedItems', {
-        params: { email: userEmail },
-      });
-
-      if (response.status === 200) {
-        setInterestedItems(response.data.items); // Zustand 상태 업데이트
-      }
-    } catch (error) {
-      console.error('Failed to fetch interested items:', error.message);
-    }
-  }, [userEmail, setInterestedItems]);
-
   // 관심 종목의 주가 데이터 가져오기
-  const fetchStockData = useCallback(async () => {
-    if (interestedItems.length === 0) return;
+  const fetchStockData = async () => {
+    if (interestedItems.length === 0) {
+      setStockDataList([]); // 관심 종목이 없으면 주가 데이터도 초기화
+      return;
+    }
 
     setLoading(true);
 
@@ -66,20 +53,19 @@ const InterestedItemsBox = () => {
     } finally {
       setLoading(false);
     }
-  }, [interestedItems]);
+  };
 
-  // 초기 렌더링 시 데이터 로드
+  // 컴포넌트 마운트 시 또는 로그인 상태 변경 시 관심 종목 가져오기
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchInterestedItems();
-    }else{
-      setStockDataList([]);
+    if (isLoggedIn && interestedItems.length === 0) {
+      fetchInterestedItems(); // Zustand 액션 호출
     }
-  }, [isLoggedIn, fetchInterestedItems]);
+  }, [isLoggedIn, interestedItems.length, fetchInterestedItems]);
 
+  // 관심 종목이 변경될 때 주가 데이터 가져오기
   useEffect(() => {
     fetchStockData();
-  }, [interestedItems, fetchStockData]);
+  }, [interestedItems]);
 
   const addStockItem = async (stock) => {
     try {
@@ -91,7 +77,7 @@ const InterestedItemsBox = () => {
       });
 
       if (res.status === 200) {
-        addInterestedItem(stock);
+        addInterestedItem(stock); // Zustand 상태 업데이트
         setIsModalOpen(false);
       }
     } catch (error) {
@@ -106,7 +92,7 @@ const InterestedItemsBox = () => {
       });
 
       if (res.status === 200) {
-        removeInterestedItem(stockCode);
+        removeInterestedItem(stockCode); // Zustand 상태 업데이트
         setStockDataList((prev) =>
           prev.filter((item) => item.code !== stockCode)
         );
@@ -127,7 +113,9 @@ const InterestedItemsBox = () => {
           <span className={classes.action} onClick={toggleEditMode}>
             {isEditMode ? '완료' : '편집'}
           </span>
-          <span className={classes.action} onClick={toggleModal}>추가</span>
+          <span className={classes.action} onClick={toggleModal}>
+            추가
+          </span>
         </div>
       </div>
 
