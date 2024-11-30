@@ -7,6 +7,7 @@ import { FixedSizeList as List } from 'react-window';
 import TableTooltip from './table-tooltip';
 import TechnicalTableSearch from './technical-table-search';
 import useAuthStore from '@/store/authStore';
+import StockHeaderCell from './stock-header-cell/stock-header-cell';
 
 export default function TechnicalTable({ data }) {
   const [sortConfig, setSortConfig] = useState(null);
@@ -228,30 +229,10 @@ export default function TechnicalTable({ data }) {
             className={classes.headerRow}
             style={{ width: totalWidth }} // 헤더의 너비 설정
           >
-            <div
-              className={classes.headerCell}
-              style={{ position: 'relative' }}
-              ref={(el) => {
-                if (el && !searchButtonPosition) {
-                  const rect = el.getBoundingClientRect();
-                  setSearchButtonPosition({
-                    top: rect.bottom + window.scrollY + 5,
-                    left: rect.left + window.scrollX + rect.width / 2,
-                  });
-                }
-              }}
-            >
-              <span>종목명</span>
-              <button
-                className={classes.searchButton}
-                onClick={(e) => {
-                  e.stopPropagation(); // 이벤트 버블링 방지
-                  setIsSearchOpen(true); // 검색창 열기
-                }}
-              >
-                🔍
-              </button>
-            </div>
+            <StockHeaderCell 
+              setSearchButtonPosition={setSearchButtonPosition}
+              setIsSearchOpen={setIsSearchOpen}
+            />
             {headers.map((header, index) => {
               const isSortedColumn = sortConfig && sortConfig.key === header;
               const headerName =

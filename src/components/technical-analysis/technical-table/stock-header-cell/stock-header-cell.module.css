@@ -1,0 +1,29 @@
+/* 종목명 헤더 셀 스타일 */
+.stockHeaderCell {
+  display: flex;
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  text-align: center;
+  width: 13vw; /* 종목명 칼럼 너비 */
+  position: relative; /* 검색 버튼 위치 조정 */
+  font-size: 14px; /* 글꼴 크기 */
+  font-weight: bold;
+  color: #555;
+  background-color: #f8f9fa;
+  z-index: 2; /* 다른 요소 위로 올라오도록 설정 */
+  border-right: 1px solid #ddd; /* 헤더 칸 구분 */
+  border-bottom: 0.5px solid #ddd;
+}
+
+/* 검색 버튼 스타일 */
+.searchButton {
+  position: absolute;
+  right: 5px; /* 오른쪽 여백 */
+  top: 50%; /* 세로 중앙 정렬 */
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 3vw;
+  font-size: 16px;
+}
