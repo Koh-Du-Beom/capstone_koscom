@@ -1,33 +1,35 @@
 'use client';
 import { useState } from 'react';
 import classes from './page.module.css';
+import logo from '../../../public/images/SuperFantastic.png';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import useAuthStore from '@/store/authStore';
 
-export default function Login() {
+export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
-  const { login } = useAuthStore();
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch('/api/auth/login', {
+    if (password !== confirmPassword){
+      alert('비밀번호 확인이 일치하지 않습니다.');
+      return;
+    }
+
+    const res = await fetch('/api/auth/signup', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include', // 쿠키를 포함하여 요청
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
     if (res.ok) {
-      const data = await res.json();
-      await login(data.user); // 로그인 및 관심 종목 가져오기
-      router.push('/');
+      alert('회원가입이 완료되었습니다.');
+      router.push('/login');
     } else {
       const data = await res.json();
       alert(data.message);
@@ -37,23 +39,21 @@ export default function Login() {
   return (
     <div className={classes.container}>
       {/* 상단 로고와 텍스트 */}
-      <div className={classes.logoContainer} href={'/'}>
+      <Link className={classes.logoContainer} href={'/'}>
         <Image
-          src='/images/SuperFantastic.png'
-          alt="SuperFantastic Logo"
-          className={classes.logoImage}
-          width={100}
-          height={100}
+          src={logo} 
+          alt="SuperFantastic Logo" 
+          className={classes.logoImage} 
           priority
         />
         <h1 className={classes.logoText}>SuperFantastic</h1>
-      </div>
+      </Link>
 
       <form onSubmit={handleSubmit} className={classes.form}>
         <div className={classes.inputGroup}>
           <input
-            type="text"
-            placeholder="아이디 또는 전화번호"
+            type="email"
+            placeholder="이메일"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -70,18 +70,19 @@ export default function Login() {
             className={classes.input}
           />
         </div>
-        <div className={classes.options}>
-          <label>
-            <input type="checkbox" />
-            로그인 상태 유지
-          </label>
+        <div className={classes.inputGroup}>
+          <input
+            type="password"
+            placeholder="비밀번호 확인"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            className={classes.input}
+          />
         </div>
-        <button type="submit" className={classes.button}>
-          로그인
-        </button>
+        <button type="submit" className={classes.button}>회원가입</button>
         <div className={classes.links}>
-          <a href="#">비밀번호 찾기</a> | <a href="#">아이디 찾기</a> |{' '}
-          <Link href="/auth/signup">회원가입</Link>
+          <Link href="/login">이미 계정이 있으신가요?</Link>
         </div>
       </form>
     </div>

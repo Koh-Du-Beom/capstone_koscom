@@ -38,16 +38,12 @@ export default function TopNavBar() {
     });
     if (res.ok) {
       logout();
-      router.push('auth/login');
+      router.push('/');
+
     } else {
       alert('로그아웃에 실패했습니다.');
     }
   };
-
-  // 로그인 상태가 아닐 때 Navbar를 렌더링하지 않음
-  if (!isLoggedIn) {
-    return null; // null을 반환하여 아무것도 렌더링하지 않음
-  }
 
   return (
     <Navbar style={{ backgroundColor: '#9DF1B3' }} sticky="top" expand="lg">
@@ -71,13 +67,17 @@ export default function TopNavBar() {
             <Nav.Link as={Link} href="/portfolio" className={`text ${classes.navbarLink}`}>포트폴리오 추천</Nav.Link>
           </Nav>
           <Nav className="ms-auto">
-            <NavDropdown title="내 정보" id="basic-nav-dropdown" className={`text ${classes.navbarLink}`}>
-              <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} href="/mypage">마이페이지</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} onClick={handleLogout}>
-                로그아웃
-              </NavDropdown.Item>
-            </NavDropdown>
+            {isLoggedIn ? (
+              <NavDropdown title="내 정보" id="basic-nav-dropdown" className={`text ${classes.navbarLink}`}>
+                <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} href="/mypage">마이페이지</NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} onClick={handleLogout}>
+                  로그아웃
+                </NavDropdown.Item>
+              </NavDropdown>
+            ) : (
+              <Nav.Link href="/login" className={`text ${classes.navbarLink}`}>로그인</Nav.Link>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

@@ -68,7 +68,6 @@ const InterestedItemsBox = () => {
   }, [interestedItems]);
 
   const addStockItem = async (stock) => {
-
     try {
       const res = await axios.post('/api/interestedItems', {
         email: userEmail,
