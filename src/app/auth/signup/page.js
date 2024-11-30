@@ -28,7 +28,7 @@ export default function SignUp() {
 
     if (res.ok) {
       alert('회원가입이 완료되었습니다.');
-      router.push('/login');
+      router.push('/auth/login');
     } else {
       const data = await res.json();
       alert(data.message);
