@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classes from './selected-stock-items.module.css';
 
-const SelectedStockItems = ({ items, isEditMode, onRemoveItem, onSelectStock, selectedStocks }) => {
+const SelectedStockItems = ({ items, onSelectStock, selectedStocks }) => {
   return (
     <div>
       {items.map((item, index) => (

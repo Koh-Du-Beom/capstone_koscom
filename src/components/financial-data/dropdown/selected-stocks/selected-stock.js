@@ -39,6 +39,10 @@ const SelectedStock = ({ onSelectStock }) => {
   // 선택된 주식 데이터 요청
   const fetchGraphData = async () => {
     const selectedStockNames = selectedStocks.map((item) => item.name);
+    if (selectedStockNames.length === 0){
+      onSelectStock([])
+      return;
+    }
 
     try {
       const response = await fetch('/api/getGraphData-checkBox', {
@@ -71,12 +75,15 @@ const SelectedStock = ({ onSelectStock }) => {
     toggleModal();
   };
 
-  const removeStockItem = (stockCode) => {
-    setItems((prevItems) => prevItems.filter((item) => item.code !== stockCode));
-  };
+  // const removeStockItem = (stockCode) => {
+  //   setItems((prevItems) => prevItems.filter((item) => item.code !== stockCode));
+  // };
 
   const handleSelectStock = (stockName) => {
+
     setSelectedStocks((prev) => {
+    
+
       // 이미 선택된 종목인지 확인
       if (prev.some((stock) => stock.name === stockName)) {
         // 이미 선택된 종목이면 선택 해제
@@ -95,7 +102,7 @@ const SelectedStock = ({ onSelectStock }) => {
   }, [email]);
 
   useEffect(() => {
-    if (selectedStocks.length > 0) {
+    if (selectedStocks.length >= 0) {
       fetchGraphData();
     }
   }, [selectedStocks]);
@@ -118,8 +125,6 @@ const SelectedStock = ({ onSelectStock }) => {
         <div className={classes.itemsList}>
           <SelectedStockItems
             items={items}
-            isEditMode={isEditMode}
-            onRemoveItem={removeStockItem}
             onSelectStock={handleSelectStock} // 선택/해제 핸들러 전달
             selectedStocks={selectedStocks} // 선택된 종목 목록 전달
           />
