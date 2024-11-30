@@ -145,6 +145,7 @@ export default function TechnicalTable({ data }) {
             index={item.sortedIndex}
             ticker={item.ticker}
             company_name={item.companyName}
+            exchange_code={item.exchange_code}
           />
         </div>
         {headers.map((header) => {

@@ -16,9 +16,9 @@ const SelectedStock = ({ onSelectStock }) => {
     setIsModalOpen(!isModalOpen);
   };
 
-  const toggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-  };
+  // const toggleEditMode = () => {
+  //   setIsEditMode(!isEditMode);
+  // };
 
   // 관심종목 불러오기 (API 호출)
   const fetchInterestedItems = async () => {
@@ -107,10 +107,10 @@ const SelectedStock = ({ onSelectStock }) => {
           분석 대상 종목 <span className={classes.counts}>{selectedStocks.length}개</span>
         </h2>
         <div className={classes.actions}>
-          <span className={classes.action} onClick={toggleEditMode}>
+          {/* <span className={classes.action} onClick={toggleEditMode}>
             {isEditMode ? '완료' : '편집'}
-          </span>
-          <span className={classes.action} onClick={toggleModal}>추가</span>
+          </span> */}
+          <span className={classes.action} onClick={toggleModal}>종목추가</span>
         </div>
       </div>
 

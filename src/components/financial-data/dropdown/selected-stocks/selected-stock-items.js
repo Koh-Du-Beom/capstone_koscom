@@ -14,7 +14,7 @@ const SelectedStockItems = ({ items, isEditMode, onRemoveItem, onSelectStock, se
             {item.name} ({item.code})
           </div>
 
-          {isEditMode && (
+          {/* {isEditMode && (
             <button
               className={classes.deleteButton}
               onClick={(e) => {
@@ -24,7 +24,7 @@ const SelectedStockItems = ({ items, isEditMode, onRemoveItem, onSelectStock, se
             >
               삭제
             </button>
-          )}
+          )} */}
         </div>
       ))}
     </div>
