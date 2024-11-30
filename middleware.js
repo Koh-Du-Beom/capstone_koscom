@@ -1,49 +1,49 @@
 import { NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
+import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 const COOKIE_NAME = process.env.COOKIE_NAME;
 
-export async function middleware(request) {
+export function middleware(request) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(COOKIE_NAME)?.value;
 
-  // 공개적으로 접근 가능한 경로
+  // Paths that are publicly accessible
   const publicPaths = ['/auth/login', '/auth/signup'];
 
-  // 현재 경로가 공개 경로인지 확인
+  // Function to check if the path is public
   const isPublicPath = publicPaths.includes(pathname);
 
   try {
     if (token) {
-      // JWT 토큰 검증
-      await jwtVerify(token, new TextEncoder().encode(JWT_SECRET));
+      // Verify the JWT token
+      jwt.verify(token, JWT_SECRET);
 
-      // 인증된 사용자가 로그인 또는 회원가입 페이지에 접근하면 홈으로 리다이렉트
+      // If authenticated user tries to access login or signup pages, redirect them to the home page
       if (isPublicPath) {
-        return NextResponse.redirect(new URL('/', request.nextUrl));
+        return NextResponse.redirect(new URL('/', request.url));
       }
-      // 요청을 그대로 진행
+      // Allow the request to proceed
       return NextResponse.next();
     } else {
-      // 토큰이 없고 보호된 경로에 접근하려는 경우 로그인 페이지로 리다이렉트
+      // If no token and trying to access a protected route, redirect to login
       if (!isPublicPath) {
-        return NextResponse.redirect(new URL('/auth/login', request.nextUrl));
+        return NextResponse.redirect(new URL('/auth/login', request.url));
       }
-      // 공개 경로에 대한 접근 허용
+      // Allow access to public paths
       return NextResponse.next();
     }
   } catch (error) {
-    // 토큰 검증 실패 시 보호된 경로는 로그인 페이지로 리다이렉트
+    // If token verification fails, redirect to login for protected routes
     if (!isPublicPath) {
-      return NextResponse.redirect(new URL('/auth/login', request.nextUrl));
+      return NextResponse.redirect(new URL('/auth/login', request.url));
     }
-    // 공개 경로에 대한 접근 허용
+    // Allow access to public paths
     return NextResponse.next();
   }
 }
 
-// 모든 경로에 미들웨어 적용
+// Apply the middleware to all routes
 export const config = {
   matcher: '/:path*',
 };
