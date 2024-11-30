@@ -1,10 +1,20 @@
 .container {
   display: flex;
-  justify-content: space-between;
-  padding: 10px;
+  justify-content: space-between; /* 좌우로 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  padding: 20px;
   border: 1px solid #e1e1e1;
   border-radius: 4px;
   background-color: #f9f9f9;
+  height: 60px;
+  box-sizing: border-box;
+  margin-bottom: 5px;
+  cursor: pointer; /* 포인터로 설정 */
+  transition: background-color 0.3s ease; /* 부드러운 색상 전환 */
+}
+
+.selected {
+  background-color: #d9eaf7; /* 연한 파란색 */
 }
 
 .name {
@@ -19,6 +29,8 @@
   padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
+  height: 30px;
+  line-height: 20px;
 }
 
 .deleteButton:hover {

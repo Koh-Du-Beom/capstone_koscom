@@ -7,7 +7,8 @@ import useAuthStore from '@/store/authStore'; // zustand에서 email 가져오�
 
 const SelectedStock = ({ onSelectStock }) => {
   const { email } = useAuthStore(); // 로그인된 사용자의 email
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([]); // 전체 종목 목록
+  const [selectedStocks, setSelectedStocks] = useState([]); // 선택된 종목 목록
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -37,7 +38,7 @@ const SelectedStock = ({ onSelectStock }) => {
 
   // 선택된 주식 데이터 요청
   const fetchGraphData = async () => {
-    const selectedStockNames = items.map((item) => item.name);
+    const selectedStockNames = selectedStocks.map((item) => item.name);
 
     try {
       const response = await fetch('/api/getGraphData-checkBox', {
@@ -74,22 +75,36 @@ const SelectedStock = ({ onSelectStock }) => {
     setItems((prevItems) => prevItems.filter((item) => item.code !== stockCode));
   };
 
+  const handleSelectStock = (stockName) => {
+    setSelectedStocks((prev) => {
+      // 이미 선택된 종목인지 확인
+      if (prev.some((stock) => stock.name === stockName)) {
+        // 이미 선택된 종목이면 선택 해제
+        return prev.filter((stock) => stock.name !== stockName);
+      }
+      // 새로운 종목 추가
+      const selectedItem = items.find((item) => item.name === stockName);
+      return [...prev, selectedItem];
+    });
+  };
+  
+
   useEffect(() => {
     // 초기 렌더링 시 관심종목 불러오기
     fetchInterestedItems();
   }, [email]);
 
   useEffect(() => {
-    if (items.length > 0) {
+    if (selectedStocks.length > 0) {
       fetchGraphData();
     }
-  }, [items]);
+  }, [selectedStocks]);
 
   return (
     <section className={classes.container}>
       <div className={classes.header}>
         <h2 className={classes.title}>
-          선택한 종목 <span className={classes.counts}>{items.length}개</span>
+          분석 대상 종목 <span className={classes.counts}>{selectedStocks.length}개</span>
         </h2>
         <div className={classes.actions}>
           <span className={classes.action} onClick={toggleEditMode}>
@@ -101,10 +116,12 @@ const SelectedStock = ({ onSelectStock }) => {
 
       <div className={classes.scrollContainer}>
         <div className={classes.itemsList}>
-          <SelectedStockItems 
-            items={items} 
-            isEditMode={isEditMode} 
+          <SelectedStockItems
+            items={items}
+            isEditMode={isEditMode}
             onRemoveItem={removeStockItem}
+            onSelectStock={handleSelectStock} // 선택/해제 핸들러 전달
+            selectedStocks={selectedStocks} // 선택된 종목 목록 전달
           />
         </div>
       </div>

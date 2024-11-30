@@ -173,6 +173,11 @@ export default function TechnicalTable({ data }) {
     );
   };
 
+
+
+
+  //종목명 검색 관련
+
   const handleSearch = (searchQuery) => {
     const query = searchQuery.toLowerCase();
     const matchingIndexes = sortedItems
