@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import classes from './technical-table-identifier.module.css';
 import useAuthStore from '@/store/authStore';
 
-export default function TechnicalTableIdentifier({ index, ticker, company_name, exchange_code }) {
+export default function TechnicalTableIdentifier({ index, ticker, company_name }) {
   const { email, interestedItems, addInterestedItem, removeInterestedItem } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
 

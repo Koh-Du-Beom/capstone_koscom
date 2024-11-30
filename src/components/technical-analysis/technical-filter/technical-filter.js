@@ -130,6 +130,10 @@ export default function TechnicalFilter({ filterData, updateFilterData, onApplyF
         <div key={section} className={classes.section}>
           <div className={classes.header}>
             <h3 className={classes.title}>{section}</h3>
+            <div className={classes.subTitle}>
+              <h6 className={classes.selectLabel}>조건</h6>
+              <h6 className={classes.weightLabel}>가중치</h6>
+            </div>
           </div>
           <div className={classes.table}>
             {items.map((indicator) => (
