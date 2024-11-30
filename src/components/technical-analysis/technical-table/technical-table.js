@@ -158,7 +158,7 @@ export default function TechnicalTable({ data }) {
               key={`data-${header}-${index}`}
               className={`${classes.cell} ${
                 isSortedColumn ? classes.sortedCell : ''
-              } ${isRatingColumn ? classes.highlightedColumn : ''}`}
+              } ${isRatingColumn ? classes.ratingColumn : ''}`}
             >
               {typeof value === 'number' ? (
                 <TableCircularProgressBar point={value} />
@@ -248,7 +248,7 @@ export default function TechnicalTable({ data }) {
                   key={`header-${index}`}
                   className={`${classes.headerCell} ${classes.sortableHeader} ${
                     isSortedColumn ? classes.sortedHeader : ''
-                  } ${header === 'Rating' ? classes.highlightedColumn : ''}`}
+                  } ${header === 'Rating' ? classes.ratingColumn : ''}`}
                   onMouseEnter={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
                     setTooltipPosition({
