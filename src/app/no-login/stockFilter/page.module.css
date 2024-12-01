@@ -1,0 +1,74 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+	overflow-x: hidden;
+}
+
+.leftSection {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 550px; /* 기본 필터와 버튼 영역의 총 너비 */
+  opacity: 1; /* 기본 상태는 완전히 보이는 상태 */
+}
+
+.leftSection.hidden {
+  width: 0; 
+  overflow: hidden; 
+}
+
+/* 필터 내용 영역 */
+.filterContent {
+  width: 530px; 
+  overflow-y: auto;
+}
+/* 버튼 영역 */
+.toggleButtonContainer {
+  position: fixed; 
+  top: 12%; 
+  left: 0; 
+  transform: translate(0, -50%); 
+  z-index: 1000; 
+  width: 40px; 
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+/* 열기/닫기 버튼 */
+.toggleButton {
+  writing-mode: vertical-lr; /* 텍스트를 세로로 표시 */
+  font-weight: bold;
+  border: none;
+  background-color: #9DF1B3;
+  color: black;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 50px; /* 고정된 버튼 높이 설정 */
+  display: flex;
+  align-items: center; /* 텍스트 Y축 중앙 정렬 */
+  justify-content: center; /* 텍스트 X축 중앙 정렬 */
+}
+
+.toggleButton:hover {
+  background-color: #82d399;
+}
+
+
+.rightSection {
+  flex: 1;
+  background-color: #f8f9fa;
+  padding: 0 20px;
+
+}
+
+.noData{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 95vw;
+  height: 85vh;
+}

@@ -27,7 +27,7 @@ export default function Login() {
     if (res.ok) {
       const data = await res.json();
       await login(data.user); // 로그인 및 관심 종목 가져오기
-      redirect('/main');
+      router.push('/main'); // redirect 대신 router.push 사용
     } else {
       const data = await res.json();
       alert(data.message);
@@ -37,7 +37,7 @@ export default function Login() {
   return (
     <div className={classes.container}>
       {/* 상단 로고와 텍스트 */}
-      <div className={classes.logoContainer}>
+      <Link className={classes.logoContainer} href={'/'}>
         <Image
           src='/images/SuperFantastic.png'
           alt="SuperFantastic Logo"
@@ -47,7 +47,7 @@ export default function Login() {
           height={100}
         />
         <h1 className={classes.logoText}>SuperFantastic</h1>
-      </div>
+      </Link>
 
       <form onSubmit={handleSubmit} className={classes.form}>
         <div className={classes.inputGroup}>

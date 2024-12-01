@@ -35,7 +35,7 @@ export default function SignUp() {
 
   return (
     <div className={classes.container}>
-      <div className={classes.logoContainer}>
+      <Link className={classes.logoContainer} href={'/'}>
         <Image
           src='/images/SuperFantastic.png'
           alt="SuperFantastic Logo" 
@@ -45,7 +45,7 @@ export default function SignUp() {
           height={100}
         />
         <h1 className={classes.logoText}>SuperFantastic</h1>
-      </div>
+      </Link>
 
       <form onSubmit={handleSubmit} className={classes.form}>
         <div className={classes.inputGroup}>
