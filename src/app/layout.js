@@ -1,8 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import TopNavBar from "@/components/navbar/top-navbar/top-navbar";
-import { InterestedItemsProvider } from "@/contexts/InterestedItemsContext";
-
 
 const notoSansKR = localFont({
   src: [
@@ -32,12 +30,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ko">
       <body className={notoSansKR.variable}>
-				<InterestedItemsProvider>
-					<TopNavBar />
-					<main className="contents">
-						{children}
-					</main>	
-				</InterestedItemsProvider>
+        <TopNavBar />
+        <main className="contents">
+          {children}
+        </main>	
       </body>
     </html>
   );
