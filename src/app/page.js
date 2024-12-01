@@ -1,14 +1,24 @@
-import InterestedItemsBox from '@/components/interested-items/interested-items-box';
-import InterestedNewsBox from '@/components/interested-news/interested-news-box';
-import RecentReportItemBox from '@/components/recent-report/recent-report-box';
 import classes from './page.module.css';
 import Link from 'next/link';
 
 export default function Home() {
   return (
     <main className={classes.container}>
-      <Link href={'/'}>로그인하지 않고 사용</Link>
-      <Link href={'/auth/login'}>로그인하고 사용</Link>
+      {/* SuperFantastic 로고 */}
+      <h1 className={classes.title}>SuperFantastic</h1>
+
+      {/* 버튼 링크들 */}
+      <div className={classes.links}>
+        <Link href={'/auth/login'} className={classes.link}>
+          로그인하고 사용
+        </Link>
+        <Link href={'/auth/signup'} className={classes.link}>
+          회원가입
+        </Link>
+        <Link href={'/'} className={classes.link}>
+          비회원으로 체험
+        </Link>
+      </div>
     </main>
   );
 }
