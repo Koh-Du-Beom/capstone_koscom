@@ -11,64 +11,23 @@ import useAuthStore from '@/store/authStore';
 const InterestedItemsBox = () => {
   const {
     email: userEmail,
-    isLoggedIn,
     interestedItems,
     addInterestedItem,
     removeInterestedItem,
-    fetchInterestedItems,
   } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  // 로딩 상태를 Zustand에서 가져오거나, 필요하다면 컴포넌트 내에서 관리합니다.
   const [loading, setLoading] = useState(false);
-  const [stockDataList, setStockDataList] = useState([]);
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
   const toggleEditMode = () => setIsEditMode(!isEditMode);
 
-  // 관심 종목의 주가 데이터 가져오기
-  const fetchStockData = async () => {
-    if (interestedItems.length === 0) {
-      setStockDataList([]); // 관심 종목이 없으면 주가 데이터도 초기화
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const promises = interestedItems.map(async (stock) => {
-        const response = await axios.get('/api/stockList', {
-          params: {
-            code: stock.code,
-            name: stock.name,
-            marketCategory: stock.marketCategory,
-          },
-        });
-        return response.data;
-      });
-
-      const results = await Promise.all(promises);
-      setStockDataList(results);
-    } catch (error) {
-      console.error('Failed to fetch stock data:', error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 컴포넌트 마운트 시 또는 로그인 상태 변경 시 관심 종목 가져오기
-  useEffect(() => {
-    if (isLoggedIn && interestedItems.length === 0) {
-      fetchInterestedItems(); // Zustand 액션 호출
-    }
-  }, [isLoggedIn, interestedItems.length, fetchInterestedItems]);
-
-  // 관심 종목이 변경될 때 주가 데이터 가져오기
-  useEffect(() => {
-    fetchStockData();
-  }, [interestedItems]);
-
   const addStockItem = async (stock) => {
     try {
+      // 로딩 시작
+      setLoading(true);
+
       const res = await axios.post('/api/interestedItems', {
         email: userEmail,
         name: stock.name,
@@ -77,11 +36,14 @@ const InterestedItemsBox = () => {
       });
 
       if (res.status === 200) {
-        addInterestedItem(stock); // Zustand 상태 업데이트
+        await addInterestedItem(stock); // Zustand에서 주가 데이터를 포함하여 상태 업데이트
         setIsModalOpen(false);
       }
     } catch (error) {
       console.error('Failed to add stock item:', error.message);
+    } finally {
+      // 로딩 종료
+      setLoading(false);
     }
   };
 
@@ -93,9 +55,6 @@ const InterestedItemsBox = () => {
 
       if (res.status === 200) {
         removeInterestedItem(stockCode); // Zustand 상태 업데이트
-        setStockDataList((prev) =>
-          prev.filter((item) => item.code !== stockCode)
-        );
       }
     } catch (error) {
       console.error('Failed to remove stock item:', error.message);
@@ -123,13 +82,13 @@ const InterestedItemsBox = () => {
         <div className={classes.loadingContainer}>
           <ComponentLoading />
         </div>
-      ) : stockDataList.length === 0 ? (
+      ) : interestedItems.length === 0 ? (
         <h1 className={classes.noItemsMessage}>관심종목을 등록하세요!</h1>
       ) : (
         <div className={classes.scrollContainer}>
           <div className={classes.itemsList}>
             <InterestedItems
-              items={stockDataList}
+              items={interestedItems}
               isEditMode={isEditMode}
               onRemoveItem={removeStockItem}
             />

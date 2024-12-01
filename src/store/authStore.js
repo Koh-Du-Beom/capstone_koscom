@@ -33,10 +33,27 @@ const useAuthStore = create((set, get) => ({
     }),
 
   // 관심 종목 추가
-  addInterestedItem: (item) =>
-    set((state) => ({
-      interestedItems: [...state.interestedItems, item],
-    })),
+  addInterestedItem: async (item) => {
+    try {
+      // 주가 데이터 가져오기
+      const response = await axios.get('/api/stockList', {
+        params: {
+          codes: item.code,
+          names: item.name,
+          marketCategories: item.marketCategory,
+        },
+      });
+
+      const [stockData] = response.data; // 배열로 반환되므로 첫 번째 아이템 추출
+      const newItem = { ...item, ...stockData };
+
+      set((state) => ({
+        interestedItems: [...state.interestedItems, newItem],
+      }));
+    } catch (error) {
+      console.error('Failed to fetch stock data for new item:', error.message);
+    }
+  },
 
   // 관심 종목 삭제
   removeInterestedItem: (code) =>
@@ -57,7 +74,36 @@ const useAuthStore = create((set, get) => ({
       });
 
       if (response.status === 200) {
-        set({ interestedItems: response.data.items });
+        const items = response.data.items;
+
+        if (items.length === 0) {
+          set({ interestedItems: [] });
+          return;
+        }
+
+        // 각 아이템의 코드, 이름, 시장 구분을 배열로 추출
+        const codes = items.map((item) => item.code).join(',');
+        const names = items.map((item) => item.name).join(',');
+        const marketCategories = items.map((item) => item.marketCategory).join(',');
+
+        // 주가 데이터 한 번에 가져오기
+        const stockResponse = await axios.get('/api/stockList', {
+          params: {
+            codes,
+            names,
+            marketCategories,
+          },
+        });
+
+        const stockDataList = stockResponse.data;
+
+        // 코드 기준으로 아이템과 주가 데이터를 매칭
+        const itemsWithStockData = items.map((item) => {
+          const stockData = stockDataList.find((data) => data.code === item.code);
+          return stockData ? { ...item, ...stockData } : item;
+        });
+
+        set({ interestedItems: itemsWithStockData });
       }
     } catch (error) {
       console.error('Failed to fetch interested items:', error.message);

@@ -1,0 +1,80 @@
+.container {
+  display: flex;
+  width: 100%;
+}
+
+.leftSection {
+  flex: 1;
+  padding: 20px;
+  padding-right: 0;
+  border-right: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rightSection {
+  flex: 2.1;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f9f9;
+}
+
+.selectionSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.button {
+  padding: 8px 16px;
+  background-color: white;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: background-color 0.3s;
+  margin-left: 10px;
+  width: 150px;
+
+  font-weight: bold;
+}
+
+.activeButton {
+  background-color: #9DF1B3;
+  color: #191919;
+}
+
+.inputSection {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  background-color: #ffffff;
+}
+
+.graphSection {
+  width: 100%;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.emptyState {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #666; /* 부드러운 텍스트 색상 */
+  text-align: center;
+  width: 100%;
+}
+
+.disabledButton {
+  opacity: 1; 
+  cursor: not-allowed; 
+}

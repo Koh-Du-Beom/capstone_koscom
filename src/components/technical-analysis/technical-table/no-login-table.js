@@ -6,34 +6,28 @@ import Image from 'next/image';
 import { FixedSizeList as List } from 'react-window';
 import TableTooltip from './table-tooltip';
 import TechnicalTableSearch from './technical-table-search';
-import useAuthStore from '@/store/authStore';
 import StockHeaderCell from './stock-header-cell/stock-header-cell';
 
-export default function TechnicalTable({ data }) {
+export default function NoLoginTechnicalTable({ data }) {
   const [sortConfig, setSortConfig] = useState(null);
   const [tooltipContent, setTooltipContent] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState(null);
-  const [applyInterestedSort, setApplyInterestedSort] = useState(false); // 관심 종목 정렬 활성화 여부
 
   const listRef = useRef(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchButtonPosition, setSearchButtonPosition] = useState(null);
+  const [searchButtonPosition, setSearchButtonPosition] = useState({ top: 0, left: 0 });
   const [searchResults, setSearchResults] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
-
-  const { interestedItems } = useAuthStore();
 
   if (!data || !data.items) {
     return <div>데이터가 없습니다.</div>;
   }
 
-  // 원본 데이터의 인덱스 추가
   const originalDataWithIndex = data.items.map((item, index) => ({
     ...item,
-    originalIndex: index + 1, // 1부터 시작
+    originalIndex: index + 1,
   }));
 
-  // 헤더 데이터 생성
   let headers = Object.keys(data.items[0]).filter(
     (key) =>
       key !== 'ticker' &&
@@ -44,8 +38,6 @@ export default function TechnicalTable({ data }) {
 
   headers = ['Rating', ...headers];
   const totalWidth = `${headers.length * 5 + 13}vw`;
-
-  const [showInterestedOnly, setShowInterestedOnly] = useState(false);
 
   const handleSort = (header) => {
     let direction = 'descending';
@@ -59,11 +51,9 @@ export default function TechnicalTable({ data }) {
     setSortConfig({ key: header, direction });
   };
 
-  // 1. 정렬된 리스트 생성
   const sortedList = React.useMemo(() => {
     let sortableItems = [...originalDataWithIndex];
 
-    // 정렬 적용
     if (sortConfig !== null) {
       const compare = (a, b) => {
         const aValue = a[sortConfig.key];
@@ -82,53 +72,18 @@ export default function TechnicalTable({ data }) {
       sortableItems.sort(compare);
     }
 
-    // sortedIndex 부여
-    sortableItems = sortableItems.map((item, index) => ({
+    return sortableItems.map((item, index) => ({
       ...item,
-      sortedIndex: index + 1, // 1부터 시작
+      sortedIndex: index + 1,
     }));
-
-    return sortableItems;
   }, [originalDataWithIndex, sortConfig]);
 
-  // 2. 관심 종목을 최상단에 배치 (버튼 클릭 시 활성화)
-  const sortedItems = React.useMemo(() => {
-    if (!applyInterestedSort) {
-      return sortedList; // 관심 종목 기준 정렬 비활성화
-    }
-
-    const interestedTickers = interestedItems.map((item) => item.code);
-
-    // 관심 종목과 일반 종목 분리
-    let interestedData = sortedList.filter((item) =>
-      interestedTickers.includes(item.ticker)
-    );
-    let otherData = sortedList.filter(
-      (item) => !interestedTickers.includes(item.ticker)
-    );
-
-    // 관심 종목을 최상단에 배치
-    let combinedItems = [...interestedData, ...otherData];
-
-    // 관심 종목만 보기 설정
-    if (showInterestedOnly) {
-      combinedItems = interestedData;
-    }
-
-    return combinedItems;
-  }, [sortedList, interestedItems, showInterestedOnly, applyInterestedSort]);
-
-  // 행 렌더링 함수
   const Row = ({ index, style }) => {
-    const item = sortedItems[index];
-
-    const isInterested = interestedItems.some(
-      (interestedItem) => interestedItem.code === item.ticker
-    );
+    const item = sortedList[index];
 
     return (
       <div
-        className={`${isInterested ? classes.interestedRow : classes.row} ${
+        className={`${classes.row} ${
           index === selectedRow ? classes.highlightedRow : ''
         }`}
         style={{ ...style, width: totalWidth }}
@@ -167,14 +122,9 @@ export default function TechnicalTable({ data }) {
     );
   };
 
-
-
-
-  //종목명 검색 관련
-
   const handleSearch = (searchQuery) => {
     const query = searchQuery.toLowerCase();
-    const matchingIndexes = sortedItems
+    const matchingIndexes = sortedList
       .map((item, index) =>
         item.companyName.toLowerCase().includes(query) ? index : -1
       )
@@ -182,12 +132,10 @@ export default function TechnicalTable({ data }) {
 
     if (matchingIndexes.length === 1) {
       listRef.current.scrollToItem(matchingIndexes[0], 'center');
-      console.log(matchingIndexes[0]);
-
       setSelectedRow(matchingIndexes[0]);
       setIsSearchOpen(false);
     } else if (matchingIndexes.length > 1) {
-      const matchingItems = matchingIndexes.map((index) => sortedItems[index]);
+      const matchingItems = matchingIndexes.map((index) => sortedList[index]);
       setSearchResults(matchingItems);
       setIsSearchOpen(true);
     } else {
@@ -195,39 +143,30 @@ export default function TechnicalTable({ data }) {
     }
   };
 
-  // 검색 결과 선택 핸들러
   const selectSearchResult = (result) => {
-    const index = sortedItems.findIndex(
+    const index = sortedList.findIndex(
       (i) => i.companyName === result.companyName
     );
-    listRef.current.scrollToItem(index, 'center'); // 리스트 스크롤
+    listRef.current.scrollToItem(index, 'center');
     setSelectedRow(index);
-    setIsSearchOpen(false); // 검색창 닫기
-    setSearchResults([]); // 검색 결과 초기화
+    setIsSearchOpen(false);
+    setSearchResults([]);
   };
 
   return (
     <>
       {data.date && (
         <div className={classes.dateContainer}>
-          {/* 관심 종목 정렬 버튼 */}
-          <button
-            className={classes.toggleInterestedButton}
-            onClick={() => setApplyInterestedSort((prev) => !prev)}
-          >
-            {applyInterestedSort ? '일반 정렬' : '관심종목 우선 정렬'}
-          </button>
           <strong>데이터 기준일 : </strong> {data.date}
         </div>
       )}
       <div className={classes.tableContainer}>
-        {/* 스크롤 컨테이너 시작 */}
         <div className={classes.tableScrollContainer}>
           <div
             className={classes.headerRow}
-            style={{ width: totalWidth }} // 헤더의 너비 설정
+            style={{ width: totalWidth }}
           >
-            <StockHeaderCell 
+            <StockHeaderCell
               setSearchButtonPosition={setSearchButtonPosition}
               setIsSearchOpen={setIsSearchOpen}
             />
@@ -274,16 +213,15 @@ export default function TechnicalTable({ data }) {
           <List
             className={classes.list}
             height={window.innerHeight * 0.8}
-            itemCount={sortedItems.length}
+            itemCount={sortedList.length}
             itemSize={50}
             width={totalWidth}
-            style={{ overflowX: 'hidden', overflowY: 'auto' }} // 가로 스크롤 숨김
+            style={{ overflowX: 'hidden', overflowY: 'auto' }}
             ref={listRef}
           >
             {({ index, style }) => <Row index={index} style={style} />}
           </List>
         </div>
-        {/* 스크롤 컨테이너 끝 */}
       </div>
       {isSearchOpen && (
         <TechnicalTableSearch
@@ -294,7 +232,6 @@ export default function TechnicalTable({ data }) {
           onResultSelect={(result) => selectSearchResult(result)}
         />
       )}
-      {/* 툴팁 렌더링 */}
       {tooltipContent && tooltipPosition && (
         <TableTooltip content={tooltipContent} position={tooltipPosition} />
       )}
