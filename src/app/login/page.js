@@ -4,7 +4,7 @@ import classes from './page.module.css';
 import logo from '../../../public/images/SuperFantastic.png';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import useAuthStore from '@/store/authStore';
 
 export default function Login() {
@@ -28,7 +28,7 @@ export default function Login() {
     if (res.ok) {
       const data = await res.json();
       await login(data.user); // 로그인 및 관심 종목 가져오기
-      router.push('/');
+      redirect('/');
     } else {
       const data = await res.json();
       alert(data.message);

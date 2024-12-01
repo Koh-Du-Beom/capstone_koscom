@@ -4,7 +4,7 @@ import classes from './page.module.css';
 import logo from '../../../public/images/SuperFantastic.png';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, redirect } from 'next/navigation';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -29,7 +29,7 @@ export default function SignUp() {
 
     if (res.ok) {
       alert('회원가입이 완료되었습니다.');
-      router.push('/login');
+      redirect('/login');
     } else {
       const data = await res.json();
       alert(data.message);

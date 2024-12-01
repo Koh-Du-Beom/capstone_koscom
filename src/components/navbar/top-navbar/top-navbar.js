@@ -6,7 +6,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import classes from './top-navbar.module.css';
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import useAuthStore from "@/store/authStore";
 
@@ -38,7 +38,7 @@ export default function TopNavBar() {
     });
     if (res.ok) {
       logout();
-      router.push('/');
+      redirect('/login');
 
     } else {
       alert('로그아웃에 실패했습니다.');
