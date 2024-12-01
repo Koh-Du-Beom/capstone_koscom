@@ -33,10 +33,27 @@ const useAuthStore = create((set, get) => ({
     }),
 
   // 관심 종목 추가
-  addInterestedItem: (item) =>
-    set((state) => ({
-      interestedItems: [...state.interestedItems, item],
-    })),
+  addInterestedItem: async (item) => {
+    try {
+      // 주가 데이터 가져오기
+      const response = await axios.get('/api/stockList', {
+        params: {
+          code: item.code,
+          name: item.name,
+          marketCategory: item.marketCategory,
+        },
+      });
+
+      const stockData = response.data;
+      const newItem = { ...item, ...stockData };
+
+      set((state) => ({
+        interestedItems: [...state.interestedItems, newItem],
+      }));
+    } catch (error) {
+      console.error('Failed to fetch stock data for new item:', error.message);
+    }
+  },
 
   // 관심 종목 삭제
   removeInterestedItem: (code) =>
@@ -57,12 +74,36 @@ const useAuthStore = create((set, get) => ({
       });
 
       if (response.status === 200) {
-        set({ interestedItems: response.data.items });
+        const items = response.data.items;
+
+        // 각 아이템에 주가 데이터 추가
+        const itemsWithStockData = await Promise.all(
+          items.map(async (item) => {
+            try {
+              const res = await axios.get('/api/stockList', {
+                params: {
+                  code: item.code,
+                  name: item.name,
+                  marketCategory: item.marketCategory,
+                },
+              });
+              const stockData = res.data;
+              return { ...item, ...stockData };
+            } catch (error) {
+              console.error('Failed to fetch stock data for item:', error.message);
+              return item; // 주가 데이터를 가져오지 못하면 원래 아이템 그대로 반환
+            }
+          })
+        );
+
+        set({ interestedItems: itemsWithStockData });
       }
     } catch (error) {
       console.error('Failed to fetch interested items:', error.message);
     }
   },
+
+  
 }));
 
 export default useAuthStore;
