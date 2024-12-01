@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import TechnicalTableIdentifier from './technical-table-identifier';
 import classes from './technical-table.module.css';
 import TableCircularProgressBar from './technical-table-circular-progress-bar';
@@ -21,14 +21,7 @@ export default function TechnicalTable({ data }) {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
 
-  const { interestedItems, fetchInterestedItems } = useAuthStore();
-
-  // 관심 종목이 없으면 가져오기
-  useEffect(() => {
-    if (interestedItems.length === 0) {
-      fetchInterestedItems();
-    }
-  }, [interestedItems.length, fetchInterestedItems]);
+  const { interestedItems } = useAuthStore();
 
   if (!data || !data.items) {
     return <div>데이터가 없습니다.</div>;
