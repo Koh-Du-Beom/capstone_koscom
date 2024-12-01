@@ -18,7 +18,6 @@
 
 .logoContainer:hover {
   text-decoration: none; /* hover 상태에서도 밑줄 제거 */
-  cursor: pointer; /* 마우스를 올렸을 때 클릭 가능한 아이콘처럼 보이도록 */
 }
 
 .logoImage {

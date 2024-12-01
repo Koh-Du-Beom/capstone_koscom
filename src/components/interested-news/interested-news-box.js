@@ -1,7 +1,8 @@
+// components/interested-news-box.js
 'use client';
 import InterestedNews from "./interested-news";
 import classes from './interested-news-box.module.css';
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import axios from 'axios';
 import useAuthStore from '@/store/authStore';
 import ComponentLoading from "../loading/component-loading";
@@ -14,7 +15,7 @@ export default function InterestedNewsBox() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // 드롭다운 열림/닫힘 상태 관리
 
   // 관심종목 기반으로 뉴스 데이터를 가져오는 함수
-  const fetchNews = useCallback(async () => {
+  const fetchNews = async () => {
     if (interestedItems.length === 0) {
       setNewsItems([]);
       return;
@@ -22,27 +23,31 @@ export default function InterestedNewsBox() {
 
     try {
       setIsLoading(true);
-      const newsPromises = interestedItems.map(async (item) =>
-        axios.get(`/api/news?code=${item.code}&stockName=${encodeURIComponent(item.name)}`).then((res) => ({
-          stockName: item.name,
-          news: res.data,
-        }))
-      );
 
-      const newsResponses = await Promise.all(newsPromises);
-      
-      setNewsItems(newsResponses);
+      // codes와 stockNames를 콤마로 구분된 문자열로 생성
+      const codes = interestedItems.map((item) => item.code).join(',');
+      const stockNames = interestedItems.map((item) => item.name).join(',');
+
+      // 한 번의 API 호출로 모든 뉴스 데이터를 가져옴
+      const response = await axios.get('/api/news', {
+        params: {
+          codes,
+          stockNames,
+        },
+      });
+
+      setNewsItems(response.data);
     } catch (error) {
       console.error("뉴스 데이터를 가져오는 중 오류 발생:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [interestedItems]);
+  };
 
   // 관심종목 데이터가 변경될 때 뉴스 데이터 다시 가져오기
   useEffect(() => {
     fetchNews();
-  }, [fetchNews]);
+  }, [interestedItems]);
 
   // selectedStock 초기값 동기화
   useEffect(() => {
@@ -54,7 +59,7 @@ export default function InterestedNewsBox() {
   // 선택된 종목의 뉴스 필터링
   const filteredNewsItems = newsItems.flatMap((item) =>
     item.stockName === selectedStock
-      ? item.news.newsItems.map((newsItem) => ({
+      ? item.newsItems.map((newsItem) => ({
           ...newsItem,
           stockName: item.stockName, // 뉴스 항목에 stockName 추가
         }))
@@ -92,7 +97,6 @@ export default function InterestedNewsBox() {
           )}
         </div>
       )}
-      
 
       <div className={classes.news_wrapper}>
         {isLoading ? (

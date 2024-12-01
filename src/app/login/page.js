@@ -38,7 +38,7 @@ export default function Login() {
   return (
     <div className={classes.container}>
       {/* 상단 로고와 텍스트 */}
-      <Link className={classes.logoContainer} href={'/'}>
+      <div className={classes.logoContainer}>
         <Image
           src={logo}
           alt="SuperFantastic Logo"
@@ -46,7 +46,7 @@ export default function Login() {
           priority
         />
         <h1 className={classes.logoText}>SuperFantastic</h1>
-      </Link>
+      </div>
 
       <form onSubmit={handleSubmit} className={classes.form}>
         <div className={classes.inputGroup}>

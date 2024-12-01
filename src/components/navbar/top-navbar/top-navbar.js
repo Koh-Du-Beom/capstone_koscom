@@ -24,7 +24,6 @@ export default function TopNavBar() {
         login(data.user); 
       } else {
         logout();
-        alert('서비스 이용 시 로그인이 필요합니다');
         redirect('/login');
       }
     };
