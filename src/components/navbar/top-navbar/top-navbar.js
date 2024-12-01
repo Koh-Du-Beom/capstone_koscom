@@ -70,7 +70,7 @@ export default function TopNavBar() {
           </Nav>
           <Nav className="ms-auto">
             <NavDropdown title="내 정보" id="basic-nav-dropdown" className={`text ${classes.navbarLink}`}>
-              <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} href="/mypage">마이페이지</NavDropdown.Item>
+              <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} href="/main/mypage">마이페이지</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} onClick={handleLogout}>
                 로그아웃
