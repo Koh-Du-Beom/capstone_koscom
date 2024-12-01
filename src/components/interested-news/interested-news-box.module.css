@@ -96,27 +96,3 @@
   color: #6c757d;
   text-align: center;
 }
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.pagination button {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  padding: 8px 12px;
-  margin: 0 5px;
-  cursor: pointer;
-}
-
-.pagination button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.pagination .activePage {
-  background-color: #9DF1B3;
-  color: white;
-}

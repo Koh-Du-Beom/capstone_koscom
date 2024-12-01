@@ -30,7 +30,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ko">
       <body className={notoSansKR.variable}>
-        <TopNavBar />
         <main className="contents">
           {children}
         </main>	

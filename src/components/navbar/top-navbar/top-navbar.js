@@ -24,7 +24,7 @@ export default function TopNavBar() {
         login(data.user); 
       } else {
         logout();
-        redirect('/login');
+        redirect('/auth/login');
       }
     };
 
@@ -38,7 +38,7 @@ export default function TopNavBar() {
     });
     if (res.ok) {
       logout();
-      redirect('/login');
+      redirect('/auth/login');
 
     } else {
       alert('로그아웃에 실패했습니다.');
@@ -48,7 +48,7 @@ export default function TopNavBar() {
   return (
     <Navbar style={{ backgroundColor: '#9DF1B3' }} sticky="top" expand="lg">
       <Container>
-        <Navbar.Brand as={Link} href="/" className="d-flex align-items-center text-white me-4" style={{ textDecoration: "none" }}>
+        <Navbar.Brand as={Link} href="/main" className="d-flex align-items-center text-white me-4" style={{ textDecoration: "none" }}>
           <Image
             src="/images/SuperFantastic.png"
             alt="SuperFantastic Logo"
@@ -61,23 +61,20 @@ export default function TopNavBar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} href="/stockFilter" className={`text ${classes.navbarLink}`}>종목필터</Nav.Link>
-            <Nav.Link as={Link} href="/financeData" className={`text ${classes.navbarLink}`}>주식분석</Nav.Link>
-            <Nav.Link as={Link} href="/backTesting" className={`text ${classes.navbarLink}`}>백테스트</Nav.Link>
-            <Nav.Link as={Link} href="/portfolio" className={`text ${classes.navbarLink}`}>포트폴리오 추천</Nav.Link>
+            <Nav.Link as={Link} href="/main/stockFilter" className={`text ${classes.navbarLink}`}>종목필터</Nav.Link>
+            <Nav.Link as={Link} href="/main/financeData" className={`text ${classes.navbarLink}`}>주식분석</Nav.Link>
+            <Nav.Link as={Link} href="/main/backTesting" className={`text ${classes.navbarLink}`}>백테스트</Nav.Link>
+            <Nav.Link as={Link} href="/main/portfolio" className={`text ${classes.navbarLink}`}>포트폴리오 추천</Nav.Link>
           </Nav>
           <Nav className="ms-auto">
-            {isLoggedIn ? (
-              <NavDropdown title="내 정보" id="basic-nav-dropdown" className={`text ${classes.navbarLink}`}>
-                <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} href="/mypage">마이페이지</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} onClick={handleLogout}>
-                  로그아웃
-                </NavDropdown.Item>
-              </NavDropdown>
-            ) : (
-              <Nav.Link href="/login" className={`text ${classes.navbarLink}`}>로그인</Nav.Link>
-            )}
+            <NavDropdown title="내 정보" id="basic-nav-dropdown" className={`text ${classes.navbarLink}`}>
+              <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} href="/mypage">마이페이지</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item className={`text ${classes.navbarDropdownLink}`} onClick={handleLogout}>
+                로그아웃
+              </NavDropdown.Item>
+            </NavDropdown>
+            
           </Nav>
         </Navbar.Collapse>
       </Container>
