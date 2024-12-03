@@ -3,12 +3,14 @@ import { useState } from 'react';
 import classes from './page.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +28,7 @@ export default function SignUp() {
 
     if (res.ok) {
       alert('회원가입이 완료되었습니다.');
-      redirect('/auth/login');
+      router.push('/auth/login');
     } else {
       const data = await res.json();
       alert(data.message);
