@@ -53,7 +53,7 @@ export default function Login() {
         <div className={classes.inputGroup}>
           <input
             type="text"
-            placeholder="아이디 또는 전화번호"
+            placeholder="이메일을 입력하세요"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
