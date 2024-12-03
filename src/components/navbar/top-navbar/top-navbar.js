@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import useAuthStore from "@/store/authStore";
 
 export default function TopNavBar() {
-  const { isLoggedIn, login, logout } = useAuthStore();
+  const { updateLoginState ,isLoggedIn, login, logout } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function TopNavBar() {
       });
       if (res.ok) {
         const data = await res.json();
-        login(data.user); 
+        updateLoginState(data.user);
       } else {
         logout();
         alert("로그인하지 않으면 이용이 불가능합니다.");
@@ -31,7 +31,7 @@ export default function TopNavBar() {
     };
 
     checkLoginStatus();
-  }, [login, logout]);
+  }, [login]);
 
   const handleLogout = async () => {
     const res = await fetch('/api/auth/logout', {

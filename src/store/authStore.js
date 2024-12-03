@@ -18,6 +18,17 @@ const useAuthStore = create((set, get) => ({
     await get().fetchInterestedItems();
   },
 
+  updateLoginState: (userData) => {
+    set({
+      isLoggedIn: true,
+      email: userData.email,
+    });
+    // 관심 종목 데이터가 없을 경우에만 로드
+    if (get().interestedItems.length === 0) {
+      get().fetchInterestedItems();
+    }
+  },
+
   // 로그아웃
   logout: () =>
     set({
@@ -65,9 +76,11 @@ const useAuthStore = create((set, get) => ({
 
   // 관심 종목 가져오기
   fetchInterestedItems: async () => {
-    const { email } = get();
-    if (!email) return;
-
+    const { email, interestedItems } = get();
+  
+    // 이미 관심 종목이 로드된 경우 API 호출 방지
+    if (!email || interestedItems.length > 0) return;
+  
     try {
       const response = await axios.get('/api/interestedItems', {
         params: { email },
