@@ -74,7 +74,7 @@
 /* 드롭다운 스타일 끝 */
 
 .reports {
-  height: 70vh; /* 컨테이너 높이 고정 */
+  height: 65vh; /* 컨테이너 높이 고정 */
   overflow-x: hidden;
   overflow-y: auto; /* 수직 스크롤 활성화 */
   padding: 10px;
