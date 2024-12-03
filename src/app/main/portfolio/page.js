@@ -1,32 +1,22 @@
 'use client'
 import React, { useEffect } from 'react';
+import PortfolioRecommendTable from '@/components/portfolio/recommends/recommend-table';
 
 export default function PortfolioPage() {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js';
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-      "symbols": [
-        ["Apple", "NASDAQ:AAPL"]
-      ],
-      "chartOnly": false,
-      "width": 600,
-      "height": 400,
-      "locale": "kr",
-      "colorTheme": "light",
-      "autosize": false,
-      "showVolume": true,
-      "showMA": true,
-    });
-    
-    document.getElementById('tradingview-widget').appendChild(script);
-  }, []);
+  const data = [
+    { email: 'user1@example.com', rebalMethod: '지정비중', stocks: '삼성전자, SK하이닉스', rateReturns: '12.5%', recommends: 2048 },
+    { email: 'user2@example.com', rebalMethod: '동일비중', stocks: '현대차, LG화학', rateReturns: '8.3%', recommends: 1689 },
+    { email: 'user3@example.com', rebalMethod: '절대모멘텀', stocks: '카카오, 네이버', rateReturns: '15.7%', recommends: 1210 },
+    { email: 'user4@example.com', rebalMethod: '최소 분산', stocks: '포스코, KT&G', rateReturns: '2.1%', recommends: 231 },
+    { email: 'user5@example.com', rebalMethod: '최대 다각화', stocks: '한화, 셀트리온', rateReturns: '5.9%', recommends: 142 },
+  ];
+
 
   return (
-    <div>
-      <h1>Portfolio 페이지</h1>
-      <div id="tradingview-widget"></div>
-    </div>
+    <>
+      <PortfolioRecommendTable data={data}/>
+    
+    
+    </>
   );
 }

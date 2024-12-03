@@ -1,0 +1,60 @@
+.tr {
+  display: table-row;
+  vertical-align: middle;
+  border-bottom: 1px solid #ddd;
+}
+
+.td {
+  padding: 12px 16px; /* 셀 안의 여백 */
+  text-align: center; /* 텍스트 가운데 정렬 */
+  font-size: 1rem;
+  font-weight: bold;
+  vertical-align: middle; /* 수직 가운데 정렬 */
+}
+
+.thead {
+  background-color: #f9f9f9; /* 연한 배경색 */
+  border-bottom: 2px solid #ddd; /* 테두리로 구분 */
+}
+
+.th{
+  padding: 12px 16px; /* 셀 내부 여백 */
+  text-align: center; /* 텍스트 가운데 정렬 */
+  font-size: 1rem; /* 글씨 크기 */
+  font-weight: bold; /* 텍스트 굵게 */
+  color: #333; /* 텍스트 색상 */
+}
+
+/* 수익률 강조 */
+.td:nth-child(4) {
+  color: #1f8c22; /* 녹색 */
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* View와 Like 아이콘 추가 */
+.td:nth-child(5) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* 아이콘 간격 */
+}
+
+.recommendButton{
+  border: none;
+  background-color: transparent;
+}
+
+.detailButton{
+  background-color: #9DF1B3;
+  color: #191919;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 10px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+}
+
+.detailButton:hover{
+  border: 2px solid #191919;
+}
