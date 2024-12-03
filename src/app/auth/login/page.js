@@ -1,38 +1,53 @@
 'use client';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import classes from './page.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import useAuthStore from '@/store/authStore';
+import Loading from '@/app/loading';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
   const { login } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include', // 쿠키를 포함하여 요청
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // 쿠키를 포함하여 요청
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (res.ok) {
-      const data = await res.json();
-      await login(data.user); // 로그인 및 관심 종목 가져오기
-      router.push('/main'); // redirect 대신 router.push 사용
-    } else {
-      const data = await res.json();
-      alert(data.message);
+      if (res.ok) {
+        const data = await res.json();
+        await login(data.user); // 로그인 및 관심 종목 가져오기
+        router.push('/main'); // 로그인 성공 시 메인 페이지로 이동
+      } else {
+        const data = await res.json();
+        alert(data.message);
+      }
+    } finally {
+      setIsLoading(false); // 로딩 종료
     }
   };
+
+  if (isLoading){
+    return (
+      <Suspense fallback>
+        <Loading/>
+      </Suspense>
+    )
+  }
 
   return (
     <div className={classes.container}>
