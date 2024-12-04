@@ -1,0 +1,36 @@
+.detailContainer {
+  background-color: #ffffff;
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap; /* 여러 요소가 한 줄에 맞지 않을 경우 줄바꿈 */
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0; /* 행의 구분선 */
+}
+
+.row:last-child {
+  border-bottom: none; /* 마지막 행은 구분선 제거 */
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  margin-right: 16px; /* 그룹 간 간격 */
+  min-width: 100px; /* 그룹 최소 너비 */
+  flex: 1;
+}
+
+.label {
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 4px;
+}
+
+.value {
+  color: #666666;
+}

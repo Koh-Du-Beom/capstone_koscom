@@ -34,3 +34,9 @@
   margin-top: 10px;
   color: red;
 }
+
+.contents{
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
