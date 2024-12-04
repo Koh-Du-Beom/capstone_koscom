@@ -3,22 +3,32 @@ import classes from './interested-items.module.css';
 import Image from 'next/image';
 import KospiLogo from '../../../public/svgs/kospi.svg';
 import KosdaqLogo from '../../../public/svgs/kosdaq.svg';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import ComponentLoading from '../loading/component-loading';
 
 export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
   const { setHoveredItem } = useHoveredItemStore(); // Zustand 상태 함수
-  const [loading, setLoading] = useState(false); // API 호출 중 로딩 상태 관리
+  const [loadingItemCode, setLoadingItemCode] = useState(null); // 특정 항목에 대한 로딩 상태 관리
+  const abortControllerRef = useRef(null); // AbortController를 저장하는 ref
 
   const handleMouseEnter = async (item) => {
     if (isEditMode) return; // 편집 모드에서는 hoveredItem 업데이트를 막음
 
-    setLoading(true); // 로딩 시작
+    // 이전 요청이 있으면 중단
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController(); // 새 AbortController 생성
+    abortControllerRef.current = controller; // ref에 저장
+
+    setLoadingItemCode(item.code); // 로딩 중인 항목 설정
     try {
       const response = await fetch('/api/mini-stock-graph', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stockCode: item.code }),
+        signal: controller.signal, // 요청에 AbortController의 signal 추가
       });
 
       if (!response.ok) {
@@ -28,9 +38,21 @@ export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
       const data = await response.json();
       setHoveredItem({ ...item, graphData: data }); // 그래프 데이터 포함하여 상태 업데이트
     } catch (error) {
-      console.error('Error fetching graph data:', error);
+      if (error.name === 'AbortError') {
+        console.log('Fetch aborted'); // 요청이 중단되었음을 로그로 표시
+      } else {
+        console.error('Error fetching graph data:', error);
+      }
     } finally {
-      setLoading(false); // 로딩 종료
+      setLoadingItemCode(null); // 로딩 종료
+    }
+  };
+
+  const handleMouseLeave = () => {
+    // hover 중단 시 요청 중단
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null; // controller 초기화
     }
   };
 
@@ -45,9 +67,10 @@ export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
 
         return (
           <div
-            className={classes.container}
+            className={`${classes.container} ${classes.hoverable}`} // hover 스타일 클래스 추가
             key={index}
             onMouseEnter={() => handleMouseEnter(item)}
+            onMouseLeave={handleMouseLeave} // mouseLeave 시 요청 중단
           >
             <div className={classes.logo}>
               <Image
@@ -103,11 +126,10 @@ export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
                 삭제
               </button>
             ) : (
-              loading && (
-                <div className={classes.componentLoading}> 
+              loadingItemCode === item.code && ( // 특정 항목에만 로딩 컴포넌트 표시
+                <div className={classes.componentLoading}>
                   <ComponentLoading />
                 </div>
-                // 따로 css만드는거보단 저 위치 그대로 놓고싶어서
               )
             )}
           </div>

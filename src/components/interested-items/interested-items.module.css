@@ -7,6 +7,16 @@
   box-sizing: border-box;
   border-radius: 8px;
   position: relative; /* 삭제 버튼을 절대 위치로 배치하기 위해 position을 relative로 설정 */
+  transition: background-color 0.3s ease; /* hover 애니메이션 */
+}
+
+
+.hoverable {
+  cursor: pointer; /* hover 시 포인터 표시 */
+}
+
+.hoverable:hover {
+  background-color: #f8f9fa; /* hover 시 배경색 변경 */
 }
 
 .deleteButton {

@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 
 const useHoveredItemStore = create((set) => ({
   hoveredItem: null, // 현재 hover된 아이템
