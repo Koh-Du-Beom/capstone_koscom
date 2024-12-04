@@ -10,6 +10,7 @@
 .middleSection,
 .rightSection {
   width: 30%;
+  height: 85vh;
 }
 
 .middleSection {
@@ -25,7 +26,6 @@
 .leftSection {
   padding-right: 10px;
 	margin-left: 40px;
-	height: 80vh;
 }
 
 .middleSection {

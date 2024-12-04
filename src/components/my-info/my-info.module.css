@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  border-radius: 8px;
+  width: 40vw;
+}
+
+.userInfo {
+  margin-bottom: 16px;
+  padding: 8px 16px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.userInfo h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.userInfo p {
+  margin: 0;
+  font-size: 14px;
+  color: #666666;
+}
+
+.itemsContainer {
+  display: flex;
+  flex-direction: column; /* 세로 배치 */
+  gap: 16px; /* 아이템 간 간격 */
+  width: 100%; /* 전체 너비 차지 */
+}

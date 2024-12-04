@@ -1,33 +1,16 @@
 .container {
-  max-width: 600px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 5vw;
+  display: flex;
+  gap: 2vw;
 }
 
 .info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 20px;
-}
-
-.passwordChange input {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.passwordChange button {
-  padding: 10px 15px;
-  background-color: #9df1b3;
-  border: none;
-  color: #191919;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.passwordChange button:hover {
-  background-color: #7cb98e;
+  width: 40vw;
 }
 
 .message {
@@ -38,5 +21,7 @@
 .contents{
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: 40vw;
   gap: 50px;
 }

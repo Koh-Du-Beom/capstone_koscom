@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import useAuthStore from '@/store/authStore'; // zustand store import
 import classes from './page.module.css';
 import DetailBox from '@/components/portfolio/details/detail-box';
+import InterestedItemsBox from '@/components/interested-items/interested-items-box';
+import MyInfo from '@/components/my-info/my-info';
 
 export default function MyPage() {
   const { email } = useAuthStore(); // zustand에서 email 가져오기
@@ -14,14 +16,14 @@ export default function MyPage() {
 
   return (
     <div className={classes.container}>
-      <h1>마이페이지</h1>
+      
 
-      <div className={classes.info}>
-        <p><strong>아이디:</strong> {email}</p>
-      </div>
+      <MyInfo />
 
-      <h1>나의 포트폴리오</h1>
+
+      
       <div className={classes.contents}>
+        <h1>나의 포트폴리오</h1>
         {/* 나중에 map함수로 받아온 포트폴리오 데이터 보여주기 */}
         <DetailBox />
         <DetailBox />
