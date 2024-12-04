@@ -1,17 +1,19 @@
-import { useState } from 'react';
 import useHoveredItemStore from '@/store/hoveredItemStore';
 import classes from './interested-items.module.css';
 import Image from 'next/image';
 import KospiLogo from '../../../public/svgs/kospi.svg';
 import KosdaqLogo from '../../../public/svgs/kosdaq.svg';
+import { useState } from 'react';
+import ComponentLoading from '../loading/component-loading';
 
 export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
-  const { setHoveredItem, clearHoveredItem } = useHoveredItemStore(); // Zustand 상태 함수
+  const { setHoveredItem } = useHoveredItemStore(); // Zustand 상태 함수
   const [loading, setLoading] = useState(false); // API 호출 중 로딩 상태 관리
 
   const handleMouseEnter = async (item) => {
-    setHoveredItem(item); // hoveredItem 상태 업데이트
-    setLoading(true);
+    if (isEditMode) return; // 편집 모드에서는 hoveredItem 업데이트를 막음
+
+    setLoading(true); // 로딩 시작
     try {
       const response = await fetch('/api/mini-stock-graph', {
         method: 'POST',
@@ -28,12 +30,8 @@ export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
     } catch (error) {
       console.error('Error fetching graph data:', error);
     } finally {
-      setLoading(false);
+      setLoading(false); // 로딩 종료
     }
-  };
-
-  const handleMouseLeave = () => {
-    clearHoveredItem(); // hover 상태 초기화
   };
 
   return (
@@ -50,7 +48,6 @@ export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
             className={classes.container}
             key={index}
             onMouseEnter={() => handleMouseEnter(item)}
-            onMouseLeave={handleMouseLeave}
           >
             <div className={classes.logo}>
               <Image
@@ -98,13 +95,20 @@ export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
               </div>
             </div>
 
-            {isEditMode && (
+            {isEditMode ? (
               <button
                 className={classes.deleteButton}
                 onClick={() => onRemoveItem(item.code)}
               >
                 삭제
               </button>
+            ) : (
+              loading && (
+                <div className={classes.componentLoading}> 
+                  <ComponentLoading />
+                </div>
+                // 따로 css만드는거보단 저 위치 그대로 놓고싶어서
+              )
             )}
           </div>
         );

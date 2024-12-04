@@ -1,3 +1,4 @@
+'use client'
 import InterestedItemsBox from '@/components/interested-items/interested-items-box';
 import InterestedNewsBox from '@/components/interested-news/interested-news-box';
 import RecentReportItemBox from '@/components/recent-report/recent-report-box';

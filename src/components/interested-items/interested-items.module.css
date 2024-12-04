@@ -26,6 +26,17 @@
   background-color: #ff0000;
 }
 
+.componentLoading{
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
 .logo img {
   width: 40px;
   height: 40px;

@@ -1,17 +1,20 @@
 import { createChart } from 'lightweight-charts';
 import { useEffect, useRef } from 'react';
+import useHoveredItemStore from '@/store/hoveredItemStore';
+import styles from './mini-stock-graph.module.css';
 
 export default function MiniGraph({ data }) {
   const chartContainerRef = useRef(null);
   const chartRef = useRef(null); // chart 인스턴스를 저장
+  const { clearHoveredItem } = useHoveredItemStore(); // zustand의 상태 초기화 함수
 
   useEffect(() => {
     if (!data || !chartContainerRef.current) return;
 
     // 차트 생성
     chartRef.current = createChart(chartContainerRef.current, {
-      width: 400, // Mini graph 크기
-      height: 300,
+      width: 800, // 더 큰 width 설정
+      height: 600, // 더 큰 height 설정
       layout: {
         backgroundColor: '#ffffff',
         textColor: '#000000',
@@ -40,5 +43,12 @@ export default function MiniGraph({ data }) {
     };
   }, [data]);
 
-  return <div ref={chartContainerRef}></div>;
+  return (
+    <div className={styles.container}>
+      <button className={styles.closeButton} onClick={clearHoveredItem}>
+        닫기
+      </button>
+      <div ref={chartContainerRef} className={styles.chart}></div>
+    </div>
+  );
 }
