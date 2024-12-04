@@ -24,7 +24,7 @@ export async function POST(request) {
 
     return new Promise((resolve, reject) => {
       const pythonPath = '/home/ubuntu-server/superfantastic/bin/python'; // Python 실행 경로
-      const scriptPath = path.resolve('/home/ubuntu-server/stock_graph.py'); // Python 스크립트 경로
+      const scriptPath = path.resolve('/home/ubuntu-server/mini_stock_graph.py'); // Python 스크립트 경로
 
       // Python 프로세스 실행
       const pythonProcess = spawn(pythonPath, [scriptPath, '--stockCode', stockCode]);

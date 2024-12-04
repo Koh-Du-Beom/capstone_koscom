@@ -2,6 +2,7 @@
   display: flex;
   justify-content: space-between;
   padding: 20px;
+  position: relative;
 }
 
 
@@ -33,4 +34,18 @@
 
 .rightSection {
   padding-left: 10px;
+}
+
+.miniGraph{
+  position: absolute;
+  top: 20px; /* rightSection 내부에서 상단 여백 */
+  left: 100%; /* rightSection 오른쪽 밖으로 배치 */
+  z-index: 1000; /* 다른 요소 위에 표시 */
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 4px;
+  width: 400px;
+  height: 300px;
 }

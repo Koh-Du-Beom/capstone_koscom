@@ -108,3 +108,15 @@
   border-top: none;
 }
 
+.miniGraphContainer {
+  position: absolute; /* 부모 요소를 기준으로 위치를 설정 */
+  top: 110%; /* 부모 요소의 아래로 배치 */
+  left: 0; /* 부모 요소의 왼쪽과 맞춤 */
+  z-index: 1000; /* 다른 요소 위에 표시되도록 설정 */
+  background-color: #ffffff; /* 배경색 설정 */
+  border: 1px solid #ccc; /* 경계선 설정 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  padding: 10px; /* 내부 여백 */
+  border-radius: 4px; /* 모서리를 둥글게 설정 */
+  width: 400px; /* 그래프 컨테이너 크기 고정 */
+}

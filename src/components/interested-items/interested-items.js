@@ -1,20 +1,19 @@
 import { useState } from 'react';
+import useHoveredItemStore from '@/store/hoveredItemStore';
 import classes from './interested-items.module.css';
 import Image from 'next/image';
 import KospiLogo from '../../../public/svgs/kospi.svg';
 import KosdaqLogo from '../../../public/svgs/kosdaq.svg';
-import MiniGraph from '../mini-graph/mini-graph';
 
 export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
-  const [hoveredItem, setHoveredItem] = useState(null); // 현재 hover된 item의 데이터를 저장
-  const [graphData, setGraphData] = useState(null); // hover된 item의 그래프 데이터를 저장
+  const { setHoveredItem, clearHoveredItem } = useHoveredItemStore(); // Zustand 상태 함수
   const [loading, setLoading] = useState(false); // API 호출 중 로딩 상태 관리
 
   const handleMouseEnter = async (item) => {
-    setHoveredItem(item);
+    setHoveredItem(item); // hoveredItem 상태 업데이트
     setLoading(true);
     try {
-      const response = await fetch('/api/mini-stockGraph', {
+      const response = await fetch('/api/mini-stock-graph', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stockCode: item.code }),
@@ -25,7 +24,7 @@ export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
       }
 
       const data = await response.json();
-      setGraphData(data); // 그래프 데이터 저장
+      setHoveredItem({ ...item, graphData: data }); // 그래프 데이터 포함하여 상태 업데이트
     } catch (error) {
       console.error('Error fetching graph data:', error);
     } finally {
@@ -34,8 +33,7 @@ export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
   };
 
   const handleMouseLeave = () => {
-    setHoveredItem(null);
-    setGraphData(null);
+    clearHoveredItem(); // hover 상태 초기화
   };
 
   return (
@@ -107,17 +105,6 @@ export default function InterestedItems({ items, isEditMode, onRemoveItem }) {
               >
                 삭제
               </button>
-            )}
-
-            {/* Hover된 아이템에 대해 MiniGraph 컴포넌트 렌더링 */}
-            {hoveredItem?.code === item.code && (
-              <div className={classes.miniGraphContainer}>
-                {loading ? (
-                  <p>Loading graph...</p>
-                ) : (
-                  <MiniGraph data={graphData} />
-                )}
-              </div>
             )}
           </div>
         );
