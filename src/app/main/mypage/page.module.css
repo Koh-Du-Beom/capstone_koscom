@@ -1,36 +1,43 @@
 .container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
+  margin: 5vh auto; /* 세로 중앙 정렬 */
+  padding: 24px;
+  display: flex;
+  gap: 2vw; /* 양쪽 섹션 간 간격 */
+  align-items: flex-start;
+  border-radius: 12px;
+  min-height: 100vh;
+  width: 80vw;
 }
 
 .info {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 40%; /* 좌측 영역 */
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 좌측 영역 그림자 */
 }
 
-.passwordChange input {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.contents {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 60%; /* 우측 영역 */
+  gap: 20px;
+  padding: 20px; /* 내부 여백 */
+  background-color: #f9f9f9; /* 흰 배경 추가 */
+  border-radius: 8px; /* 둥근 테두리 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
 }
 
-.passwordChange button {
-  padding: 10px 15px;
-  background-color: #9df1b3;
-  border: none;
-  color: #191919;
+.subHeading {
+  font-size: 18px; /* 섹션 제목 크기 */
   font-weight: bold;
-  cursor: pointer;
-}
-
-.passwordChange button:hover {
-  background-color: #7cb98e;
-}
-
-.message {
-  margin-top: 10px;
-  color: red;
+  color: #333;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #e2e4e6; /* 강조용 하단선 */
+  padding-bottom: 4px;
+  width: 100%;
 }

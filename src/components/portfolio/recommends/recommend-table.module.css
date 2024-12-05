@@ -1,0 +1,14 @@
+
+.container{
+  padding: 5vw;
+}
+
+.title{
+  font-size: 3rem; /* 크기 조정 */
+  color: #ff4d4d; /* 빨간색 강조 */
+  font-weight: bold;
+  text-align: left; /* 왼쪽 정렬 */
+  margin-bottom: 20px; /* 테이블과의 간격 */
+  border-bottom: 2px solid #ddd; /* 구분선 추가 */
+  padding-bottom: 10px; /* 구분선과 텍스트 간격 */
+}

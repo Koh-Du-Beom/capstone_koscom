@@ -30,6 +30,11 @@
   background-color: none;
 }
 
+.navbarDropdownLink:active, .navbarDropdownLink.active {
+  background-color: #9DF1B3; /* 초록 배경색 */
+  color: black; /* 텍스트 색상 */
+  text-decoration: none;
+}
 
 .circularImage {
   border-radius: 20%; /* 원형으로 만듦 */
