@@ -3,6 +3,7 @@
   padding: 5vw;
   display: flex;
   gap: 2vw;
+  min-height: 100vh;
 }
 
 .info {

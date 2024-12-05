@@ -2,7 +2,6 @@
   display: flex;
   justify-content: space-between;
   padding: 20px;
-  position: relative;
 }
 
 
@@ -26,6 +25,7 @@
 .leftSection {
   padding-right: 10px;
 	margin-left: 40px;
+  position : relative;
 }
 
 .middleSection {
@@ -36,10 +36,11 @@
   padding-left: 10px;
 }
 
-.miniGraph{
-  position: absolute;
-  top: 20px; /* rightSection 내부에서 상단 여백 */
-  left: 100%; /* rightSection 오른쪽 밖으로 배치 */
+.miniGraph {
+  position: absolute; /* leftSection 내부에서 절대 위치 지정 */
+  top: 0; /* leftSection의 상단에 맞춤 */
+  left: 100%; /* leftSection의 너비 바로 오른쪽에 위치 */
+  margin-left: 10px; /* leftSection과의 간격 조정 */
   z-index: 1000; /* 다른 요소 위에 표시 */
   background-color: #ffffff;
   border: 1px solid #ccc;

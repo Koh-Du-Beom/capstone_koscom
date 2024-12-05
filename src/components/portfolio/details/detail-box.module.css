@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 90%;
   margin: 0 auto;
   background-color: #f5f5f5;
   border-radius: 4px;
@@ -14,11 +14,14 @@
   padding: 0 16px;
   border-top: 1px solid #e0e0e0;
   overflow: hidden;
-  max-height: 0; /* 접힌 상태 */
-  transition: max-height 0.8s ease, padding 0.8s ease;
+  max-height: 0; /* 축소 상태 */
+  opacity: 0; /* 투명도 */
+  transform: translateY(-10px); /* 살짝 위에서 시작 */
+  transition: max-height 0.8s ease, opacity 0.8s ease, transform 0.8s ease;
 }
 
 .contents.enlarged {
-  max-height: 500px; /* 충분히 큰 값으로 설정 (예: 500px) */
-  padding: 16px;
+  max-height: 500px; /* 적당한 최대 높이 */
+  opacity: 1; /* 불투명도 */
+  transform: translateY(0); /* 원래 위치로 이동 */
 }
