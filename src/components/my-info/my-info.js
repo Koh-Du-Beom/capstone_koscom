@@ -1,22 +1,20 @@
-import useAuthStore from "@/store/authStore"
-import InterestedItemsBox from "../interested-items/interested-items-box"
-import classes from './my-info.module.css'
+import useAuthStore from "@/store/authStore";
+import InterestedItemsBox from "../interested-items/interested-items-box";
+import classes from './my-info.module.css';
 
-export default function MyInfo(){
+export default function MyInfo() {
   const { email } = useAuthStore();
 
   return (
     <section className={classes.container}>
-      <h2>내 정보</h2>
       <div className={classes.userInfo}>
-        
-        <p>{email}</p>
+        <h3 className={classes.subHeading}>내 정보</h3>
+        <p><strong>이메일:</strong> {email}</p>
       </div>
-      <div className={classes.itemsContainer}>
+      <div className={classes.interestedItemsSection}>
+        <h3 className={classes.subHeading}>나의 관심 종목</h3>
         <InterestedItemsBox />
       </div>
-      
-
     </section>
-  )
+  );
 }

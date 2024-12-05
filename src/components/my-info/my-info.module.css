@@ -2,34 +2,55 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 16px;
-  border-radius: 8px;
+  padding: 24px; /* 더 넉넉한 패딩 */
+  background-color: #f9f9f9; /* 배경 색 추가로 구분감 제공 */
+  border-radius: 12px; /* 둥근 테두리로 부드러운 느낌 */
   width: 40vw;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 약간의 그림자로 심미성 강화 */
 }
 
 .userInfo {
-  margin-bottom: 16px;
-  padding: 8px 16px;
+  margin-bottom: 20px;
+  padding: 16px;
   background-color: #ffffff;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 8px; /* 둥근 테두리 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 더 뚜렷한 그림자 */
+  width: 100%; /* 전체 너비 사용 */
 }
 
 .userInfo h2 {
   margin: 0 0 8px;
-  font-size: 18px;
+  font-size: 20px; /* 더 큰 제목 폰트 */
   font-weight: bold;
+  color: #333; /* 더 어두운 색상으로 가독성 향상 */
 }
 
 .userInfo p {
   margin: 0;
-  font-size: 14px;
-  color: #666666;
+  font-size: 16px; /* 조금 더 큰 폰트 */
+  color: #555; /* 중간 색상으로 시각적 균형 */
 }
 
 .itemsContainer {
   display: flex;
-  flex-direction: column; /* 세로 배치 */
-  gap: 16px; /* 아이템 간 간격 */
+  flex-direction: column;
+  gap: 16px; /* 아이템 간의 간격 유지 */
   width: 100%; /* 전체 너비 차지 */
+  padding: 16px;
+  background-color: #ffffff; /* 백그라운드 색상 추가 */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.subHeading {
+  font-size: 18px; /* 섹션 제목 크기 */
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #e2e4e6; /* 강조용 하단선 */
+  padding-bottom: 4px;
+}
+
+.interestedItemsSection {
+  width: 100%;
 }

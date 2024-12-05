@@ -19,11 +19,9 @@ export default function MyPage() {
       
 
       <MyInfo />
-
-
       
       <div className={classes.contents}>
-        <h1>나의 포트폴리오</h1>
+        <h3 className={classes.subHeading}>나의 포트폴리오</h3>
         {/* 나중에 map함수로 받아온 포트폴리오 데이터 보여주기 */}
         <DetailBox />
         <DetailBox />
