@@ -2,8 +2,11 @@
 import { useState, useEffect } from "react";
 import SimpleStockListModal from "@/components/modal/stock-list-modal/stock-list-modal";
 import classes from './back-testing-assets.module.css';
+import useAuthStore from "@/store/authStore";
 
 export default function BackTestingAsset({ options, updateParentObject }) {
+  const { interestedItems } = useAuthStore();
+  
   const [selectedStocks, setSelectedStocks] = useState([]); // 선택된 주식 목록
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태
   const [stockRatios, setStockRatios] = useState({}); // 각 주식의 비율
@@ -17,6 +20,18 @@ export default function BackTestingAsset({ options, updateParentObject }) {
 
     updateParentObject(options, formattedStocks);
   };
+
+  useEffect(() => {
+    if (interestedItems && interestedItems.length > 0) {
+      const extractedStocks = interestedItems.map((item) => ({
+        name: item.name,
+        code: item.code,
+      }));
+  
+      setSelectedStocks(extractedStocks); // selectedStocks 업데이트
+    }
+  }, [interestedItems]);
+  
 
   // 비율 합이 100%인지 확인하고 오류 메시지 설정
   const checkTotalRatio = () => {
