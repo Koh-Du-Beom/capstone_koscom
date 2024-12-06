@@ -9,7 +9,7 @@ export default function RecommendModal({ portfolio_name, toggleModal }) {
 
   // 구매 페이지로 이동
   const handlePurchase = () => {
-    router.push(`/main/portfolio/purchase/${encodeURIComponent(portfolio_name)}`);
+    router.push(`/main/portfolio/purchase/${portfolio_name}`);
   };
 
   return (
