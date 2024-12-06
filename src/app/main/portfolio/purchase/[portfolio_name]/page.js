@@ -3,10 +3,11 @@
 import styles from './page.module.css';
 import { useState, useRef } from 'react';
 import useAuthStore from '@/store/authStore';
+import { useRouter } from 'next/navigation';
 
 export default function PurchasePage({ params }) {
   const { portfolio_name } = params; // URL에서 포트폴리오 이름 가져오기
-
+  const router = useRouter();
   const { email } = useAuthStore();
   const [agree, setAgree] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false); // 펼치기 여부 상태
@@ -168,7 +169,7 @@ export default function PurchasePage({ params }) {
 
         {/* 버튼 */}
         <div className={styles.buttonGroup}>
-          <button type="button" className={styles.cancelButton} onClick={() => {}}>
+          <button type="button" className={styles.cancelButton} onClick={() => {router.push('/main/portfolio')}}>
             취소
           </button>
           <button type="submit" className={styles.purchaseButton}>
