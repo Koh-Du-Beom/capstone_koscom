@@ -1,0 +1,29 @@
+.modalTitle {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #343a40; /* 어두운 제목 색상 */
+}
+
+.modalBody {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #212529; /* 본문 색상 */
+}
+
+.portfolioName {
+  color: #007bff; /* 포트폴리오 이름 색상 */
+}
+
+.paidText {
+  color: red; /* 유료 강조 색상 */
+  font-weight: bold;
+  text-decoration: underline; /* 밑줄 추가 */
+  margin: 0 5px;
+}
+
+.additionalText {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #495057; /* 서브 텍스트 색상 */
+}
