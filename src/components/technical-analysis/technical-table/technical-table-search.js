@@ -5,6 +5,8 @@ import classes from './technical-table-search.module.css';
 function TechnicalTableSearch({ onSearch, onClose, position, searchResults, onResultSelect }) {
   const [searchQuery, setSearchQuery] = useState('');
 
+  if (!position) return null; // position이 null이면 아무것도 렌더링하지 않음
+
   return ReactDOM.createPortal(
     <div
       className={classes.searchContainer}

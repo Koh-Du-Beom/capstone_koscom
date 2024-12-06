@@ -17,7 +17,11 @@ export default function TechnicalTable({ data }) {
 
   const listRef = useRef(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchButtonPosition, setSearchButtonPosition] = useState(null);
+  const [searchButtonPosition, setSearchButtonPosition] = useState({
+    top: 0,
+    left: 0,
+  });
+  
   const [searchResults, setSearchResults] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
 
