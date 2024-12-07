@@ -58,7 +58,6 @@ const SelectedStock = ({ onSelectStock }) => {
       }
 
       const graphData = await response.json();
-      console.log('Fetched Graph Data:', graphData); // 데이터를 콘솔에 출력
       onSelectStock(graphData); // 그래프 데이터 전달
     } catch (error) {
       console.error('Error fetching graph data:', error);

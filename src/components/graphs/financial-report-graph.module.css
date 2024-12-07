@@ -1,4 +1,6 @@
 .chartContainer {
+  display: flex; /* y축 레이블과 차트를 나란히 배치 */
+  align-items: center;
   margin-bottom: 20px;
   padding: 20px;
   border-radius: 8px;
@@ -13,14 +15,27 @@
   height: auto; /* 세로 자동 조절 */
 }
 
+.yAxisTitle {
+  writing-mode: vertical-lr; /* 텍스트를 수직으로 렌더링 */
+  font-size: 14px; /* 텍스트 크기 */
+  font-weight: bold; /* 텍스트 굵기 */
+  margin-right: 20px; /* 그래프와 간격 조정 */
+  color: #333; /* 텍스트 색상 */
+}
+
+.chartContent {
+  flex: 1; /* 차트 영역 확장 */
+  position: relative;
+}
+
 .chartToggleButton {
   display: inline-block;
   margin-bottom: 10px;
   padding: 5px 15px;
   font-size: 14px;
-  font-weight: 500;
-  color: #fff;
-  background-color: #007bff;
+  font-weight: bold; /* Font weight 설정 */
+  color: #000; /* 텍스트 색상 */
+  background-color: #9DF1B3; /* 새로운 배경색 */
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -30,7 +45,7 @@
 }
 
 .chartToggleButton:hover {
-  background-color: #0056b3;
+  background-color: #82c99b; /* Hover 시 어두운 녹색 */
 }
 
 .rangeSliderTrack {
@@ -44,18 +59,19 @@
 .rangeSliderThumb {
   height: 15px;
   width: 15px;
-  background-color: #007bff;
+  background-color: #9DF1B3; /* 새로운 색상 */
   border-radius: 50%;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .rangeSliderThumb:hover {
-  background-color: #0056b3;
+  background-color: #82c99b; /* Hover 시 어두운 녹색 */
 }
 
 .rangeValue {
   margin-top: 10px;
   font-size: 14px;
   color: #333;
+  font-weight: bold; /* Font weight 설정 */
 }

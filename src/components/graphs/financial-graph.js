@@ -80,7 +80,7 @@ export default function FinancialGraph({ graphData, updateGraphData, option }) {
         data: sortedYears.map(year => metricData[company][year] || null),
         backgroundColor: graphColors[colorIndex].backgroundColor,
         borderColor: graphColors[colorIndex].borderColor,
-        borderWidth: 1,
+        borderWidth: 2,
       };
     });
 
