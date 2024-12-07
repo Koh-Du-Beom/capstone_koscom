@@ -4,11 +4,36 @@ import PortfolioRecommendTable from '@/components/portfolio/recommends/recommend
 
 export default function PortfolioPage() {
   const data = [
-    { email: 'user1@example.com', rebalMethod: '지정비중', stocks: '삼성전자, SK하이닉스', rateReturns: '12.5%', recommends: 2048 },
-    { email: 'user2@example.com', rebalMethod: '동일비중', stocks: '현대차, LG화학', rateReturns: '8.3%', recommends: 1689 },
-    { email: 'user3@example.com', rebalMethod: '절대모멘텀', stocks: '카카오, 네이버', rateReturns: '15.7%', recommends: 1210 },
-    { email: 'user4@example.com', rebalMethod: '최소 분산', stocks: '포스코, KT&G', rateReturns: '2.1%', recommends: 231 },
-    { email: 'user5@example.com', rebalMethod: '최대 다각화', stocks: '한화, 셀트리온', rateReturns: '5.9%', recommends: 142 },
+    {
+      portfolio_name: "수익률 최강 포트폴리오",
+      email: "example@test.com", 
+      mainStocks: "삼성전자, SK하이닉스, 카카오", 
+      period: "1년", 
+      rateReturns: "25.4%",
+      sharpeRatio: "1.2",
+      mdd: "-10.5%",
+      scraps: 123,
+    },
+    {
+      portfolio_name: "안정성 포트폴리오",
+      email: "example@test.com",
+      mainStocks: "현대차, LG화학, NAVER",
+      period: "6개월",
+      rateReturns: "12.8%",
+      sharpeRatio: "0.9",
+      mdd: "-8.3%",
+      scraps: 85,
+    },
+    {
+      portfolio_name: "고위험 고수익",
+      email: "example@test.com",
+      mainStocks: "테슬라, 엔비디아, 애플",
+      period: "2년",
+      rateReturns: "40.3%",
+      sharpeRatio: "1.8",
+      mdd: "-15.2%",
+      scraps: 210,
+    }
   ];
 
 

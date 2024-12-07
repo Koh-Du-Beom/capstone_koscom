@@ -12,11 +12,14 @@ export default function PortfolioRecommendTable({ data }){
           {data.map((row, index) => (
             <RecommendTableRow
               key={index}
+              portfolio_name={row.portfolio_name}
               email={row.email}
-              rebalMethod={row.rebalMethod}
-              stocks={row.stocks}
+              mainStocks={row.mainStocks}
+              period={row.period}
               rateReturns={row.rateReturns}
-              recommends={row.recommends}
+              sharpeRatio={row.sharpeRatio}
+              mdd={row.mdd}
+              scraps={row.scraps}
             />
           ))}
         </tbody>
