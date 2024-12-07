@@ -25,7 +25,7 @@ export default function MainPage() {
       </div>
 
       <div className={classes.rightSection}>
-        <RecentReportItemBox /> 
+        {/* <RecentReportItemBox />  */}
 			</div>
     </main>
   );
