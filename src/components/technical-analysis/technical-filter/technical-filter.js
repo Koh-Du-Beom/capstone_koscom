@@ -48,7 +48,7 @@ export default function TechnicalFilter({ filterData, updateFilterData, onApplyF
 				Number(indicator.weight) < 0 ||
 				Number(indicator.weight) > 100
 		);
-	
+    
 		if (invalidWeight) {
 			alert('가중치에는 0에서 100 사이의 숫자만 입력 가능합니다.');
 			return;
@@ -84,37 +84,41 @@ export default function TechnicalFilter({ filterData, updateFilterData, onApplyF
   };
 
   // 가중치 변경 핸들러
+  // 가중치 변경 핸들러
   const handleWeightChange = (indicator, value) => {
-		// 상태 업데이트
-		setSelectedIndicators((prev) => ({
-			...prev,
-			[indicator]: { ...prev[indicator], weight: value },
-		}));
-	
-		// 에러 메시지 초기화
-		setError('');
-	
-		// 유효성 검사
-		if (value === '') {
-			// 빈 문자열은 허용
-			return;
-		}
-	
-		if (!/^\d+$/.test(value)) {
-			setError('가중치는 숫자만 입력 가능합니다.');
-			return;
-		}
-	
-		const weight = Number(value);
-	
-		if (weight < 0 || weight > 100) {
-			setError('가중치는 0에서 100 사이여야 합니다.');
-			return;
-		}
-	
-		// 에러가 없으므로 에러 메시지를 지웁니다.
-		setError('');
-	};
+    // `%` 제거하고 숫자만 상태에 저장
+    const numericValue = value.replace('%', '').trim();
+
+    setSelectedIndicators((prev) => ({
+      ...prev,
+      [indicator]: { ...prev[indicator], weight: numericValue },
+    }));
+
+    // 에러 메시지 초기화
+    setError('');
+
+    // 유효성 검사
+    if (numericValue === '') {
+      // 빈 문자열은 허용
+      return;
+    }
+
+    if (!/^\d+$/.test(numericValue)) {
+      setError('가중치는 숫자만 입력 가능합니다.');
+      return;
+    }
+
+    const weight = Number(numericValue);
+
+    if (weight < 0 || weight > 100) {
+      setError('가중치는 0에서 100 사이여야 합니다.');
+      return;
+    }
+
+    // 에러가 없으므로 에러 메시지를 지웁니다.
+    setError('');
+  };
+
 
   return (
     <div className={classes.filterContainer}>
@@ -161,10 +165,11 @@ export default function TechnicalFilter({ filterData, updateFilterData, onApplyF
                     type="text"
                     className={classes.weightInput}
                     disabled={!selectedIndicators.hasOwnProperty(indicator)}
-                    value={selectedIndicators[indicator]?.weight || ''}
+                    value={selectedIndicators[indicator]?.weight ? `${selectedIndicators[indicator]?.weight}%` : ''} // % 추가
                     onChange={(e) => handleWeightChange(indicator, e.target.value)}
                     placeholder="가중치 (%)"
                   />
+
                 </div>
               </div>
             ))}

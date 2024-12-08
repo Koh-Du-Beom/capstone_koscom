@@ -74,16 +74,18 @@ export default function BackTestingAsset({ options, updateParentObject, updateSa
 
   // 비율 입력값 검증 및 업데이트 함수
   const handleRatioChange = (code, event) => {
-    const value = event.target.value;
+    const value = event.target.value.replace('%', ''); // % 제거
     if (value === "" || /^\d+$/.test(value)) { // 빈 문자열 또는 숫자만 허용
       setStockRatios((prevRatios) => ({
         ...prevRatios,
-        [code]: value,
+        [code]: value, // 숫자만 상태에 저장
       }));
+      setRatioError(""); // 오류 초기화
     } else {
-      setRatioError("숫자를 입력해주세요.");
+      setRatioError("숫자를 입력해주세요."); // 오류 메시지 설정
     }
   };
+
 
   const handleDeleteStock = (code) => {
     setSelectedStocks((prevStocks) => prevStocks.filter((stock) => stock.code !== code));
@@ -103,11 +105,12 @@ export default function BackTestingAsset({ options, updateParentObject, updateSa
             <div className={classes.inputContainer}>
               <input
                 type="text"
-                value={stockRatios[stock.code] || ""}
+                value={stockRatios[stock.code] ? `${stockRatios[stock.code]}%` : ""} // % 추가
                 onChange={(event) => handleRatioChange(stock.code, event)}
                 placeholder="비율 입력 (%)"
                 className={classes.ratioInput}
               />
+
               <button
                 onClick={() => handleDeleteStock(stock.code)}
                 className={classes.deleteButton}
