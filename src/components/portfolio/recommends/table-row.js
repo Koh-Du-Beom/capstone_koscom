@@ -18,7 +18,6 @@ export default function RecommendTableRow({ portfolio_name, email, mainStocks, p
       <td className={classes.td}>{rateReturns}</td>
       <td className={classes.td}>{sharpeRatio}</td>
       <td className={classes.td}>{mdd}</td>
-      <td className={classes.td}>{scraps}</td>
       
       <td><button className={classes.detailButton} onClick={toggleModal}>자세히보기</button></td>
       {showModal && (

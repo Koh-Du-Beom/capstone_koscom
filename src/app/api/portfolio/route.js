@@ -8,7 +8,7 @@ export async function POST(request) {
     const {
       email,
       portfolio_title,
-      scraps,           // scraps를 숫자로 받아온다고 가정
+      scraps, // scraps를 숫자로 받아온다고 가정
       sharpe_ratio,
       kelly_ratio,
       mdd,
@@ -22,8 +22,12 @@ export async function POST(request) {
       assets
     } = body;
 
-    // scraps가 문자열 형태일 가능성을 고려한다면 숫자로 변환:
-    // const scrapsNumber = parseInt(scraps, 10);
+    // 소수점 둘째자리로 반올림
+    const roundedSharpeRatio = parseFloat(parseFloat(sharpe_ratio).toFixed(2));
+    const roundedKellyRatio = parseFloat(parseFloat(kelly_ratio).toFixed(2));
+    const roundedMdd = parseFloat(parseFloat(mdd).toFixed(2));
+    const roundedRateReturn = parseFloat(parseFloat(rate_return).toFixed(2));
+    const roundedMaxRateReturn = parseFloat(parseFloat(max_rate_return).toFixed(2));
 
     const insertStmt = db.prepare(`
       INSERT INTO portfolios (
@@ -45,12 +49,12 @@ export async function POST(request) {
     const result = insertStmt.run({
       user_email: email,
       portfolio_title,
-      scraps, // 숫자로 전달되었다고 가정. 필요하면 scraps: scrapsNumber 로
-      sharpe_ratio,
-      kelly_ratio,
-      mdd,
-      rate_return,
-      max_rate_return,
+      scraps,
+      sharpe_ratio: roundedSharpeRatio,
+      kelly_ratio: roundedKellyRatio,
+      mdd: roundedMdd,
+      rate_return: roundedRateReturn,
+      max_rate_return: roundedMaxRateReturn,
       startDate,
       endDate,
       rebalancePeriod,
@@ -93,6 +97,33 @@ export async function GET(request) {
     return new Response(JSON.stringify(portfolios), { status: 200 });
   } catch (error) {
     console.error('Error fetching portfolios:', error);
+    return new Response(JSON.stringify({ error: '서버 에러가 발생했습니다.' }), { status: 500 });
+  }
+}
+
+
+//삭제
+export async function DELETE(request) {
+  try {
+    const { email, title } = await request.json();
+
+    if (!email || !title) {
+      return new Response(JSON.stringify({ error: '이메일과 제목이 필요합니다.' }), { status: 400 });
+    }
+
+    const stmt = db.prepare(`
+      DELETE FROM portfolios
+      WHERE user_email = ? AND portfolio_title = ?
+    `);
+    const result = stmt.run(email, title);
+
+    if (result.changes === 0) {
+      return new Response(JSON.stringify({ error: '포트폴리오가 존재하지 않습니다.' }), { status: 404 });
+    }
+
+    return new Response(JSON.stringify({ success: true, message: '포트폴리오가 삭제되었습니다.' }), { status: 200 });
+  } catch (error) {
+    console.error('Error deleting portfolio:', error);
     return new Response(JSON.stringify({ error: '서버 에러가 발생했습니다.' }), { status: 500 });
   }
 }

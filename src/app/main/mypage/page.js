@@ -1,7 +1,7 @@
-'use client'
+'use client';
 import React, { useEffect, useState } from 'react';
 import useAuthStore from '@/store/authStore';
-import ComponentLoading from '@/components/loading/component-loading';
+import Loading from '@/app/loading';
 import classes from './page.module.css';
 import DetailBox from '@/components/portfolio/details/detail-box';
 import MyInfo from '@/components/my-info/my-info';
@@ -36,8 +36,15 @@ export default function MyPage() {
     }
   }, [email]);
 
+  const handleDeletePortfolio = (id) => {
+    // 삭제된 포트폴리오를 상태에서 제거
+    setMyPortfolio((prevPortfolios) =>
+      prevPortfolios.filter((portfolio) => portfolio.id !== id)
+    );
+  };
+
   if (isLoading) {
-    return <ComponentLoading />; // 로딩 상태 표시
+    return <Loading />; // 로딩 상태 표시
   }
 
   return (
@@ -45,10 +52,13 @@ export default function MyPage() {
       <MyInfo />
       <div className={classes.contents}>
         <h3 className={classes.subHeading}>나의 포트폴리오</h3>
-        {message && <p>{message}</p>}
         {myPortfolio.length > 0 ? (
           myPortfolio.map((portfolio) => (
-            <DetailBox key={portfolio.id} data={portfolio} /> // 포트폴리오 데이터 전달
+            <DetailBox
+              key={portfolio.id}
+              data={portfolio}
+              onDelete={handleDeletePortfolio} // 삭제 핸들러 전달
+            />
           ))
         ) : (
           <p>포트폴리오가 없습니다.</p>

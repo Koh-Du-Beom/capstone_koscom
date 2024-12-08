@@ -1,6 +1,40 @@
 import classes from './detail-content.module.css';
 
 export default function DetailContent({ data }) {
+  // 종목 데이터를 파싱하는 함수
+  const parseAssets = (assets) => {
+    if (!assets) return [];
+    return assets.split(';').map((item) => {
+      const [name, ratio] = item.split(',');
+      return `${name} : ${ratio}%`;
+    });
+  };
+
+  const parsedAssets = parseAssets(data.assets);
+
+  // 종료금액 계산 함수
+  const calculateEndMoney = (startMoney, rateReturn) => {
+    if (!startMoney || rateReturn == null) return null;
+
+    // 시작금액 숫자 변환
+    const startMoneyNumber = parseFloat(startMoney.toString().replace(/,/g, ''));
+
+    // 수익률을 %로 계산
+    const rateReturnNumber = parseFloat(rateReturn); // SQLite에서 REAL로 저장된 숫자 처리
+
+    // 종료금액 계산 및 포맷팅
+    const endMoney = startMoneyNumber * (1 + rateReturnNumber / 100);
+    return Math.round(endMoney).toLocaleString(); // 소수점 없이 반올림
+  };
+
+  // 소수점 둘째 자리에서 반올림 처리
+  const formatNumber = (num, appendPercent = false) => {
+    const rounded = parseFloat(num).toFixed(2);
+    return appendPercent ? `${rounded}%` : rounded;
+  };
+
+  const endMoney = calculateEndMoney(data.startMoney, data.rate_return);
+
   return (
     <div className={classes.detailContainer}>
       {/* 시작일 / 종료일 */}
@@ -31,8 +65,11 @@ export default function DetailContent({ data }) {
       <div className={classes.row}>
         <div className={classes.group}>
           <div className={classes.label}>종목</div>
-          <div className={classes.value}>{data.assets}</div>
-          {/* 종목 파싱해서 보여줘야함 */}
+          <div className={classes.value}>
+            {parsedAssets.map((asset, index) => (
+              <div key={index}>{asset}</div> // 한 줄씩 표시
+            ))}
+          </div>
         </div>
       </div>
 
@@ -44,11 +81,11 @@ export default function DetailContent({ data }) {
         </div>
         <div className={classes.group}>
           <div className={classes.label}>종료금액</div>
-          <div className={classes.value}>수익률이랑 종료금액으로 파싱</div>
+          <div className={classes.value}>{endMoney || '계산 불가'}</div>
         </div>
         <div className={classes.group}>
           <div className={classes.label}>수익률</div>
-          <div className={classes.value}>{data.rate_return}</div>
+          <div className={classes.value}>{formatNumber(data.rate_return, true)}</div>
         </div>
       </div>
 
@@ -56,19 +93,19 @@ export default function DetailContent({ data }) {
       <div className={classes.row}>
         <div className={classes.group}>
           <div className={classes.label}>최대 수익률</div>
-          <div className={classes.value}>{data.max_rate_return}</div>
+          <div className={classes.value}>{formatNumber(data.max_rate_return, true)}</div>
         </div>
         <div className={classes.group}>
           <div className={classes.label}>최대 낙폭</div>
-          <div className={classes.value}>{data.mdd}</div>
+          <div className={classes.value}>{formatNumber(data.mdd)}</div>
         </div>
         <div className={classes.group}>
           <div className={classes.label}>샤프 지수</div>
-          <div className={classes.value}>{data.sharpe_ratio}</div>
+          <div className={classes.value}>{formatNumber(data.sharpe_ratio)}</div>
         </div>
         <div className={classes.group}>
           <div className={classes.label}>켈리 지수</div>
-          <div className={classes.value}>{data.kelly_ratio}</div>
+          <div className={classes.value}>{formatNumber(data.kelly_ratio)}</div>
         </div>
       </div>
     </div>

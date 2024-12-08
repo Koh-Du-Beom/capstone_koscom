@@ -11,7 +11,6 @@ export default function RecommendTableHeader(){
         <th className={classes.th}>수익률</th>
         <th className={classes.th}>샤프비율</th>
         <th className={classes.th}>MDD</th>
-        <th className={classes.th}>스크랩수</th>
         <th className={classes.th}></th>
       </tr>
     </thead>

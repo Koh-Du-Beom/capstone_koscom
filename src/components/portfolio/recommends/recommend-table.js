@@ -5,7 +5,7 @@ import classes from './recommend-table.module.css'
 export default function PortfolioRecommendTable({ data }){
   return (
     <div className={classes.container}>
-      <h1 className={classes.title}>포트폴리오 Top 랭킹</h1>
+      <h1 className={classes.title}>포트폴리오 Top5 랭킹</h1>
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
         <RecommendTableHeader />
         <tbody>
