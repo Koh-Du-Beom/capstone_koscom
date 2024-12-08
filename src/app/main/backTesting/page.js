@@ -29,7 +29,7 @@ export default function BacktestingPageTwo() {
 
   const [saveData, setSaveData] = useState({
     email : '',
-    portfolio_name: '',
+    portfolio_title: '',
     scraps: 0,
     startDate: '',
     endDate: '',

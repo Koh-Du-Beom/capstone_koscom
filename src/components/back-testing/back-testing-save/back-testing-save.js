@@ -16,12 +16,12 @@ export default function BackTestingSave({ saveData, toggleModal }) {
     const updatedSaveData = {
       ...saveData,
       email, // 사용자 이메일
-      portfolio_name: portfolioTitle,
+      portfolio_title: portfolioTitle,
       scraps: 0, // 스크랩은 항상 0으로 설정
     };
 
     try {
-      const response = await fetch('/api/savePortfolio', {
+      const response = await fetch('/api/portfolio', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
