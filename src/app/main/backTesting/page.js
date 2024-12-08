@@ -27,6 +27,23 @@ export default function BacktestingPageTwo() {
     mdd : '',
   })
 
+  const [saveData, setSaveData] = useState({
+    email : '',
+    portfolio_name: '',
+    scraps: 0,
+    startDate: '',
+    endDate: '',
+    rebalancePeriod: '',
+    method: '',
+    startMoney: '',
+    assets: '',
+    sharpe_ratio: '',
+    kelly_ratio: '',
+    rate_return : '',
+    max_rate_return : '',
+    mdd : '',
+  })
+
   const [portfolioData, setPortfolioData] = useState(null);
   const [holdingsData, setHoldingsData] = useState(null);
 
@@ -85,6 +102,19 @@ export default function BacktestingPageTwo() {
         max_rate_return,
       });
 
+      // saveData 상태 업데이트 (assets 제외하고 모두 덮어쓰기)
+      setSaveData((prev) => ({
+        ...prev,
+        ...backTestingInfos,
+        ...{
+          sharpe_ratio,
+          kelly_ratio,
+          mdd,
+          rate_return,
+          max_rate_return,
+        },
+        assets: prev.assets,
+      }));
     } catch (error) {
       console.error("Error fetching data:", error);
       alert("데이터 요청 중 문제가 발생했습니다.");
@@ -139,7 +169,11 @@ export default function BacktestingPageTwo() {
             </label>
           </div>
 
-          <BackTestingAsset options="assets" updateParentObject={updateBackTestingInfos} />
+          <BackTestingAsset
+            options="assets"
+            updateParentObject={updateBackTestingInfos}
+            updateSaveDataAssets={(assets) => setSaveData((prev) => ({ ...prev, assets }))}
+          />
 
           <button type="submit" className={classes.submitButton}>백테스트 실행</button>
         </form>
@@ -157,8 +191,7 @@ export default function BacktestingPageTwo() {
 
       {showModal && (
         <BackTestingSave
-          backTestingInfos={backTestingInfos}
-          summaryInfos={summaryInfos}
+          saveData={saveData}
           toggleModal={toggleModal}
         />
       )}

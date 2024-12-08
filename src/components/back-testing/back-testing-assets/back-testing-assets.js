@@ -4,7 +4,7 @@ import SimpleStockListModal from "@/components/modal/stock-list-modal/stock-list
 import classes from './back-testing-assets.module.css';
 import useAuthStore from "@/store/authStore";
 
-export default function BackTestingAsset({ options, updateParentObject }) {
+export default function BackTestingAsset({ options, updateParentObject, updateSaveDataAssets }) {
   const { interestedItems } = useAuthStore();
   
   const [selectedStocks, setSelectedStocks] = useState([]); // 선택된 주식 목록
@@ -12,13 +12,20 @@ export default function BackTestingAsset({ options, updateParentObject }) {
   const [stockRatios, setStockRatios] = useState({}); // 각 주식의 비율
   const [ratioError, setRatioError] = useState(""); // 비율 입력 오류 메시지 상태
 
-  // 종목과 비율을 상위 컴포넌트에 업데이트
+  // 기존 backTestingInfos 업데이트
   const updateFormattedStocks = () => {
     const formattedStocks = selectedStocks
       .map(stock => `${stock.code},${stockRatios[stock.code] || 0}`)
       .join(";");
-
     updateParentObject(options, formattedStocks);
+  };
+
+  // 새로 추가된 saveData의 assets 업데이트
+  const updateSaveDataFormattedStocks = () => {
+    const formattedStocks = selectedStocks
+      .map(stock => `${stock.name},${stockRatios[stock.code] || 0}`)
+      .join(";");
+    updateSaveDataAssets(formattedStocks);
   };
 
   useEffect(() => {
@@ -27,11 +34,9 @@ export default function BackTestingAsset({ options, updateParentObject }) {
         name: item.name,
         code: item.code,
       }));
-  
       setSelectedStocks(extractedStocks); // selectedStocks 업데이트
     }
   }, [interestedItems]);
-  
 
   // 비율 합이 100%인지 확인하고 오류 메시지 설정
   const checkTotalRatio = () => {
@@ -45,7 +50,8 @@ export default function BackTestingAsset({ options, updateParentObject }) {
 
   useEffect(() => {
     checkTotalRatio();
-    updateFormattedStocks();
+    updateFormattedStocks(); // 기존 로직 호출
+    updateSaveDataFormattedStocks(); // saveData 업데이트 호출
   }, [selectedStocks, stockRatios]);
 
   // 모달에서 종목 추가 시 호출되는 함수

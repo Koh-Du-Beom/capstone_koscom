@@ -3,21 +3,21 @@ import { useState } from 'react';
 import useAuthStore from "@/store/authStore";
 import classes from './back-testing-save.module.css';
 
-export default function BackTestingSave({ backTestingInfos, summaryInfos, toggleModal }) {
-  const { email } = useAuthStore(); 
-  const [portfolioTitle, setPortfolioTitle] = useState('');
+export default function BackTestingSave({ saveData, toggleModal }) {
+  const { email } = useAuthStore();
+  const [portfolioTitle, setPortfolioTitle] = useState(saveData.portfolio_name || '');
 
   const formatNumber = (num) => {
     return num ? num.toFixed(2) : '-';
   };
 
   const handleSave = async () => {
-    const saveData = {
-      email,
-      portfolio_title: portfolioTitle,
-      scraps: 0, // Always 0
-      ...backTestingInfos,
-      ...summaryInfos,
+    // saveData에 이메일, 포트폴리오 제목 및 스크랩 추가
+    const updatedSaveData = {
+      ...saveData,
+      email, // 사용자 이메일
+      portfolio_name: portfolioTitle,
+      scraps: 0, // 스크랩은 항상 0으로 설정
     };
 
     try {
@@ -26,7 +26,7 @@ export default function BackTestingSave({ backTestingInfos, summaryInfos, toggle
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(saveData),
+        body: JSON.stringify(updatedSaveData),
       });
 
       if (!response.ok) {
@@ -36,6 +36,8 @@ export default function BackTestingSave({ backTestingInfos, summaryInfos, toggle
       const result = await response.json();
       alert("저장 완료되었습니다!");
       console.log("Saved Result:", result);
+
+      // 저장 완료 후 모달 닫기
       toggleModal();
     } catch (error) {
       console.error("Error saving data:", error);
@@ -63,21 +65,20 @@ export default function BackTestingSave({ backTestingInfos, summaryInfos, toggle
           />
         </div>
 
-
         <h4>백테스팅 설정 정보</h4>
-        <div className={classes.infoRow}><span>시작일:</span><span>{backTestingInfos.startDate}</span></div>
-        <div className={classes.infoRow}><span>종료일:</span><span>{backTestingInfos.endDate}</span></div>
-        <div className={classes.infoRow}><span>리밸런싱 주기:</span><span>{backTestingInfos.rebalancePeriod}</span></div>
-        <div className={classes.infoRow}><span>리밸런싱 방법:</span><span>{backTestingInfos.method}</span></div>
-        <div className={classes.infoRow}><span>시작 금액:</span><span>{backTestingInfos.startMoney}</span></div>
-        <div className={classes.infoRow}><span>자산 목록:</span><span>{backTestingInfos.assets}</span></div>
+        <div className={classes.infoRow}><span>시작일:</span><span>{saveData.startDate}</span></div>
+        <div className={classes.infoRow}><span>종료일:</span><span>{saveData.endDate}</span></div>
+        <div className={classes.infoRow}><span>리밸런싱 주기:</span><span>{saveData.rebalancePeriod}</span></div>
+        <div className={classes.infoRow}><span>리밸런싱 방법:</span><span>{saveData.method}</span></div>
+        <div className={classes.infoRow}><span>시작 금액:</span><span>{saveData.startMoney}</span></div>
+        <div className={classes.infoRow}><span>자산 목록:</span><span>{saveData.assets}</span></div>
 
         <h4>백테스팅 요약 정보</h4>
-        <div className={classes.infoRow}><span>Sharpe Ratio:</span><span>{formatNumber(summaryInfos.sharpe_ratio)}</span></div>
-        <div className={classes.infoRow}><span>Kelly Ratio:</span><span>{formatNumber(summaryInfos.kelly_ratio)}</span></div>
-        <div className={classes.infoRow}><span>MDD:</span><span>{formatNumber(summaryInfos.mdd)}</span></div>
-        <div className={classes.infoRow}><span>최대 수익률:</span><span>{formatNumber(summaryInfos.max_rate_return)}</span></div>
-        <div className={classes.infoRow}><span>최종 수익률:</span><span>{formatNumber(summaryInfos.rate_return)}</span></div>
+        <div className={classes.infoRow}><span>Sharpe Ratio:</span><span>{formatNumber(saveData.sharpe_ratio)}</span></div>
+        <div className={classes.infoRow}><span>Kelly Ratio:</span><span>{formatNumber(saveData.kelly_ratio)}</span></div>
+        <div className={classes.infoRow}><span>MDD:</span><span>{formatNumber(saveData.mdd)}</span></div>
+        <div className={classes.infoRow}><span>최대 수익률:</span><span>{formatNumber(saveData.max_rate_return)}</span></div>
+        <div className={classes.infoRow}><span>최종 수익률:</span><span>{formatNumber(saveData.rate_return)}</span></div>
 
         <button 
           onClick={handleSave} 
