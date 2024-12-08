@@ -20,8 +20,8 @@
   transition: max-height 0.8s ease, opacity 0.8s ease, transform 0.8s ease;
 }
 
-.contents.enlarged {
-  max-height: 500px; /* 적당한 최대 높이 */
-  opacity: 1; /* 불투명도 */
-  transform: translateY(0); /* 원래 위치로 이동 */
+.contents.expanded {
+  max-height: 500px;
+  opacity: 1;
+  transform: translateY(0);
 }

@@ -67,8 +67,6 @@ export async function POST(request) {
 }
 
 
-import db from '@/db'; // db.js 파일에서 데이터베이스 가져오기
-
 export async function GET(request) {
   try {
     // 클라이언트에서 이메일 파라미터를 쿼리로 받음

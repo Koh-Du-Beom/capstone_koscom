@@ -5,7 +5,7 @@ import Image from 'next/image';
 import classes from './detail-toolbar.module.css';
 import TableTooltip from '@/components/technical-analysis/technical-table/table-tooltip';
 
-export default function DetailToolbar({ enlarged, toggleDetail }) {
+export default function DetailToolbar({ title , isExpanded, toggleDetail }) {
   const [tooltip, setTooltip] = useState({ visible: false, content: '', position: { top: 0, left: 0 } });
 
   const showTooltip = (content, event) => {
@@ -26,16 +26,16 @@ export default function DetailToolbar({ enlarged, toggleDetail }) {
 
   return (
     <div className={classes.toolbar}>
-      <h2 className={classes.portfolio_title}>Portfolio Name</h2>
+      <h2 className={classes.portfolio_title}>{title}</h2>
       <section className={classes.button_container}>
         <button
           className={classes.button}
           onClick={toggleDetail}
-          onMouseEnter={(event) => showTooltip(enlarged ? '포트폴리오 닫기' : '포트폴리오 열기', event)}
+          onMouseEnter={(event) => showTooltip(isExpanded ? '포트폴리오 닫기' : '포트폴리오 열기', event)}
           onMouseLeave={hideTooltip}
         >
           <Image
-            src={`/svgs/${enlarged ? 'shrinkIcon' : 'enlargeIcon'}.svg`}
+            src={`/svgs/${isExpanded ? 'shrinkIcon' : 'enlargeIcon'}.svg`}
             alt="Enlarge"
             width={24}
             height={24}
