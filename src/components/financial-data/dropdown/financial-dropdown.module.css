@@ -45,7 +45,8 @@
 }
 
 .dropdownMenu.open {
-  max-height: 200px;
+  max-height: 400px;
+	overflow-y: auto;
   opacity: 1;
   display: block; /* 열리도록 설정 */
 }
