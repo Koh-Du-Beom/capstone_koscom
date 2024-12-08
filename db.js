@@ -34,5 +34,26 @@ db.prepare(`
   CREATE UNIQUE INDEX IF NOT EXISTS idx_user_code ON InterestedItems(user_id, code)
 `).run();
 
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS portfolios (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_email TEXT NOT NULL,
+    portfolio_title TEXT,
+    scraps INTEGER,
+    sharpe_ratio REAL,
+    kelly_ratio REAL,
+    mdd REAL,
+    rate_return REAL,
+    max_rate_return REAL,
+    startDate TEXT,
+    endDate TEXT,
+    rebalancePeriod TEXT,
+    method TEXT,
+    startMoney TEXT,
+    assets TEXT,
+    FOREIGN KEY (user_email) REFERENCES users(email) ON DELETE CASCADE
+  )
+`).run();
+
 export default db;
 

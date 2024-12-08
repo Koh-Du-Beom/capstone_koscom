@@ -9,8 +9,6 @@ export async function POST(request) {
       endDate,
       rebalancePeriod,
       method,
-      rsiPeriod,
-      startMoney,
       assets,
     } = await request.json();
 
@@ -24,7 +22,7 @@ export async function POST(request) {
         '--assets', assets,
         '--rebal_period', rebalancePeriod,
         '--method', method,
-        '--uninvested_asset', "현금",
+        // '--uninvested_asset', "현금",
         '--start_date', startDate,
         '--end_date', endDate,
       ]);
