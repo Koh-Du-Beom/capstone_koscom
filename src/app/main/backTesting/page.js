@@ -102,7 +102,7 @@ export default function BacktestingPageTwo() {
         <h2 className={classes.title}>백테스팅 설정</h2>
         
         <div className={classes.buttonContainer}>
-          <button type="button" onClick={handleSave} className={classes.saveButton}>저장</button>
+          <button type="button" onClick={toggleModal} className={classes.saveButton}>저장</button>
         </div>
         
         {/* 폼 시작 */}
@@ -121,7 +121,7 @@ export default function BacktestingPageTwo() {
 
           <h6>리밸런싱 방법</h6>
           <BackTestingDropdown
-            options={['지정 비중', '동일 비중', '절대 모멘텀', '최소 분산', '최대 다각화', '리스트 패리티']}
+            options={['지정 비중', '동일 비중', '절대 모멘텀', '최소 분산', '최대 다각화', '리스크 패리티']}
             targetKey="method"
             updateParentObject={updateBackTestingInfos}
           />
