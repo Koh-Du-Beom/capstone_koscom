@@ -16,6 +16,7 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   transition: background-color 0.3s ease;
+  box-sizing: border-box;
 }
 
 .dropdownHeader:hover {
@@ -43,6 +44,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 드롭다운 그림자 추가 */
   margin-top: 5px;
   z-index: 10;
+  box-sizing: border-box;
 }
 
 .dropdownItem {
@@ -51,8 +53,35 @@
   color: #333;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  box-sizing: border-box;
+  position: relative; /* 설명 표시를 위해 상대 위치 지정 */
 }
 
 .dropdownItem:hover {
   background-color: #f0f0f0; /* 항목 호버 시 배경색 변경 */
+}
+
+.description {
+  display: block;
+  font-size: 14px; /* 설명 텍스트 크기 */
+  color: #666;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  position: absolute;
+  top: 100%; /* 현재 항목 바로 아래에 표시 */
+  left: 0; /* 항목의 왼쪽 정렬 */
+  margin-top: 5px; /* 항목과 설명 사이 간격 */
+  width: 100%; /* 설명 텍스트 너비 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 20; /* 드롭다운보다 위에 표시 */
+  visibility: hidden; /* 기본적으로 숨김 */
+  opacity: 0; /* 투명도 0으로 숨김 */
+  transition: visibility 0.3s ease, opacity 0.3s ease;
+}
+
+.dropdownItem:hover .description {
+  visibility: visible; /* 항목 호버 시 표시 */
+  opacity: 1; /* 투명도 1로 설정 */
 }

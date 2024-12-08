@@ -145,6 +145,7 @@ export default function BacktestingPageTwo() {
           <h6>리밸런싱 주기</h6>
           <BackTestingDropdown
             options={['1개월', '3개월', '6개월', '1년']}
+            descriptions={{}}
             targetKey="rebalancePeriod"
             updateParentObject={updateBackTestingInfos}
           />
@@ -152,9 +153,18 @@ export default function BacktestingPageTwo() {
           <h6>리밸런싱 방법</h6>
           <BackTestingDropdown
             options={['지정 비중', '동일 비중', '절대 모멘텀', '최소 분산', '최대 다각화', '리스크 패리티']}
+            descriptions={{
+              '지정 비중': '자산군 내 종목 비중을 지정한대로 구성',
+              '동일 비중': '자산군 내 종목 비중을 모두 동일하게 구성',
+              '절대 모멘텀': '자산군 내 종목 비중을 모멘텀 로직에 따라 구성',
+              '리스크 패리티': '자산군 내 종목 비중을 포트폴리오에 기여하는 리스크가 동일하도록 구성',
+              '최소 분산': '자산군 내 종목 비중을 전체 포트폴리오의 리스크가 가장 작게 나오도록 구성',
+              '최대 다각화': '자산군 내 종목 비중을 종목 간 상관관계가 낮은 종목들에 가중치를 두어 구성',
+            }}
             targetKey="method"
             updateParentObject={updateBackTestingInfos}
           />
+
 
           <div className={classes.moneyContainer}>
             <label className={classes.label}>
